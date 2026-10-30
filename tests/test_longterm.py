@@ -230,3 +230,16 @@ def test_stale_copy_kept_when_refetch_404s(tmp_path):
     lim = fetch_sec.Limiter(8, clock=lambda: 0.0, sleep=lambda s_: None)
     res = fetch_sec.fetch_all(["AAA"], s, tmp_path, lim, max_age_days=25)
     assert res["missing"] == [] and f.exists()
+
+
+def test_built_date_is_iso_in_build_and_committed_json(tmp_path):
+    from datetime import date
+    out = build(tmp_path, {"asof": "2026-10-30", "lookup": {}}, {})
+    assert date.fromisoformat(out["built"]) == date.today()
+    d = json.loads((SITE / "data/longterm.json").read_text())
+    assert date.fromisoformat(d["built"])
+
+
+def test_long_term_tab_shows_as_of_from_built():
+    js = (SITE / "app.js").read_text()
+    assert 'id="lt-asof"' in js and "Long-term data as of " in js and "D.built" in js
