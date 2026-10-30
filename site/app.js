@@ -209,6 +209,97 @@
     show(sym);
   }
 
+  /* ---------- scroll region with a "more to the side" hint ---------- */
+  function scrollRegion(inner, label, id) {
+    return '<div class="twrap"><span class="swipe" id="sw-' + id + '" aria-hidden="true">Scroll sideways for more &rarr;</span>' +
+      '<div class="tw" id="tw-' + id + '" tabindex="0" role="region" aria-label="' + esc(label) + '">' + inner + "</div></div>";
+  }
+  function watchScroll(id) {
+    var tw = document.getElementById("tw-" + id), sw = document.getElementById("sw-" + id);
+    if (!tw) return;
+    var upd = function () {
+      var more = tw.scrollWidth - tw.clientWidth - tw.scrollLeft > 4;
+      tw.parentNode.classList.toggle("more", more);
+      if (tw.scrollLeft > 8 && sw) sw.hidden = true;
+    };
+    tw.addEventListener("scroll", upd, { passive: true }); window.addEventListener("resize", upd); upd();
+    if (window.ResizeObserver) new ResizeObserver(upd).observe(tw);
+  }
+
+  /* ---------- long-term tab: SEC 10-K quality and valuation ---------- */
+  function secUrl(cik, accn) { return "https://www.sec.gov/Archives/edgar/data/" + parseInt(cik, 10) + "/" + String(accn).replace(/-/g, "") + "/"; }
+  var LT = { sort: "ck", q: "", n: 60 };
+  function ltCell(r, k, fmt) {
+    var m = r[k];
+    if (!m) return '<td class="num na" title="Not reported in a form we can read">n/a</td>';
+    return '<td class="num"><a class="fig" target="_blank" rel="noopener" href="' + secUrl(r.cik, m.a || r.a) + '" title="Open the SEC filing for fiscal year ending ' + esc(r.fy) + '">' + fmt(m) + "</a></td>";
+  }
+  function fp(x, d) { return (x * 100).toFixed(d == null ? 1 : d) + "%"; }
+  var LTSORT = {
+    ck: function (r) { return r.cm ? r.ck / r.cm + r.cm / 100 : -1; },
+    rev_cagr: function (r) { return r.rev_cagr ? r.rev_cagr.v : -9; },
+    fcf_margin: function (r) { return r.fcf_margin ? r.fcf_margin.v : -9; },
+    roic: function (r) { return r.roic ? r.roic.v : -9; },
+    debt_ebitda: function (r) { return r.debt_ebitda ? -r.debt_ebitda.v : -999; },
+    t: function (r) { return r.t; }
+  };
+  function ltRows() {
+    var q = LT.q.trim().toLowerCase(), f = LTSORT[LT.sort];
+    var rows = S.lt.rows.filter(function (r) { return !q || r.t.toLowerCase().indexOf(q) === 0 || r.n.toLowerCase().indexOf(q) >= 0; });
+    rows.sort(function (a, b) { var x = f(a), y = f(b); return LT.sort === "t" ? (x < y ? -1 : 1) : (y - x) || (a.t < b.t ? -1 : 1); });
+    return rows;
+  }
+  function ltBody() {
+    var rows = ltRows(), shown = rows.slice(0, LT.n);
+    var html = shown.map(function (r) {
+      return '<tr><td class="stk"><a class="tk" href="#/lookup/' + encodeURIComponent(r.t) + '">' + esc(r.t) + '</a><span class="nm2">' + esc(r.n) + "</span></td>" +
+        '<td class="num" title="' + esc(S.lt.rules.join("; ")) + '">' + r.ck + " of " + r.cm + "</td>" +
+        ltCell(r, "rev_cagr", function (m) { return fp(m.v) + " <small>" + m.yrs + "y</small>"; }) +
+        ltCell(r, "op_margin", function (m) { return fp(m.v) + " <small>" + (m.d >= 0 ? "+" : "") + (m.d * 100).toFixed(1) + " pts</small>"; }) +
+        ltCell(r, "fcf_margin", function (m) { return fp(m.v); }) +
+        ltCell(r, "roic", function (m) { return fp(m.v); }) +
+        ltCell(r, "shares", function (m) { return (m.v >= 0 ? "+" : "") + fp(m.v); }) +
+        ltCell(r, "debt_ebitda", function (m) { return m.v.toFixed(1) + "x"; }) +
+        ltCell(r, "fcf_yield", function (m) { return fp(m.v); }) +
+        ltCell(r, "ev_ebitda", function (m) { return m.v.toFixed(1) + "x"; }) + "</tr>";
+    }).join("");
+    return { html: html, total: rows.length, shown: shown.length };
+  }
+  function longterm() {
+    var D = S.lt, c = D.coverage;
+    function head(k, label, sortable) { return "<th" + (k && LT.sort === k ? ' aria-sort="descending"' : "") + ">" + label + "</th>"; }
+    var tbl = '<table id="lttable"><thead><tr><th>Name</th>' + head("ck", "Checks") + head("rev_cagr", "Revenue CAGR") + head(0, "Op margin, 5y change") + head("fcf_margin", "FCF margin") + head("roic", "ROIC proxy") + head(0, "Shares, 2y") + head("debt_ebitda", "Debt / EBITDA") + head(0, "FCF yield") + head(0, "EV / EBITDA") + "</tr></thead><tbody id=\"ltbody\"></tbody></table>";
+    app.innerHTML = '<section class="hero"><span class="label">Long-term</span><h1>Ten years of <em>10-K numbers.</em></h1>' +
+      '<p class="lede">Quality and valuation for ' + D.count + " of " + D.universe + " S&amp;P 500 names, built only from annual SEC filings. Every figure links to the filing it came from. Mechanical rules on reported numbers: not forecasts, and nothing here is a recommendation. <strong>Not investment advice.</strong></p></section>" +
+      '<section class="lt"><div class="ltbar"><label class="label" for="ltq">Find a name</label><input id="ltq" type="search" placeholder="Ticker or company" autocomplete="off" value="' + esc(LT.q) + '">' +
+      '<label class="label" for="lts">Sort by</label><select id="lts"><option value="ck">Checks passed</option><option value="rev_cagr">Revenue CAGR</option><option value="fcf_margin">FCF margin</option><option value="roic">ROIC proxy</option><option value="debt_ebitda">Lowest debt / EBITDA</option><option value="t">Ticker A to Z</option></select></div>' +
+      '<p class="note" id="ltcount" aria-live="polite"></p>' + scrollRegion(tbl, "Long-term SEC 10-K table", "lt") +
+      '<p class="center"><button type="button" class="more-btn" id="ltmore">Show more</button></p>' +
+      '<details class="how"><summary>How these are computed</summary><ul>' +
+      "<li><b>Source:</b> SEC EDGAR XBRL companyfacts. 10-K annual facts only, one fact per period, the latest filing wins if a number was restated. Fiscal year of the latest 10-K is in each link.</li>" +
+      "<li><b>Revenue CAGR:</b> compound growth over the longest span up to 10 years that the filings cover (at least 5).</li>" +
+      "<li><b>Op margin:</b> operating income over revenue, with the change in points versus 5 years earlier.</li>" +
+      "<li><b>FCF margin:</b> operating cash flow minus capital spending, over revenue.</li>" +
+      "<li><b>ROIC proxy:</b> operating income after the company's own tax rate (21% if unusable, capped at 35%), over debt plus equity minus cash at year end. A proxy, not the company's own figure.</li>" +
+      "<li><b>Shares, 2y:</b> change in diluted weighted shares over two years, both ends from the newest filing so splits line up.</li>" +
+      "<li><b>Debt / EBITDA:</b> tagged debt over operating income plus depreciation and amortization. Shown only when EBITDA is positive. Finance leases count only where a company tags them inside its debt line; operating leases are left out.</li>" +
+      "<li><b>FCF yield and EV / EBITDA:</b> use the last scan price and the 10-K cover share count (share classes added up). A price is a snapshot, so these move daily.</li>" +
+      "<li><b>Checks:</b> six yes or no tests: " + D.rules.map(esc).join("; ") + ". The count is of tests that could be measured. Banks, insurers and others without an operating income line show n/a.</li>" +
+      "<li><b>Coverage:</b> revenue CAGR " + c.rev_cagr + ", operating margin " + c.op_margin + ", FCF margin " + c.fcf_margin + ", ROIC proxy " + c.roic + ", share change " + c.shares + ", debt / EBITDA " + c.debt_ebitda + ", FCF yield " + c.fcf_yield + ", EV / EBITDA " + c.ev_ebitda + " of " + D.count + " names. Data built " + esc(D.built) + ".</li></ul></details></section>";
+    var q = document.getElementById("ltq"), sel = document.getElementById("lts"), more = document.getElementById("ltmore");
+    sel.value = LT.sort;
+    function draw() {
+      var r = ltBody();
+      document.getElementById("ltbody").innerHTML = r.html;
+      document.getElementById("ltcount").textContent = "Showing " + r.shown + " of " + r.total + " names" + (LT.q ? " matching your search" : "") + ". Higher check counts are not a forecast.";
+      more.hidden = r.shown >= r.total;
+    }
+    q.addEventListener("input", function () { LT.q = q.value; LT.n = 60; draw(); });
+    sel.addEventListener("change", function () { LT.sort = sel.value; LT.n = 60; draw(); });
+    more.addEventListener("click", function () { LT.n += 120; draw(); });
+    draw(); watchScroll("lt");
+  }
+
   function track() {
     var T = S.track, C = 2 * Math.PI * 96, p = Math.min(1, T.trading_days / T.min_days), noise = T.trading_days < T.min_days;
     function stat(k) {
@@ -218,29 +309,28 @@
       return '<div class="stat"><span class="label">' + HZNAME[k] + '</span><div class="v">' + (!v || v.avg_excess_pct == null ? "None yet" : (v.avg_excess_pct >= 0 ? "+" : "") + v.avg_excess_pct.toFixed(2) + "%") + '</div><span class="label">' + (v ? "avg vs S&amp;P 500 over " + best + " days &middot; " + v.hit_rate_pct + "% hit rate &middot; " + v.graded + " graded" : "nothing graded yet") + " &middot; " + L.calls + " logged</span></div>";
     }
     var rows = T.graded.slice().sort(function (a, b) { return a.date < b.date ? 1 : a.date > b.date ? -1 : 0; }).slice(0, 40);
-    var tbl = rows.length ? '<div class="twrap"><span class=\"swipe\" id=\"sw\" aria-hidden=\"true\">Swipe for more &rarr;</span><div class="tw" id="tw"><table><thead><tr><th>Called</th><th>Name</th><th>View</th><th>Call</th><th>Window</th><th>Stock</th><th>Vs S&amp;P</th></tr></thead><tbody>' +
+    var tbl = rows.length ? scrollRegion('<table><thead><tr><th>Called</th><th>Name</th><th>View</th><th>Call</th><th>Window</th><th>Stock</th><th>Vs S&amp;P</th></tr></thead><tbody>' +
       rows.map(function (g) {
         return "<tr><td>" + esc(g.date) + '</td><td><a class="tk" href="#/lookup/' + encodeURIComponent(g.ticker) + '">' + esc(g.ticker) + "</a></td><td>" + esc(HZNAME[g.lens] || g.lens) + "</td><td>" + esc(g.label) + '</td><td class="num">' + g.window + 'd</td><td class="num">' + pct(g.stock_return) + '</td><td class="num ' + (g.excess >= 0 ? "pos" : "neg") + '">' + pct(g.excess) + "</td></tr>";
-      }).join("") + "</tbody></table></div></div>" : '<p class="note">No graded calls yet. A call is graded from the next trading day\'s close, over 5, 20 and 60 trading days, so the first results appear after a week.</p>';
+      }).join("") + "</tbody></table>", "Graded calls table", "graded") : '<p class="note">No graded calls yet. A call is graded from the next trading day\'s close, over 5, 20 and 60 trading days, so the first results appear after a week.</p>';
     app.innerHTML = '<section class="hero"><span class="label">Track record</span><h1>' + (noise ? "Still <em>noise.</em>" : "Enough days <em>to read.</em>") + "</h1>" +
       '<p class="lede">Every published pick is logged with its date, then graded against the S&amp;P 500 from the next trading day\'s close, over 5, 20 and 60 trading days. A Bullish call wins by beating the index, a Bearish call by lagging it. ' + esc(T.note) + "</p>" +
+      '<p class="lede sample" id="sample-size"><strong>Sample size:</strong> ' + T.calls_logged.toLocaleString() + " calls logged, " + T.graded.length.toLocaleString() + " graded, across " + T.trading_days + " trading day" + (T.trading_days === 1 ? "" : "s") + ". " + (noise ? "Under " + T.min_days + " trading days this is still noise: do not read skill into it." : "Past " + T.min_days + " trading days, but a few weeks of calls is still a small sample.") + "</p>" +
       '<div class="ringwrap"><div class="ring"><svg viewBox="0 0 220 220" aria-hidden="true"><circle cx="110" cy="110" r="96" fill="none" stroke="#1a1812" stroke-width="8"/><circle class="p" id="pr" cx="110" cy="110" r="96" fill="none" stroke="#d4af37" stroke-width="8" stroke-linecap="round" stroke-dasharray="' + C + '" stroke-dashoffset="' + C + '"/></svg>' +
       '<div class="c" role="img" aria-label="' + esc(noise ? "still noise" : "readable") + ", " + T.trading_days + " of " + T.min_days + ' trading days"><b>' + T.trading_days + '</b><span class="label">of ' + T.min_days + ' trading days</span><span class="label" style="color:var(--gold);margin-top:6px">' + (noise ? "still noise" : "readable") + "</span></div></div>" +
       '<div class="stats">' + stat("mispricing") + stat("short_term") + stat("swing") + '<div class="stat"><span class="label">Calls logged</span><div class="v">' + T.calls_logged.toLocaleString() + '</div><span class="label">' + T.pending + " pending</span></div>" +
       '<div class="stat"><span class="label">Rule</span><div class="v" style="font-size:18px">Nothing is hidden or removed after the fact.</div></div></div></div></section>' +
       '<section><h2>Graded calls</h2><p class="lede" style="margin-top:6px">Most recent 40. Neutral names are never called. Results this early are not evidence of skill.</p>' + tbl + "</section>";
-    var tw = document.getElementById("tw"), sw = document.getElementById("sw");
-    if (tw) {
-      var upd = function () {
-        var more = tw.scrollWidth - tw.clientWidth - tw.scrollLeft > 4;
-        tw.parentNode.classList.toggle("more", more);
-        if (tw.scrollLeft > 8 && sw) sw.hidden = true;
-      };
-      tw.addEventListener("scroll", upd, { passive: true }); window.addEventListener("resize", upd); upd();
-    }
+    watchScroll("graded");
     var pr = document.getElementById("pr");
     if (reduce) pr.style.strokeDashoffset = C * (1 - p);
     else requestAnimationFrame(function () { requestAnimationFrame(function () { pr.style.strokeDashoffset = C * (1 - p); }); });
+  }
+
+  function loadLT() {
+    app.innerHTML = '<section class="hero"><span class="label">Long-term</span><p class="lede">Loading SEC filings data...</p></section>';
+    load("data/longterm.json").then(function (d) { S.lt = d; if (location.hash.indexOf("#/longterm") === 0) longterm(); })
+      .catch(function () { app.innerHTML = '<section class="hero"><h1>Long-term data <em>unavailable.</em></h1><p class="lede">The SEC data file could not be loaded. Not investment advice.</p></section>'; });
   }
 
   /* ---------- router ---------- */
@@ -250,6 +340,7 @@
     [].forEach.call(document.querySelectorAll("nav a"), function (a) { a.classList.toggle("on", a.getAttribute("data-nav") === pg); });
     if (pg === "lookup") lookup(decodeURIComponent(parts[1] || ""));
     else if (pg === "track") track();
+    else if (pg === "longterm") { if (S.lt) longterm(); else loadLT(); }
     else home();
     window.scrollTo(0, 0);
   }
