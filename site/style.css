@@ -126,8 +126,8 @@ button.stage{font:inherit;color:inherit;text-align:left;background:none;cursor:p
 .btn.ghost{background:none;color:var(--gold)}
 .twrap{position:relative;margin-top:18px}
 .twrap .tw{margin-top:0}
-.twrap.more::after{content:"";position:absolute;top:1px;right:1px;bottom:1px;width:48px;border-radius:0 6px 6px 0;background:linear-gradient(90deg,transparent,var(--bg) 85%);pointer-events:none}
-.swipe{display:none;margin-top:8px;font:11px var(--mono);letter-spacing:.14em;text-transform:uppercase;color:var(--gold)}
+.twrap.more::after{content:"";position:absolute;top:30px;right:1px;bottom:1px;width:48px;border-radius:0 6px 6px 0;background:linear-gradient(90deg,transparent,var(--bg) 85%);pointer-events:none}
+.swipe{display:none;margin-bottom:8px;font:11px var(--mono);letter-spacing:.14em;text-transform:uppercase;color:var(--gold)}
 .twrap.more .swipe{display:block}
 .swipe[hidden]{display:none!important}
 @media(min-width:760px){.swipe{display:none!important}}
