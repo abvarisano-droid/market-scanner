@@ -8,10 +8,10 @@ import plotly.graph_objects as go
 import streamlit as st
 
 from scanner import data, news_ai, pipeline, signals, universe, valuation
+from scanner.labels import COLOR as CALL_COLOR, normalize
 
 st.set_page_config(page_title="Market Scanner", page_icon="📈", layout="wide")
 LATEST = Path(__file__).parent / "data" / "latest_scan.json"
-CALL_COLOR = {"BUY": "#16a34a", "SELL": "#dc2626", "WATCH": "#ca8a04"}
 
 
 @st.cache_data(ttl=600)
@@ -56,7 +56,8 @@ with tabs[0]:
 # ---------- calls ----------
 with tabs[1]:
     picks = pd.DataFrame(scan["picks"])
-    f = st.radio("Show", ["All", "BUY", "SELL", "WATCH"], horizontal=True)
+    picks["call"] = picks["call"].map(normalize)
+    f = st.radio("Show", ["All", "Bullish", "Bearish", "Neutral"], horizontal=True)
     if f != "All":
         picks = picks[picks["call"] == f]
     for _, p in picks.sort_values("mispricing", ascending=False).iterrows():
@@ -126,9 +127,11 @@ with tabs[4]:
     m[2].metric("Avg alpha (open)", pct(sc.get("open_avg_alpha")))
     m[3].metric("20D hit rate", pct(sc.get("hit_rate_20d")).lstrip("+"), help=f"n={sc.get('n_20d', 0)}")
     m[4].metric("60D hit rate", pct(sc.get("hit_rate_60d")).lstrip("+"), help=f"n={sc.get('n_60d', 0)}")
-    st.caption("A call is 'right' if it beat SPY in its direction: BUYs outperform, SELLs underperform.")
+    st.caption("A call is 'right' if it beat SPY in its direction: Bullish calls outperform, Bearish calls lag. Entry is the next trading day's close. Under 21 trading days of history the record is still noise. Not investment advice.")
+    st.info(f"{sc.get('status', 'still noise')}: {sc.get('note', '')}")
     led = pd.DataFrame(scan["ledger"])
     if not led.empty:
+        led["call"] = led["call"].map(normalize)
         led["verdict"] = led["alpha_now"].map(lambda a: "✅ right" if a and a > 0 else ("❌ wrong" if a is not None else "⏳"))
         cols = [c for c in ["date", "ticker", "call", "confidence", "entry", "ret_now", "alpha_now", "verdict",
                             "alpha_20d", "alpha_60d", "thesis"] if c in led]
@@ -154,7 +157,7 @@ with tabs[5]:
             row = valuation.score(pool).loc[tk].to_dict() | {"ticker": tk}
             res = news_ai.analyze(row, data.news(tk))
         a, b, c, d = st.columns(4)
-        a.markdown(f"<h2 style='color:{CALL_COLOR[res['call']]}'>{res['call']}</h2>", unsafe_allow_html=True)
+        a.markdown(f"<h2 style='color:{CALL_COLOR[normalize(res['call'])]}'>{normalize(res['call'])}</h2>", unsafe_allow_html=True)
         b.metric("Mispricing", f"{row['mispricing']:+.0f}")
         c.metric("News sentiment", f"{res['sentiment']:+.2f}")
         d.metric("Analyst upside", pct(row.get("analyst_upside")))
