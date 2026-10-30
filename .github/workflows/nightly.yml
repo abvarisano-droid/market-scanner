@@ -24,11 +24,13 @@ jobs:
         run: python scan.py
       - name: Track
         run: python track.py
+      - name: Export site data
+        run: python scripts/export_site.py
       - name: Commit results
         run: |
           git config user.name "market-scanner-bot"
           git config user.email "actions@users.noreply.github.com"
-          git add out data
+          git add out data site/data
           git diff --cached --quiet || git commit -m "nightly: scan $(date -u +%F)"
           git pull --rebase
           git push

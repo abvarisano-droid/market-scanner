@@ -68,7 +68,7 @@ def _frames(stock_slope, spy_slope=0.0, n=30):
 
 def test_grade_bullish_and_bearish():
     st, spy = _frames(0.01)
-    d0 = st["date"].iloc[-11]
+    d0 = st["date"].iloc[-12]
     g = track.grade_call({"date": d0, "label": "Bullish", "horizon": "short_term"}, st, spy)
     assert g["days"] == 10 and g["closed"] and g["excess"] > 0
     g2 = track.grade_call({"date": d0, "label": "Bearish", "horizon": "short_term"}, st, spy)
@@ -77,11 +77,22 @@ def test_grade_bullish_and_bearish():
 
 def test_grade_open_and_skips():
     st, spy = _frames(0.01)
-    d = st["date"].iloc[-4]
+    d = st["date"].iloc[-5]
     g = track.grade_call({"date": d, "label": "Bullish", "horizon": "swing"}, st, spy)
     assert g["days"] == 3 and not g["closed"]
     assert track.grade_call({"date": d, "label": "Neutral", "horizon": "swing"}, st, spy) is None
     assert track.grade_call({"date": st["date"].iloc[-1], "label": "Bullish", "horizon": "swing"}, st, spy) is None
+    # next bar exists but nothing after the entry bar yet: still pending
+    assert track.grade_call({"date": st["date"].iloc[-2], "label": "Bullish", "horizon": "swing"}, st, spy) is None
+
+
+def test_entry_is_next_close():
+    st, spy = _frames(0.01)
+    d0 = st["date"].iloc[-12]
+    g = track.grade_call({"date": d0, "label": "Bullish", "horizon": "short_term"}, st, spy)
+    assert g["entry_date"] == st["date"].iloc[-11]
+    exp = st["close"].iloc[-1] / st["close"].iloc[-11] - 1
+    assert abs(g["stock_return"] - exp) < 1e-12
 
 
 def test_summary_noise_threshold():

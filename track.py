@@ -27,20 +27,24 @@ def log_calls(scan: dict, calls_path) -> int:
 
 
 def grade_call(call, stock: pd.DataFrame, spy: pd.DataFrame) -> dict | None:
-    """Excess return vs SPY since the call date. Bullish wins by beating SPY, Bearish by lagging it.
-    Neutral calls are not graded. Window ends at the horizon length or the latest bar."""
+    """Excess return vs SPY. Entry is the close of the NEXT trading day after the call date
+    (no trading at the signal's own close). Bullish wins by beating SPY, Bearish by lagging it.
+    Neutral calls are not graded. Returns None while pending (no bar after the entry bar yet).
+    The window runs from the entry close for the horizon length, or to the latest bar."""
     if call["label"] == "Neutral":
         return None
     sd, pd_ = stock.set_index("date")["close"], spy.set_index("date")["close"]
-    dates = [d for d in pd_.index if d >= call["date"] and d in sd.index]
-    if not dates or dates[0] != call["date"] or len(dates) < 2:
+    dates = [d for d in pd_.index if d > call["date"] and d in sd.index]
+    if len(dates) < 2:
         return None
+    entry = dates[0]
     h = HORIZON_DAYS[call["horizon"]]
-    end = dates[min(h, len(dates) - 1)]
-    rs = sd[end] / sd[call["date"]] - 1
-    rm = pd_[end] / pd_[call["date"]] - 1
+    n = min(h, len(dates) - 1)
+    end = dates[n]
+    rs = sd[end] / sd[entry] - 1
+    rm = pd_[end] / pd_[entry] - 1
     sign = 1 if call["label"] == "Bullish" else -1
-    return {"days": min(h, len(dates) - 1), "closed": len(dates) - 1 >= h,
+    return {"entry_date": entry, "days": n, "closed": len(dates) - 1 >= h,
             "stock_return": rs, "spy_return": rm, "excess": sign * (rs - rm)}
 
 
@@ -62,7 +66,7 @@ def run_track(scan: dict, data_dir, out_dir) -> dict:
     log_calls(scan, calls_path)
     calls = pd.read_csv(calls_path)
     spy = load_prices(data_dir, "SPY")
-    cache, graded = {}, []
+    cache, graded, pending = {}, [], 0
     for c in calls.to_dict("records"):
         if c["ticker"] not in cache:
             cache[c["ticker"]] = load_prices(data_dir, c["ticker"])
@@ -70,10 +74,12 @@ def run_track(scan: dict, data_dir, out_dir) -> dict:
         g = grade_call(c, st, spy) if st is not None else None
         if g:
             graded.append({**c, **g})
+        elif c["label"] != "Neutral":
+            pending += 1
     first = calls["date"].min()
     days = int((spy["date"] >= first).sum()) if len(calls) else 0
     res = summarize(graded, days)
-    res.update({"asof": scan["asof"], "calls_logged": len(calls), "disclaimer": "Not investment advice.",
+    res.update({"asof": scan["asof"], "calls_logged": len(calls), "pending": pending, "disclaimer": "Not investment advice.",
                 "graded": [{**x, "excess": round(x["excess"], 4), "stock_return": round(x["stock_return"], 4),
                             "spy_return": round(x["spy_return"], 4)} for x in graded]})
     Path(out_dir).mkdir(parents=True, exist_ok=True)
