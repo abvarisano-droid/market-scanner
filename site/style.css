@@ -133,3 +133,15 @@ button.stage{font:inherit;color:inherit;text-align:left;background:none;cursor:p
 @media(min-width:760px){.swipe{display:none!important}}
 .stage{border-top:0;border-left:0}button.stage{border-color:var(--line);border-style:solid;border-width:0 1px 1px 0;border-radius:0}
 @media(max-width:759px){.stage:nth-child(2n){border-right-width:0}}
+
+.heat{margin-top:40px}
+.heat .lede{font-size:14px}
+.heatrow{display:flex;gap:10px;padding:10px;border:1px solid var(--line);border-radius:6px;overflow-x:auto}
+.sec{flex:0 0 168px;display:flex;flex-direction:column;gap:6px;text-align:left;font:inherit;color:var(--text);background:var(--panel);border:1px solid var(--line);border-radius:6px;padding:10px;cursor:pointer}
+.sec:hover,.sec[aria-pressed=true]{border-color:var(--gold)}
+.sname{font:600 14px var(--serif);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.cell{display:flex;flex-direction:column;border-radius:4px;padding:6px 8px}
+.cell b{font:600 15px var(--mono);font-variant-numeric:tabular-nums}
+.bb{display:flex;justify-content:space-between;font:11px var(--mono)}
+.heat .twrap.more::after{top:1px}
+.cell .label{color:var(--text);opacity:.8}
