@@ -14,8 +14,14 @@
   function load(u) { return fetch(u).then(function (r) { if (!r.ok) throw new Error(u); return r.json(); }); }
 
   /* ---------- funnel dot field ---------- */
+  var CAP = [
+    function (v) { return v[0].toLocaleString() + " stocks from the major indexes enter the scan."; },
+    function (v) { return v[1].toLocaleString() + " pass the data checks (enough history, fresh, liquid, sane values)."; },
+    function (v) { return v[2].toLocaleString() + " get a score from the rules."; },
+    function (v) { return v[3].toLocaleString() + " rank at the top as the day's setups."; }
+  ];
   function funnel(canvas, f, counters, stages) {
-    cancelAnimationFrame(S.raf);
+    cancelAnimationFrame(S.raf); if (S.stop) S.stop();
     var ctx = canvas.getContext("2d");
     var dpr = Math.min(window.devicePixelRatio || 1, 2);
     var W = canvas.clientWidth, H = canvas.clientHeight;
@@ -63,15 +69,28 @@
       }
       ctx.shadowBlur = 0;
     }
-    if (reduce) { setStage(3, 1); draw(0, 3, 1); return; }
-    var t0 = performance.now();
+    var cur = reduce ? 3 : 0, ts = performance.now(), timer = 0, desktop = window.innerWidth >= 760;
+    function go(s, instant) { cur = Math.max(0, Math.min(3, s)); ts = instant ? -1e9 : performance.now(); caption(); }
+    function stop() { clearTimeout(timer); timer = 0; }
+    function caption() {
+      var c = document.getElementById("cap"); if (!c) return;
+      c.textContent = (cur + 1) + " of 4. " + CAP[cur](vals);
+      for (var q = 0; q < 4; q++) stages[q].setAttribute("aria-current", q === cur ? "step" : "false");
+      var nx = document.getElementById("nx"); if (nx) nx.textContent = cur === 3 ? "Replay" : "Next step";
+    }
+    function tick() { if (cur < 3) { go(cur + 1); timer = setTimeout(tick, 2300); } else timer = 0; }
+    stages.forEach(function (el, q) { el.addEventListener("click", function () { stop(); go(q); }); });
+    var nx = document.getElementById("nx"), sk = document.getElementById("sk");
+    if (nx) nx.addEventListener("click", function () { stop(); go(cur === 3 ? 0 : cur + 1); });
+    if (sk) sk.addEventListener("click", function () { stop(); go(3, true); });
+    caption();
+    if (!reduce && desktop) timer = setTimeout(tick, 1200);
     (function loop(now) {
-      var el = (now - t0) / 1000, total = DUR * 4 + HOLD, tt = el % (total + 2.4);
-      var s, p;
-      if (tt >= total) { s = 3; p = 1; } else { s = Math.min(3, Math.floor(tt / DUR)); p = Math.min(1, (tt - s * DUR) / (DUR * 0.8)); p = 1 - Math.pow(1 - p, 3); }
-      if (el < total + 2.4 || true) { setStage(s, p); draw(now, s, p); }
-      S.raf = requestAnimationFrame(loop);
-    })(t0);
+      var p = Math.min(1, (now - ts) / 1100); p = 1 - Math.pow(1 - p, 3);
+      setStage(cur, p); draw(now, cur, p);
+      if (!reduce || p < 1) S.raf = requestAnimationFrame(loop);
+    })(performance.now());
+    S.stop = stop;
   }
 
   /* ---------- views ---------- */
@@ -102,7 +121,8 @@
       '<h1>' + f.universe.toLocaleString() + ' stocks in.<br><em>' + f.picks + ' setups out.</em></h1>' +
       '<p class="lede">Every weekday after the close we run each stock from the major indexes through data checks, a valuation model and a handful of plain price rules, then rank the strongest bullish and bearish setups. Every call is logged and graded against the S&amp;P 500, in public.</p>' +
       '<div class="field"><canvas id="cv" aria-label="Animated field of dots. Each dot is a stock, narrowing from the full universe to the final picks." role="img"></canvas>' +
-      '<div class="stages">' + ["Universe", "Passed checks", "Scored", "Picks"].map(function (n) { return '<div class="stage"><div class="k">' + n + '</div><div class="n">0</div></div>'; }).join("") + "</div></div></section>" +
+      '<div class="stages">' + ["Universe", "Passed checks", "Scored", "Picks"].map(function (n) { return '<button type="button" class="stage"><span class="k">' + n + '</span><span class="n">0</span></button>'; }).join("") + "</div></div>" +
+      '<div class="story"><p id="cap" class="cap" aria-live="polite"></p><div class="ctl"><button type="button" id="nx" class="btn">Next step</button><button type="button" id="sk" class="btn ghost">Skip animation</button></div></div></section>' +
       '<div class="ixs">' + chips + '</div><div class="tabs" role="tablist">' + tabs + "</div>" + body;
     var cv = document.getElementById("cv");
     funnel(cv, f, [].slice.call(app.querySelectorAll(".stage .n")), [].slice.call(app.querySelectorAll(".stage")));
@@ -157,10 +177,10 @@
       return '<div class="stat"><span class="label">' + HZNAME[k] + '</span><div class="v">' + (!v || v.avg_excess_pct == null ? "None yet" : (v.avg_excess_pct >= 0 ? "+" : "") + v.avg_excess_pct.toFixed(2) + "%") + '</div><span class="label">' + (v ? "avg vs S&amp;P 500 over " + best + " days &middot; " + v.hit_rate_pct + "% hit rate &middot; " + v.graded + " graded" : "nothing graded yet") + " &middot; " + L.calls + " logged</span></div>";
     }
     var rows = T.graded.slice().sort(function (a, b) { return a.date < b.date ? 1 : a.date > b.date ? -1 : 0; }).slice(0, 40);
-    var tbl = rows.length ? '<div class="tw"><table><thead><tr><th>Called</th><th>Name</th><th>View</th><th>Call</th><th>Window</th><th>Stock</th><th>Vs S&amp;P</th></tr></thead><tbody>' +
+    var tbl = rows.length ? '<div class="twrap"><span class=\"swipe\" id=\"sw\" aria-hidden=\"true\">Swipe for more &rarr;</span><div class="tw" id="tw"><table><thead><tr><th>Called</th><th>Name</th><th>View</th><th>Call</th><th>Window</th><th>Stock</th><th>Vs S&amp;P</th></tr></thead><tbody>' +
       rows.map(function (g) {
         return "<tr><td>" + esc(g.date) + '</td><td><a class="tk" href="#/lookup/' + encodeURIComponent(g.ticker) + '">' + esc(g.ticker) + "</a></td><td>" + esc(HZNAME[g.lens] || g.lens) + "</td><td>" + esc(g.label) + '</td><td class="num">' + g.window + 'd</td><td class="num">' + pct(g.stock_return) + '</td><td class="num ' + (g.excess >= 0 ? "pos" : "neg") + '">' + pct(g.excess) + "</td></tr>";
-      }).join("") + "</tbody></table></div>" : '<p class="note">No graded calls yet. A call is graded from the next trading day\'s close, over 5, 20 and 60 trading days, so the first results appear after a week.</p>';
+      }).join("") + "</tbody></table></div></div>" : '<p class="note">No graded calls yet. A call is graded from the next trading day\'s close, over 5, 20 and 60 trading days, so the first results appear after a week.</p>';
     app.innerHTML = '<section class="hero"><span class="label">Track record</span><h1>' + (noise ? "Still <em>noise.</em>" : "Enough days <em>to read.</em>") + "</h1>" +
       '<p class="lede">Every published pick is logged with its date, then graded against the S&amp;P 500 from the next trading day\'s close, over 5, 20 and 60 trading days. A Bullish call wins by beating the index, a Bearish call by lagging it. ' + esc(T.note) + "</p>" +
       '<div class="ringwrap"><div class="ring"><svg viewBox="0 0 220 220" aria-hidden="true"><circle cx="110" cy="110" r="96" fill="none" stroke="#1a1812" stroke-width="8"/><circle class="p" id="pr" cx="110" cy="110" r="96" fill="none" stroke="#d4af37" stroke-width="8" stroke-linecap="round" stroke-dasharray="' + C + '" stroke-dashoffset="' + C + '"/></svg>' +
@@ -168,6 +188,15 @@
       '<div class="stats">' + stat("mispricing") + stat("short_term") + stat("swing") + '<div class="stat"><span class="label">Calls logged</span><div class="v">' + T.calls_logged.toLocaleString() + '</div><span class="label">' + T.pending + " pending</span></div>" +
       '<div class="stat"><span class="label">Rule</span><div class="v" style="font-size:18px">Nothing is hidden or removed after the fact.</div></div></div></div></section>' +
       '<section><h2>Graded calls</h2><p class="lede" style="margin-top:6px">Most recent 40. Neutral names are never called. Results this early are not evidence of skill.</p>' + tbl + "</section>";
+    var tw = document.getElementById("tw"), sw = document.getElementById("sw");
+    if (tw) {
+      var upd = function () {
+        var more = tw.scrollWidth - tw.clientWidth - tw.scrollLeft > 4;
+        tw.parentNode.classList.toggle("more", more);
+        if (tw.scrollLeft > 8 && sw) sw.hidden = true;
+      };
+      tw.addEventListener("scroll", upd, { passive: true }); window.addEventListener("resize", upd); upd();
+    }
     var pr = document.getElementById("pr");
     if (reduce) pr.style.strokeDashoffset = C * (1 - p);
     else requestAnimationFrame(function () { requestAnimationFrame(function () { pr.style.strokeDashoffset = C * (1 - p); }); });
