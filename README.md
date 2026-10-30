@@ -34,7 +34,7 @@ python -m pytest -q                 # offline tests, no network
 `ANTHROPIC_API_KEY` is optional. In GitHub Actions it is read from the repo secret `MARKET_TEAM_ANTHROPIC_API_KEY` (Settings, Secrets and variables, Actions) and only the scan step sees it. No other secrets are needed.
 
 ## The website
-`site/` is plain static files (`index.html`, `style.css`, `app.js`, `data/*.json`) with no build step. Tabs: Mispricing, Short-term, Swing, plus a ticker lookup and the track record ring.
+`site/` is plain static files (`index.html`, `style.css`, `app.js`, `data/*.json`) with no build step. Tabs: Mispricing, Short-term, Swing, plus a ticker lookup, the Long-term tab and the public track record (in the main nav, with its sample size and "still noise" state).
 
 - **Vercel:** import the repo, set the output directory to `site`, no build command.
 - **GitHub Pages:** publish the `site/` folder (Pages action, or a `gh-pages` branch from it).
@@ -47,3 +47,11 @@ The committed `site/data/` is **Sample data** (synthetic prices, labeled with a 
 
 ## Layout
 `scanner/` engine: `data.py` (yfinance), `universe.py`, `valuation.py` (mispricing), `technical.py` (short-term and swing rules), `news_ai.py`, `tracker.py` (ledger and grading), `labels.py`, `pipeline.py`. `scripts/export_site.py` feeds `site/`.
+
+## Long-term tab (SEC 10-K)
+`site/data/longterm.json` holds, for the S&P 500, 10-year revenue CAGR, operating margin and its 5-year change, FCF margin, an ROIC proxy, 2-year share count change, debt to EBITDA, and FCF yield and EV/EBITDA from the last scan price. Every figure links to the SEC filing folder it came from. Six mechanical yes/no checks give a count; no buy or sell language, "Not investment advice" on the tab. Logic is in `scanner/longterm.py` (10-K facts only, tag fallbacks, latest filing wins per period).
+```bash
+SEC_USER_AGENT="<name and contact email>" python scripts/fetch_sec.py   # cache raw JSON in data/cache/sec (git-ignored), max 8 req/s
+python scripts/build_longterm.py                                         # writes site/data/longterm.json
+```
+Names with no usable 10-K facts (some banks, insurers, and a few with unusual tagging) show n/a rather than a guess. The SEC User-Agent is never stored in the repo.

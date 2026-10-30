@@ -130,7 +130,6 @@ button.stage{font:inherit;color:inherit;text-align:left;background:none;cursor:p
 .swipe{display:none;margin-bottom:8px;font:11px var(--mono);letter-spacing:.14em;text-transform:uppercase;color:var(--gold)}
 .twrap.more .swipe{display:block}
 .swipe[hidden]{display:none!important}
-@media(min-width:760px){.swipe{display:none!important}}
 .stage{border-top:0;border-left:0}button.stage{border-color:var(--line);border-style:solid;border-width:0 1px 1px 0;border-radius:0}
 @media(max-width:759px){.stage:nth-child(2n){border-right-width:0}}
 
@@ -145,3 +144,22 @@ button.stage{font:inherit;color:inherit;text-align:left;background:none;cursor:p
 .bb{display:flex;justify-content:space-between;font:11px var(--mono)}
 .heat .twrap.more::after{top:1px}
 .cell .label{color:var(--text);opacity:.8}
+
+.tw:focus-visible{outline:2px solid var(--gold);outline-offset:2px}
+.na{color:var(--muted)}
+td small{color:var(--muted);font-size:11px;margin-left:4px}
+a.fig{text-decoration:none;border-bottom:1px dotted var(--gold-soft)}
+a.fig:hover,a.fig:focus-visible{color:var(--gold);border-color:var(--gold)}
+.lt .ltbar{display:flex;flex-wrap:wrap;gap:10px 14px;align-items:center}
+.lt input,.lt select{background:var(--panel);color:var(--text);border:1px solid var(--line);border-radius:6px;padding:10px 12px;font:16px var(--serif);min-height:44px}
+.lt input{flex:1 1 200px;min-width:0}
+.lt table{min-width:980px}
+td.stk{white-space:normal;min-width:150px;position:sticky;left:0;background:var(--bg)}
+.nm2{display:block;color:var(--muted);font-size:12px;max-width:170px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.center{text-align:center}
+.more-btn{background:none;color:var(--gold);border:1px solid var(--gold-soft);border-radius:6px;padding:12px 22px;font:11px var(--mono);letter-spacing:.14em;text-transform:uppercase;cursor:pointer;min-height:44px}
+.more-btn[hidden]{display:none}
+.how{margin-top:24px;color:var(--muted);font-size:14px;max-width:70ch}
+.how summary{cursor:pointer;color:var(--gold);font:11px var(--mono);letter-spacing:.14em;text-transform:uppercase;padding:10px 0}
+.how li{margin:8px 0}
+.lede.sample strong{color:var(--gold);font-weight:600}
