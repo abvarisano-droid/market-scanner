@@ -89,3 +89,22 @@ def test_insufficient_data():
 def test_deterministic():
     a = s.short_term(make_prices("AAA", 300)); b = s.short_term(make_prices("AAA", 300))
     assert a == b
+
+
+def test_swing_rs_aligns_dates_with_spy():
+    import numpy as np, pandas as pd
+    from signals import swing
+    dates = pd.bdate_range("2024-01-01", periods=300).strftime("%Y-%m-%d")
+    stock = pd.DataFrame({"date": dates, "close": np.linspace(100, 130, 300), "volume": 1e6})
+    spy_full = pd.DataFrame({"date": dates, "close": 100.0})
+    # SPY missing 20 dates: misaligned positional RS would compare different days
+    spy_gap = spy_full.drop(index=range(250, 270)).reset_index(drop=True)
+    a = swing(stock, spy_gap)
+    b = swing(stock.drop(index=range(250, 270)).reset_index(drop=True), spy_gap)
+    rs_a = [r for r in a["reasons"] if "S&P" in r]
+    assert a is not None and b is not None
+    # with alignment, RS text matches the aligned computation
+    from signals import rule_rs
+    m = stock.merge(spy_gap, on="date", suffixes=("", "_spy"))
+    exp = rule_rs(m["close"], m["close_spy"]).text
+    assert all(r == exp for r in rs_a)

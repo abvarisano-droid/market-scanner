@@ -29,6 +29,7 @@ def label(score: float) -> str:
 
 
 def rsi(close: pd.Series, n=14) -> float:
+    """Wilder RSI: smoothing alpha 1/n (ewm, seeded from the first change, not an SMA)."""
     d = close.diff().dropna()
     if len(d) < n:
         return float("nan")
@@ -127,5 +128,10 @@ def swing(df: pd.DataFrame, spy: pd.DataFrame) -> Optional[dict]:
     if df is None or spy is None or len(df) < MIN_SWING or len(spy) < 64:
         return None
     c = df["close"].reset_index(drop=True)
-    s = spy["close"].reset_index(drop=True)
-    return _assemble([rule_ma50(c), rule_ma200(c), rule_slope(c), rule_rs(c, s), rule_high52(c)])
+    # relative strength compares the same calendar dates for stock and SPY
+    m = df[["date", "close"]].merge(spy[["date", "close"]], on="date", suffixes=("", "_spy"))
+    if len(m) < 64:
+        return None
+    return _assemble([rule_ma50(c), rule_ma200(c), rule_slope(c),
+                      rule_rs(m["close"].reset_index(drop=True), m["close_spy"].reset_index(drop=True)),
+                      rule_high52(c)])
