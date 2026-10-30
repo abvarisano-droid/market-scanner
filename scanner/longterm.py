@@ -19,6 +19,7 @@ TAGS = {
             "NetCashProvidedByUsedInOperatingActivitiesContinuingOperations"],
     "capex": ["PaymentsToAcquirePropertyPlantAndEquipment", "PaymentsToAcquireProductiveAssets",
               "PaymentsForCapitalImprovements"],
+    "net_income": ["NetIncomeLoss", "ProfitLoss"],
     "tax": ["IncomeTaxExpenseBenefit"],
     "pretax": ["IncomeLossFromContinuingOperationsBeforeIncomeTaxesExtraordinaryItemsNoncontrollingInterest",
                "IncomeLossFromContinuingOperationsBeforeIncomeTaxesMinorityInterestAndIncomeLossFromEquityMethodInvestments",
@@ -90,7 +91,9 @@ def series(facts: dict, tags: list[str], kind: str, unit: str = "USD") -> dict[s
 
 
 def anchor_end(facts: dict) -> str | None:
-    ends = [e for k in ("revenue", "operating_income") for e in series(facts, TAGS[k], "duration")]
+    """Latest fiscal year end with any 10-K annual income or cash flow fact. Not just revenue: a company whose
+    revenue tag went stale must not drag every other figure back to an old year."""
+    ends = [e for k in ("revenue", "operating_income", "net_income", "cfo") for e in series(facts, TAGS[k], "duration")]
     return max(ends) if ends else None
 
 
@@ -166,7 +169,7 @@ def _m(v: float | None, accn: str | None, anchor_accn: str, **extra) -> dict | N
     return o
 
 
-def extract(facts: dict) -> dict | None:
+def extract(facts: dict, sector: str | None = None) -> dict | None:
     """Long-term figures for one company from its companyfacts JSON. Missing figures are None."""
     anchor = anchor_end(facts)
     if not anchor:
@@ -179,9 +182,10 @@ def extract(facts: dict) -> dict | None:
     shs = series(facts, TAGS["diluted_shares"], "duration", "shares")
     r0 = _at(rev, anchor)
     o0 = _at(opi, anchor)
-    main = r0 or o0
+    main = r0 or o0 or _at(cfo, anchor) or _at(series(facts, TAGS["net_income"], "duration"), anchor)
     aa = main["accn"]  # the anchor-year 10-K, used as the default filing link
-    out: dict = {"fy": anchor, "a": aa}
+    out: dict = {"fy": anchor, "a": aa, "nr": {}}
+    financial = (sector or "") == "Financial Services"
 
     # 10-year revenue CAGR (uses the longest span up to 10 years, at least 5)
     cagr = None
@@ -203,13 +207,27 @@ def extract(facts: dict) -> dict | None:
             om = _m(now, o0["accn"], aa, d=round(d, 4))
     out["op_margin"] = om
 
-    # free cash flow margin and the dollar FCF
+    # free cash flow margin. Revenue, operating cash flow and capex must all end on the anchor date (same fiscal year).
+    # Not shown for financial companies (revenue is a net proxy and cash flow includes lending and trading flows)
+    # or when the margin is bigger than 100% of revenue in size (not a usable margin).
     fcf = None
     c0, x0 = _at(cfo, anchor), _at(capex, anchor)
-    if r0 and c0 and x0 and r0["val"] > 0:
+    fcf_dollars = None
+    if financial:
+        out["nr"]["fcf_margin"] = "Financial company: cash flow includes lending and trading flows, so FCF margin is not meaningful"
+    elif not r0:
+        out["nr"]["fcf_margin"] = "No revenue reported for the latest fiscal year in a form we can read"
+    elif not (c0 and x0):
+        out["nr"]["fcf_margin"] = "Operating cash flow or capital spending missing for the same fiscal year"
+    elif r0["val"] > 0:
         f = c0["val"] - abs(x0["val"])
-        fcf = _m(f / r0["val"], c0["accn"], aa, f=round(f))
+        fcf_dollars = (round(f), c0["accn"])
+        if abs(f / r0["val"]) > 1:
+            out["nr"]["fcf_margin"] = "FCF is more than 100% of revenue in size, not a usable margin"
+        else:
+            fcf = _m(f / r0["val"], c0["accn"], aa, f=round(f))
     out["fcf_margin"] = fcf
+    out["_fcf"] = fcf_dollars
 
     # ROIC proxy: operating income after a tax rate over (debt + equity - cash)
     debt = _debt(facts, anchor)
@@ -255,9 +273,9 @@ def add_valuation(row: dict, price: float | None) -> None:
         return
     mcap = price * cover["val"]
     a = row["a"]
-    fcf = row.get("fcf_margin")
-    if fcf and "f" in fcf and mcap > 0:
-        row["fcf_yield"] = {"v": round(fcf["f"] / mcap, 4), **({"a": cover["accn"]} if cover["accn"] != a else {})}
+    fcf = row.get("_fcf")
+    if fcf and mcap > 0:
+        row["fcf_yield"] = {"v": round(fcf[0] / mcap, 4), **({"a": cover["accn"]} if cover["accn"] != a else {})}
     de = row.get("debt_ebitda")
     if de and de.get("ebitda", 0) > 0:
         ev = mcap + de["debt"] - (row.get("_cash") or 0)

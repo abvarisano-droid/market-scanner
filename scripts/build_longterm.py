@@ -29,7 +29,7 @@ def build(cache: Path = CACHE, latest: dict | None = None, ciks: dict | None = N
     for t, cik in sorted(ciks.items()):
         f = cache / f"CIK{cik:010d}.json" if cik else None
         meta = latest["lookup"].get(t, {})
-        ex = lt.extract(json.loads(f.read_text())) if f and f.exists() else None
+        ex = lt.extract(json.loads(f.read_text()), meta.get("s")) if f and f.exists() else None
         if not ex:
             missing.append(t)
             continue
@@ -37,6 +37,8 @@ def build(cache: Path = CACHE, latest: dict | None = None, ciks: dict | None = N
         chk = lt.rule_checks(ex)
         row = {"t": t, "n": meta.get("n", t), "s": meta.get("s", ""), "cik": cik, "fy": ex["fy"], "a": ex["a"],
                "ck": chk["passed"], "cm": chk["measured"], "cf": chk["flags"]}
+        if ex.get("nr"):
+            row["nr"] = ex["nr"]
         for k in KEYS:
             if ex.get(k):
                 row[k] = ex[k]
