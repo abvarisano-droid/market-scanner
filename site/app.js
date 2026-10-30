@@ -163,7 +163,7 @@
       '<div class="field"><canvas id="cv" aria-label="Animated field of dots. Each dot is a stock, narrowing from the full universe to the final picks." role="img"></canvas>' +
       '<div class="stages">' + ["Universe", "Passed checks", "Scored", "Picks"].map(function (n) { return '<button type="button" class="stage"><span class="k">' + n + '</span><span class="n">0</span></button>'; }).join("") + "</div></div>" +
       '<div class="story"><p id="cap" class="cap" aria-live="polite"></p><div class="ctl"><button type="button" id="nx" class="btn">Next step</button><button type="button" id="sk" class="btn ghost">Skip animation</button></div></div></section>' + sectorHtml(L.sectors) +
-      '<div class="ixs">' + chips + '</div><div class="tabs" role="tablist">' + tabs + "</div>" + body;
+      '<div class="ixs" tabindex="0" role="region" aria-label="Index moves today">' + chips + '</div><div class="tabs" role="tablist">' + tabs + "</div>" + body;
     sectorWire(L.sectors);
     var cv = document.getElementById("cv");
     funnel(cv, f, [].slice.call(app.querySelectorAll(".stage .n")), [].slice.call(app.querySelectorAll(".stage")));

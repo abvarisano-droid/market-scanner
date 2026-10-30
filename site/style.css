@@ -1,6 +1,6 @@
 :root{
   --bg:#050505; --panel:#0d0c0a; --line:#26231b; --text:#ebe6d8; --muted:#8d8777;
-  --gold:#d4af37; --gold-soft:#8f7424; --bear:#c2553f;
+  --gold:#d4af37; --gold-soft:#8f7424; --bear:#cb5d46;
   --serif:"Iowan Old Style","Palatino Linotype","Book Antiqua",Palatino,Georgia,"Times New Roman",serif;
   --mono:ui-monospace,SFMono-Regular,Menlo,Consolas,"Liberation Mono",monospace;
 }
@@ -145,7 +145,7 @@ button.stage{font:inherit;color:inherit;text-align:left;background:none;cursor:p
 .heat .twrap.more::after{top:1px}
 .cell .label{color:var(--text);opacity:.8}
 
-.tw:focus-visible{outline:2px solid var(--gold);outline-offset:2px}
+.tw:focus-visible,.ixs:focus-visible{outline:2px solid var(--gold);outline-offset:2px}
 .na{color:var(--muted)}
 td small{color:var(--muted);font-size:11px;margin-left:4px}
 a.fig{text-decoration:none;border-bottom:1px dotted var(--gold-soft)}
