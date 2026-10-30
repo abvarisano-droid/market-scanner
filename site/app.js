@@ -105,6 +105,46 @@
     }).join("");
   }
 
+  function heatColor(v, max) {
+    if (v == null) return "rgba(141,135,119,.14)";
+    var t = Math.max(-1, Math.min(1, v / max)), a = (0.14 + 0.5 * Math.abs(t)).toFixed(2);
+    return t >= 0 ? "rgba(212,175,55," + a + ")" : "rgba(194,85,63," + a + ")";
+  }
+  function relTxt(v) { return v == null ? "n/a" : (v >= 0 ? "+" : "") + (v * 100).toFixed(1) + "%"; }
+  function sectorHtml(secs) {
+    if (!secs || !secs.length) return "";
+    var mx = 0.01;
+    secs.forEach(function (s) { mx = Math.max(mx, Math.abs(s.rel_1w || 0), Math.abs(s.rel_1m || 0)); });
+    var tiles = secs.map(function (s, i) {
+      var det = "Calls by view (Bullish / Bearish): " + HZ.map(function (h) { var c = s.calls[h[0]]; return h[1] + " " + c.Bullish + " / " + c.Bearish; }).join(", ") + ". " + s.n + " stocks in the scan.";
+      return '<button type="button" class="sec" data-i="' + i + '" aria-pressed="false" title="' + esc(s.name + ". " + det) + '">' +
+        '<span class="sname">' + esc(s.name) + '</span>' +
+        '<span class="cell" style="background:' + heatColor(s.rel_1w, mx) + '"><span class="label">1 week</span><b>' + relTxt(s.rel_1w) + '</b></span>' +
+        '<span class="cell" style="background:' + heatColor(s.rel_1m, mx) + '"><span class="label">1 month</span><b>' + relTxt(s.rel_1m) + '</b></span>' +
+        '<span class="bb"><span class="pos">' + s.bullish + ' Bullish</span><span class="neg">' + s.bearish + ' Bearish</span></span></button>';
+    }).join("");
+    return '<section class="heat"><h2>Sector heat</h2><p class="lede">Each sector\'s average move minus the S&amp;P 500 (SPY) over 1 week and 1 month, with how many of its stocks the mispricing view calls Bullish or Bearish. Gold is ahead of the index, red is behind, gray is level. Tap a tile for the other views.</p>' +
+      '<div class="twrap"><span class="swipe" id="hsw" aria-hidden="true">Swipe for more &rarr;</span><div class="tw heatrow" id="hrow">' + tiles + '</div></div>' +
+      '<p class="note" id="hdet" aria-live="polite">Tap a sector to see its calls in every view.</p></section>';
+  }
+  function sectorWire(secs) {
+    var row = document.getElementById("hrow"), sw = document.getElementById("hsw"), det = document.getElementById("hdet");
+    if (!row) return;
+    [].forEach.call(row.querySelectorAll(".sec"), function (b) {
+      b.addEventListener("click", function () {
+        var s = secs[+b.getAttribute("data-i")];
+        [].forEach.call(row.querySelectorAll(".sec"), function (o) { o.setAttribute("aria-pressed", o === b ? "true" : "false"); });
+        det.textContent = s.name + ", " + s.n + " stocks. 1 week " + relTxt(s.rel_1w) + " and 1 month " + relTxt(s.rel_1m) + " vs SPY. Bullish / Bearish: " + HZ.map(function (h) { var c = s.calls[h[0]]; return h[1] + " " + c.Bullish + " / " + c.Bearish; }).join(", ") + ".";
+      });
+    });
+    var upd = function () {
+      tw_more(row);
+      if (row.scrollLeft > 8 && sw) sw.hidden = true;
+    };
+    row.addEventListener("scroll", upd, { passive: true }); window.addEventListener("resize", upd); upd();
+  }
+  function tw_more(tw) { tw.parentNode.classList.toggle("more", tw.scrollWidth - tw.clientWidth - tw.scrollLeft > 4); }
+
   function home() {
     var L = S.latest;
     var f = L.funnel[S.hz];
@@ -122,8 +162,9 @@
       '<p class="lede">Every weekday after the close we run each stock from the major indexes through data checks, a valuation model and a handful of plain price rules, then rank the strongest bullish and bearish setups. Every call is logged and graded against the S&amp;P 500, in public.</p>' +
       '<div class="field"><canvas id="cv" aria-label="Animated field of dots. Each dot is a stock, narrowing from the full universe to the final picks." role="img"></canvas>' +
       '<div class="stages">' + ["Universe", "Passed checks", "Scored", "Picks"].map(function (n) { return '<button type="button" class="stage"><span class="k">' + n + '</span><span class="n">0</span></button>'; }).join("") + "</div></div>" +
-      '<div class="story"><p id="cap" class="cap" aria-live="polite"></p><div class="ctl"><button type="button" id="nx" class="btn">Next step</button><button type="button" id="sk" class="btn ghost">Skip animation</button></div></div></section>' +
+      '<div class="story"><p id="cap" class="cap" aria-live="polite"></p><div class="ctl"><button type="button" id="nx" class="btn">Next step</button><button type="button" id="sk" class="btn ghost">Skip animation</button></div></div></section>' + sectorHtml(L.sectors) +
       '<div class="ixs">' + chips + '</div><div class="tabs" role="tablist">' + tabs + "</div>" + body;
+    sectorWire(L.sectors);
     var cv = document.getElementById("cv");
     funnel(cv, f, [].slice.call(app.querySelectorAll(".stage .n")), [].slice.call(app.querySelectorAll(".stage")));
     [].forEach.call(app.querySelectorAll(".tab"), function (b) {

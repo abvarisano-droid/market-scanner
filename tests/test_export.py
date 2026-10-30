@@ -22,6 +22,14 @@ def test_export_schema(tmp_path, monkeypatch):
     assert [r["score"] for r in mp] == sorted((r["score"] for r in mp), reverse=True)
     for k in ("mispricing", "short_term", "swing"):
         assert {"universe", "with_data", "passed_checks", "scored", "picks"} <= set(lat["funnel"][k])
+    assert lat["sectors"], "sector heat needs at least one sector"
+    for sec in lat["sectors"]:
+        assert {"name", "n", "rel_1w", "rel_1m", "bullish", "bearish", "calls"} <= set(sec)
+        assert sec["name"] and sec["n"] > 0 and sec["bullish"] >= 0 and sec["bearish"] >= 0
+        assert sec["bullish"] + sec["bearish"] <= sec["n"]
+        assert set(sec["calls"]) == {"mispricing", "short_term", "swing"}
+        for v in (sec["rel_1w"], sec["rel_1m"]):
+            assert v is None or -1 < v < 1
     t, row = next(iter(lat["lookup"].items()))
     assert {"n", "c", "spark", "mp", "st", "sw"} <= set(row) and len(row["spark"]) <= 60
     assert {"asof", "status", "trading_days", "min_days", "by_lens", "graded", "pending", "calls_logged",

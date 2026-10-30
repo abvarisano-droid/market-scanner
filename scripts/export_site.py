@@ -80,6 +80,39 @@ def _mispricing_rows(scan, table):
     return {"counts": counts, "top_bull": bull, "top_bear": bear}
 
 
+def _spy_ret(spark, n):
+    return float(spark[-1] / spark[-1 - n] - 1) if len(spark) > n and spark[-1 - n] else None
+
+
+def _sectors(scan, table, lookup):
+    """Per sector: mean 1 week and 1 month move minus SPY's, plus Bullish and Bearish call counts per view."""
+    spy = scan.get("spy_spark") or []
+    r1w, r1m = _spy_ret(spy, 5), _spy_ret(spy, 21)
+    groups = {}
+    for t, m in table.items():
+        if m.get("sector"):
+            groups.setdefault(plain(m["sector"]), []).append(m)
+
+    def rel(vals, ref):
+        vals = [v for v in vals if v is not None and v == v]
+        return None if ref is None or not vals else round(sum(vals) / len(vals) - ref, 4)
+
+    out = []
+    for name, ms in groups.items():
+        calls = {k: {BULLISH: 0, BEARISH: 0} for k in ("mispricing", "short_term", "swing")}
+        for m in ms:
+            row = lookup.get(m["ticker"], {})
+            for k, key in (("mispricing", "mp"), ("short_term", "st"), ("swing", "sw")):
+                lab = (row.get(key) or {}).get("label")
+                if lab in (BULLISH, BEARISH):
+                    calls[k][lab] += 1
+        out.append({"name": name, "n": len(ms), "rel_1w": rel([m.get("chg_5d") for m in ms], r1w),
+                    "rel_1m": rel([m.get("chg_1m") for m in ms], r1m),
+                    "bullish": calls["mispricing"][BULLISH], "bearish": calls["mispricing"][BEARISH], "calls": calls})
+    out.sort(key=lambda x: (x["rel_1m"] is None, -(x["rel_1m"] or 0), x["name"]))
+    return out
+
+
 def build_latest(scan: dict, sample: bool) -> dict:
     table = {r["ticker"]: r for r in scan["table"]}
     tech = scan["technical"]
@@ -105,6 +138,7 @@ def build_latest(scan: dict, sample: bool) -> dict:
             "horizons": {"mispricing": _mispricing_rows(scan, table),
                          "short_term": _tech_rows(scan, "short_term", table),
                          "swing": _tech_rows(scan, "swing", table)},
+            "sectors": _sectors(scan, table, lookup),
             "lookup": lookup, "spy_spark": scan.get("spy_spark", [])}
 
 
