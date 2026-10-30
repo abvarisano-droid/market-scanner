@@ -2,13 +2,15 @@
 
 Without an API key it uses a fast keyword sentiment model. With
 ANTHROPIC_API_KEY set, Claude reads the numbers plus headlines and writes a
-real analyst thesis (why it is mispriced, catalysts, risks, call).
+real analyst thesis (why it looks mispriced, catalysts, risks, a Bullish/Bearish/Neutral label).
 """
 from __future__ import annotations
 
 import json
 import os
 import re
+
+from .labels import BEARISH, BULLISH, NEUTRAL, normalize
 
 POS = {"beat", "beats", "raise", "raises", "raised", "upgrade", "upgraded", "record", "surge", "soar",
        "growth", "strong", "buyback", "outperform", "approval", "approved", "wins", "expands", "profit",
@@ -36,11 +38,11 @@ def rule_based_call(row: dict, sentiment: float) -> dict:
     m = row.get("mispricing", 0) or 0
     adj = m + sentiment * 20
     if adj >= 35:
-        call = "BUY"
+        call = BULLISH
     elif adj <= -35:
-        call = "SELL"
+        call = BEARISH
     else:
-        call = "WATCH"
+        call = NEUTRAL
     conf = min(95, int(40 + abs(adj) * 0.6 * (row.get("coverage") or 0.5)))
     reasons = list(row.get("valuation_reasons") or [])
     if sentiment >= 0.3:
@@ -68,14 +70,15 @@ def ai_call(row: dict, headlines: list[dict]) -> dict | None:
         "is mispriced and why. Be specific and skeptical, consider whether news is already priced in.\n\n"
         f"Ticker: {row.get('ticker')}\nData: {json.dumps(facts, default=str)}\n"
         f"Model notes: {row.get('valuation_reasons')}\nHeadlines:\n{news}\n\n"
-        'Reply with JSON only: {"call": "BUY|SELL|WATCH", "confidence": 0-100, '
-        '"thesis": "2-3 sentences on why", "catalysts": "short", "risks": "short", "target_return_pct": number}'
+        'Reply with JSON only: {"call": "Bullish|Bearish|Neutral", "confidence": 0-100, '
+        '"thesis": "2-3 sentences on why, plain words, no advice wording", "catalysts": "short", "risks": "short", "target_return_pct": number}'
     )
     try:
         msg = anthropic.Anthropic(api_key=key).messages.create(
             model=MODEL, max_tokens=500, messages=[{"role": "user", "content": prompt}])
         text = msg.content[0].text
         out = json.loads(text[text.find("{"): text.rfind("}") + 1])
+        out["call"] = normalize(out.get("call"))  # also accepts legacy BUY/SELL/WATCH
         out["source"] = "ai"
         return out
     except Exception:

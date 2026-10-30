@@ -3,13 +3,12 @@ from __future__ import annotations
 
 import json
 import logging
-from datetime import date
 from pathlib import Path
 
 import numpy as np
 import pandas as pd
 
-from . import data, news_ai, signals, tracker, universe, valuation
+from . import data, news_ai, signals, technical, tracker, universe, valuation
 
 log = logging.getLogger(__name__)
 ROOT = Path(__file__).resolve().parent.parent
@@ -46,23 +45,41 @@ def run(indexes: list[str] | None = None, top_n: int = 12, live_constituents: bo
     tickers = list(uni)[:max_tickers] if max_tickers else list(uni)
     log.info("scanning %d stocks", len(tickers))
 
-    price_map = data.prices(tickers + list(universe.INDEXES.values()) + [universe.BENCHMARK])
+    price_map = data.prices(tickers + list(universe.INDEXES.values()) + [universe.BENCHMARK], period="2y")
     stock_prices = {t: price_map[t] for t in tickers if t in price_map}
     fund = data.fundamentals(list(stock_prices))
     table = build_table(stock_prices, fund, uni)
 
+    # technical rules (short-term and swing) on the same price data, SPY as the market reference
+    bench_df = price_map[universe.BENCHMARK]
+    bench = bench_df["Close"]
+    asof = pd.Timestamp(bench.index[-1]).tz_localize(None).normalize() if getattr(bench.index, "tz", None) is not None \
+        else pd.Timestamp(bench.index[-1]).normalize()
+    tech = technical.scan_technical({t: technical.from_ohlcv(df) for t, df in stock_prices.items()},
+                                    technical.from_ohlcv(bench_df))
+    tech["dropped"]["no data"] += len(tickers) - len(stock_prices)
+    passed = set(tech["spark"])
+
     # rank the most mispriced in both directions, only where we have real data
-    eligible = table[table["coverage"] >= 0.4]
+    eligible = table[(table["coverage"] >= 0.4) & table.index.isin(passed)]
     cands = pd.concat([eligible.nlargest(top_n, "mispricing"), eligible.nsmallest(top_n // 2, "mispricing")])
 
     picks = []
     for t, r in cands.iterrows():
         row = {"ticker": t, **r.to_dict()}
         res = news_ai.analyze(row, data.news(t))
-        picks.append({**_clean(row), **res})
+        picks.append({**_clean(row), **res, "lens": "mispricing"})
 
-    bench = price_map[universe.BENCHMARK]["Close"]
-    led = tracker.log_picks(picks, float(bench.iloc[-1]))
+    tech_calls = []
+    for hz, h in tech["horizons"].items():
+        for r in h["top_bull"] + h["top_bear"]:
+            if r["label"] in ("Bullish", "Bearish"):
+                tech_calls.append({"ticker": r["ticker"], "index": uni.get(r["ticker"]), "call": r["label"],
+                                   "price": float(table.loc[r["ticker"], "price"]) if r["ticker"] in table.index else None,
+                                   "score": r["score"], "thesis": "; ".join(r["reasons"]), "source": "technical",
+                                   "lens": hz})
+
+    led = tracker.log_picks(picks + tech_calls, float(bench.iloc[-1]), today=asof)
     hist = {t: df["Close"] for t, df in price_map.items()}
     missing = [t for t in led["ticker"].unique() if t not in hist]
     if missing:
@@ -70,19 +87,34 @@ def run(indexes: list[str] | None = None, top_n: int = 12, live_constituents: bo
     ev = tracker.evaluate(led, hist, bench)
 
     result = {
-        "date": date.today().isoformat(),
+        "date": asof.date().isoformat(),
+        "funnel": _funnel(uni, tickers, stock_prices, tech, len(eligible), len(picks)),
+        "spy_spark": [round(float(x), 2) for x in bench.tail(60)],
+        "technical": {k: tech[k] for k in ("asof", "dropped", "horizons", "scores", "spark")},
         "indexes": index_snapshot(price_map),
         "picks": picks,
         "movers": _movers(table),
         "sectors": signals.sector_rotation(table).reset_index().to_dict("records"),
         "table": _clean_records(table.reset_index()),
-        "scorecard": tracker.scorecard(ev),
+        "scorecard": tracker.scorecard(ev, tracker.trading_days(led, bench)),
         "ledger": _clean_records(ev),
     }
     LATEST.parent.mkdir(parents=True, exist_ok=True)
     LATEST.write_text(json.dumps(result, default=str))
     write_report(result)
     return result
+
+
+def _funnel(uni, tickers, stock_prices, tech, n_scored, n_picks) -> dict:
+    base = {"universe": len(tickers), "with_data": len(stock_prices), "passed_checks": tech["passed_checks"]}
+    by_index: dict[str, int] = {}
+    for t in tickers:
+        by_index[uni.get(t)] = by_index.get(uni.get(t), 0) + 1
+    f = {"mispricing": {**base, "scored": n_scored, "picks": n_picks},
+         "by_index": by_index, "dropped": tech["dropped"]}
+    for hz, h in tech["horizons"].items():
+        f[hz] = {**base, "scored": h["scored"], "picks": len(h["top_bull"]) + len(h["top_bear"])}
+    return f
 
 
 def _movers(table: pd.DataFrame) -> list[dict]:
@@ -128,11 +160,18 @@ def write_report(res: dict) -> Path:
         for h in (p.get("headlines") or [])[:3]:
             L.append(f"- [{h['title']}]({h['link']})")
         L.append("")
+    for hz, title in (("short_term", "Short-term"), ("swing", "Swing")):
+        h = res["technical"]["horizons"][hz]
+        L += [f"## {title} technical signals", ""]
+        for side, rows in (("Bullish", h["top_bull"][:5]), ("Bearish", h["top_bear"][:5])):
+            for r in rows:
+                L.append(f"- **{r['ticker']}** {side} ({r['score']:.0f}): {'; '.join(r['reasons'])}")
+        L.append("")
     L += ["## Unusual movers", ""]
     for m in res["movers"][:15]:
         L.append(f"- **{m['ticker']}** {_pct(m['chg_1d'])}: {', '.join(m['flags'])}")
     sc = res["scorecard"]
-    L += ["", "## Track record", "", "```", json.dumps(sc, indent=2), "```", ""]
+    L += ["", "## Track record", "", "Not investment advice. Calls are graded from the next trading day's close.", "", "```", json.dumps(sc, indent=2), "```", ""]
     out = ROOT / "reports" / f"{res['date']}.md"
     out.parent.mkdir(parents=True, exist_ok=True)
     out.write_text("\n".join(L))

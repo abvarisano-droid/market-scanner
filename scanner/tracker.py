@@ -1,8 +1,16 @@
 """Pick ledger + scorecard: were the calls right?
 
-Every BUY/SELL is logged with its entry price and the benchmark level. Later
-runs mark each pick to market and judge it on absolute and benchmark-relative
-return at 5, 20 and 60 trading days.
+Every Bullish/Bearish call (from the mispricing score or the short-term and swing
+technical rules, called a "lens") is logged with the signal date. Grading rules:
+
+* Entry is the close of the NEXT trading day after the signal date (no trading at
+  the signal's own close). The benchmark (SPY) uses the same entry day.
+* Windows are 5, 20 and 60 trading days counted from that entry close.
+* A Bullish call wins by beating SPY over the window, a Bearish call by lagging it.
+* Under 21 trading days of history the whole record is "still noise".
+* Rows logged before this rule existed (entry_rule blank) keep the old same-day
+  entry so history is not rewritten. Old BUY/SELL/WATCH values load as
+  Bullish/Bearish/Neutral.
 """
 from __future__ import annotations
 
@@ -11,31 +19,65 @@ from pathlib import Path
 
 import pandas as pd
 
+from .labels import BEARISH, BULLISH, normalize, sign
+
 LEDGER = Path(__file__).resolve().parent.parent / "data" / "picks.csv"
-COLS = ["date", "ticker", "index", "call", "confidence", "entry", "bench_entry", "mispricing", "thesis", "source"]
+COLS = ["date", "ticker", "index", "call", "confidence", "entry", "bench_entry", "mispricing", "thesis",
+        "source", "lens", "score", "entry_rule"]
 HORIZONS = {"5d": 5, "20d": 20, "60d": 60}
+LENSES = ("mispricing", "short_term", "swing")
+MIN_DAYS = 21
+NEXT_CLOSE = "next_close"
 
 
 def load() -> pd.DataFrame:
-    if LEDGER.exists():
-        return pd.read_csv(LEDGER, parse_dates=["date"])
-    return pd.DataFrame(columns=COLS)
+    if not LEDGER.exists():
+        return pd.DataFrame(columns=COLS)
+    led = pd.read_csv(LEDGER, parse_dates=["date"])
+    for c in COLS:
+        if c not in led:
+            led[c] = None
+    led["call"] = led["call"].map(normalize)
+    led["lens"] = led["lens"].fillna("mispricing")
+    led["entry_rule"] = led["entry_rule"].fillna("")
+    return led[COLS]
 
 
-def log_picks(picks: list[dict], bench_price: float, today: date | None = None) -> pd.DataFrame:
-    today = pd.Timestamp(today or date.today())
+def log_picks(picks: list[dict], bench_price: float, today=None) -> pd.DataFrame:
+    """Append calls. One row per (date, ticker, lens); re-running a day replaces that day's rows."""
+    today = pd.Timestamp(today or date.today()).normalize()
     led = load()
-    new = pd.DataFrame([{
-        "date": today, "ticker": p["ticker"], "index": p.get("index"), "call": p["call"],
-        "confidence": p.get("confidence"), "entry": p["price"], "bench_entry": bench_price,
-        "mispricing": p.get("mispricing"), "thesis": p.get("thesis", "")[:500], "source": p.get("source"),
-    } for p in picks if p["call"] in ("BUY", "SELL")], columns=COLS)
-    if not led.empty:  # one entry per ticker per day
-        led = led[~((led["date"] == today) & led["ticker"].isin(new["ticker"]))]
+    rows = []
+    for p in picks:
+        call = normalize(p["call"])
+        if call not in (BULLISH, BEARISH):
+            continue
+        rows.append({"date": today, "ticker": p["ticker"], "index": p.get("index"), "call": call,
+                     "confidence": p.get("confidence"), "entry": p.get("price"), "bench_entry": bench_price,
+                     "mispricing": p.get("mispricing"), "thesis": (p.get("thesis") or "")[:500],
+                     "source": p.get("source"), "lens": p.get("lens", "mispricing"), "score": p.get("score"),
+                     "entry_rule": NEXT_CLOSE})
+    new = pd.DataFrame(rows, columns=COLS)
+    if not led.empty and not new.empty:
+        key = set(zip(new["ticker"], new["lens"]))
+        drop = (led["date"] == today) & pd.Series([(t, l) in key for t, l in zip(led["ticker"], led["lens"])], index=led.index)
+        led = led[~drop]
     led = pd.concat([led, new], ignore_index=True) if not led.empty else new
     LEDGER.parent.mkdir(parents=True, exist_ok=True)
     led.to_csv(LEDGER, index=False)
     return led
+
+
+def _naive(s: pd.Series) -> pd.Series:
+    s = s.dropna()
+    if getattr(s.index, "tz", None) is not None:
+        s = s.copy()
+        s.index = s.index.tz_localize(None)
+    return s
+
+
+def _after(s: pd.Series, d) -> pd.Series:
+    return s[s.index > d]
 
 
 def evaluate(led: pd.DataFrame, history: dict[str, pd.Series], bench: pd.Series) -> pd.DataFrame:
@@ -43,47 +85,79 @@ def evaluate(led: pd.DataFrame, history: dict[str, pd.Series], bench: pd.Series)
     if led.empty:
         return led
     led = led.copy()
-    for col, n in HORIZONS.items():
-        rets, rels, hits = [], [], []
-        for _, r in led.iterrows():
-            s = history.get(r["ticker"])
-            if s is None:
-                rets.append(None); rels.append(None); hits.append(None); continue
-            after = s[s.index.tz_localize(None) >= r["date"]] if s.index.tz is not None else s[s.index >= r["date"]]
-            b_after = bench[bench.index.tz_localize(None) >= r["date"]] if bench.index.tz is not None else bench[bench.index >= r["date"]]
-            if len(after) <= n or len(b_after) <= n:
-                rets.append(None); rels.append(None); hits.append(None); continue
-            ret = after.iloc[n] / r["entry"] - 1
-            bret = b_after.iloc[n] / r["bench_entry"] - 1
-            sign = 1 if r["call"] == "BUY" else -1
-            rel = sign * (ret - bret)
-            rets.append(ret); rels.append(rel); hits.append(rel > 0)
-        led[f"ret_{col}"], led[f"alpha_{col}"], led[f"hit_{col}"] = rets, rels, hits
-    # live mark-to-market
-    led["ret_now"] = [
-        (history[t].iloc[-1] / e - 1) if t in history else None for t, e in zip(led["ticker"], led["entry"])
-    ]
-    led["alpha_now"] = [
-        (1 if c == "BUY" else -1) * (r - (bench.iloc[-1] / b - 1)) if r is not None else None
-        for c, r, b in zip(led["call"], led["ret_now"], led["bench_entry"])
-    ]
+    hist = {t: _naive(s) for t, s in history.items()}
+    bench = _naive(bench)
+    out = {f"{k}_{h}": [] for h in HORIZONS for k in ("ret", "alpha", "hit")}
+    out.update({"ret_now": [], "alpha_now": []})
+    for _, r in led.iterrows():
+        sg = sign(r["call"])
+        s = hist.get(r["ticker"])
+        legacy = r.get("entry_rule") != NEXT_CLOSE
+        if s is None or len(s) == 0:
+            for k in out: out[k].append(None)
+            continue
+        if legacy:  # old rule: same-day entry price as logged, windows counted from the signal date
+            a, b = s[s.index >= r["date"]], bench[bench.index >= r["date"]]
+            e, be, off = r["entry"], r["bench_entry"], 0
+        else:
+            a, b = _after(s, r["date"]), _after(bench, r["date"])
+            if len(a) == 0 or len(b) == 0:
+                for k in out: out[k].append(None)
+                continue
+            e, be, off = a.iloc[0], b.iloc[0], 0
+        for h, n in HORIZONS.items():
+            if len(a) <= n + off or len(b) <= n + off:
+                out[f"ret_{h}"].append(None); out[f"alpha_{h}"].append(None); out[f"hit_{h}"].append(None)
+                continue
+            ret, bret = a.iloc[n] / e - 1, b.iloc[n] / be - 1
+            rel = sg * (ret - bret)
+            out[f"ret_{h}"].append(ret); out[f"alpha_{h}"].append(rel); out[f"hit_{h}"].append(bool(rel > 0))
+        if not legacy and len(a) < 2:  # entry bar only, nothing to mark yet
+            out["ret_now"].append(None); out["alpha_now"].append(None)
+        else:
+            ret = a.iloc[-1] / e - 1
+            out["ret_now"].append(ret); out["alpha_now"].append(sg * (ret - (b.iloc[-1] / be - 1)))
+    for k, v in out.items():
+        led[k] = v
     return led
 
 
-def scorecard(ev: pd.DataFrame) -> dict:
+def trading_days(led: pd.DataFrame, bench: pd.Series) -> int:
+    """Trading days of calls so far: benchmark bars on or after the first logged call."""
+    if led.empty:
+        return 0
+    b = _naive(bench)
+    return int((b.index >= led["date"].min()).sum())
+
+
+def scorecard(ev: pd.DataFrame, days: int | None = None) -> dict:
     out = {"total_picks": int(len(ev))}
-    for col in HORIZONS:
-        h = ev.get(f"hit_{col}")
-        if h is None:
-            continue
-        done = h.dropna()
-        if len(done):
-            out[f"hit_rate_{col}"] = round(float(done.astype(bool).mean()), 3)
-            out[f"avg_alpha_{col}"] = round(float(ev[f"alpha_{col}"].dropna().mean()), 4)
-            out[f"n_{col}"] = int(len(done))
-    if "alpha_now" in ev:
-        a = ev["alpha_now"].dropna()
-        if len(a):
-            out["open_win_rate"] = round(float((a > 0).mean()), 3)
-            out["open_avg_alpha"] = round(float(a.mean()), 4)
+    if days is not None:
+        out["trading_days"] = int(days)
+        out["status"] = "still noise" if days < MIN_DAYS else "enough days to read"
+        out["note"] = (f"Only {days} trading days of calls so far (need {MIN_DAYS}). Treat results as noise."
+                       if days < MIN_DAYS else f"{days} trading days of calls.")
+    if ev.empty:
+        return out
+
+    def block(df):
+        o = {}
+        for col in HORIZONS:
+            h = df.get(f"hit_{col}")
+            if h is None:
+                continue
+            done = h.dropna()
+            if len(done):
+                o[f"hit_rate_{col}"] = round(float(done.astype(bool).mean()), 3)
+                o[f"avg_alpha_{col}"] = round(float(df[f"alpha_{col}"].dropna().mean()), 4)
+                o[f"n_{col}"] = int(len(done))
+        if "alpha_now" in df:
+            a = df["alpha_now"].dropna()
+            if len(a):
+                o["open_win_rate"] = round(float((a > 0).mean()), 3)
+                o["open_avg_alpha"] = round(float(a.mean()), 4)
+        return o
+
+    out.update(block(ev))
+    out["by_lens"] = {l: {"calls": int((ev["lens"] == l).sum()), **block(ev[ev["lens"] == l])} for l in LENSES}
     return out
