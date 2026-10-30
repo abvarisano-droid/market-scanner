@@ -77,7 +77,7 @@ def _reasons(r: pd.Series, vz: pd.Series, qz: pd.Series) -> list[str]:
         out.append("Below-peer quality, could be a value trap")
     up = r.get("analyst_upside")
     if pd.notna(up) and abs(up) >= 0.15 and (r.get("numberOfAnalystOpinions") or 0) >= 5:
-        out.append(f"Street target implies {up:+.0%} ({int(r['numberOfAnalystOpinions'])} analysts)")
+        out.append(f"Analyst consensus sits {up:+.0%} from the last close ({int(r['numberOfAnalystOpinions'])} analysts)")
     if pd.notna(r.get("chg_3m")) and abs(r["chg_3m"]) >= 0.2:
         out.append(f"{'Down' if r['chg_3m'] < 0 else 'Up'} {abs(r['chg_3m']):.0%} in 3 months")
     return out
