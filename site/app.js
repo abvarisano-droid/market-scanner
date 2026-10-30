@@ -231,7 +231,7 @@
   var LT = { sort: "ck", q: "", n: 60 };
   function ltCell(r, k, fmt) {
     var m = r[k];
-    if (!m) return '<td class="num na" title="Not reported in a form we can read">n/a</td>';
+    if (!m) return '<td class="num na" title="' + esc((r.nr && r.nr[k]) || "Not reported in a form we can read") + '">n/a</td>';
     return '<td class="num"><a class="fig" target="_blank" rel="noopener" href="' + secUrl(r.cik, m.a || r.a) + '" title="Open the SEC filing for fiscal year ending ' + esc(r.fy) + '">' + fmt(m) + "</a></td>";
   }
   function fp(x, d) { return (x * 100).toFixed(d == null ? 1 : d) + "%"; }

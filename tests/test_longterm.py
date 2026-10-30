@@ -162,3 +162,42 @@ def test_committed_longterm_json():
     for r in d["rows"]:
         assert r["a"].count("-") == 2 and r["cik"] > 0 and r["cm"] <= 6
     assert not any(c in (SITE / "data/longterm.json").read_text() for c in ("—", "–"))
+
+
+def test_fcf_margin_over_100_percent_is_na():
+    fx = sample_facts()
+    fx["facts"]["us-gaap"]["NetCashProvidedByUsedInOperatingActivities"]["units"]["USD"] = years(2013, 11, lambda i: 90000)
+    ex = lt.extract(fx)
+    assert ex["fcf_margin"] is None and "100%" in ex["nr"]["fcf_margin"]
+    ex["_cover"] = {"val": 100.0, "accn": "x"}
+    lt.add_valuation(ex, 50.0)
+    assert ex["fcf_yield"] is not None  # dollars still usable for yield
+
+
+def test_financial_sector_fcf_margin_is_na():
+    ex = lt.extract(sample_facts(), "Financial Services")
+    assert ex["fcf_margin"] is None and "Financial" in ex["nr"]["fcf_margin"]
+    ex["_cover"] = {"val": 100.0, "accn": "x"}
+    lt.add_valuation(ex, 50.0)
+    assert ex["fcf_yield"] is None
+    assert lt.extract(sample_facts(), "Technology")["fcf_margin"] is not None
+
+
+def test_stale_revenue_does_not_mix_periods():
+    # revenue stops in 2023 but cash flow runs to 2025: anchor is 2025, revenue figures are n/a, not 2023 numbers
+    fx = sample_facts()
+    g = fx["facts"]["us-gaap"]
+    g["Revenues"]["units"]["USD"] = years(2013, 11, lambda i: 1000)[:-2]
+    g["NetCashProvidedByUsedInOperatingActivities"]["units"]["USD"] = years(2013, 13, lambda i: 300)
+    g["PaymentsToAcquirePropertyPlantAndEquipment"]["units"]["USD"] = years(2013, 13, lambda i: 100)
+    ex = lt.extract(fx)
+    assert ex["fy"] == "2025-12-31"
+    assert ex["rev_cagr"] is None and ex["fcf_margin"] is None and ex["op_margin"] is None
+    assert "revenue" in ex["nr"]["fcf_margin"].lower()
+
+
+def test_fcf_needs_capex_in_same_period():
+    fx = sample_facts()
+    fx["facts"]["us-gaap"]["PaymentsToAcquirePropertyPlantAndEquipment"]["units"]["USD"] = years(2013, 10, lambda i: 100)  # none for 2023
+    ex = lt.extract(fx)
+    assert ex["fcf_margin"] is None and "same fiscal year" in ex["nr"]["fcf_margin"]
