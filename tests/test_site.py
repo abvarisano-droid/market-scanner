@@ -22,3 +22,8 @@ def test_no_dashes_or_advice_words():
         if f.suffix in (".html", ".js", ".css"):
             assert not re.search(r"\b(buy|sell|price target)\b", txt, re.I), f
     assert "Not investment advice" in (SITE / "index.html").read_text()
+
+
+def test_bearish_score_uses_bear_color():
+    css = (SITE / "style.css").read_text()
+    assert ".hz .big.neg{color:var(--bear)}" in css

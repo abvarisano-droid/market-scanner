@@ -75,6 +75,7 @@ input::placeholder{color:#5c574b;text-transform:none;letter-spacing:0}
 .spark{width:100%;height:110px;margin-top:18px}
 .hz{margin-top:22px;border-top:1px solid var(--line);padding-top:16px}
 .hz .big{font:400 40px/1 var(--serif);color:var(--gold)}
+.hz .big.neg{color:var(--bear)}
 .note{color:var(--muted);font-size:13px;margin-top:14px}
 .ringwrap{display:grid;gap:28px;align-items:center;margin-top:24px}
 .ring{width:min(260px,70vw);margin:0 auto;position:relative}
