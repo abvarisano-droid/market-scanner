@@ -1,6 +1,6 @@
 {
  "asof": "2026-10-30",
- "banner": "Sample data. Synthetic prices, replaced by the first real daily scan.",
+ "banner": "",
  "by_lens": {
   "mispricing": {
    "calls": 18,
@@ -11,9 +11,9 @@
      "hit_rate_pct": null
     },
     "5": {
-     "avg_excess_pct": -1.51,
-     "graded": 13,
-     "hit_rate_pct": 38.5
+     "avg_excess_pct": null,
+     "graded": 0,
+     "hit_rate_pct": null
     },
     "60": {
      "avg_excess_pct": null,
@@ -31,9 +31,9 @@
      "hit_rate_pct": null
     },
     "5": {
-     "avg_excess_pct": 5.19,
-     "graded": 15,
-     "hit_rate_pct": 93.3
+     "avg_excess_pct": null,
+     "graded": 0,
+     "hit_rate_pct": null
     },
     "60": {
      "avg_excess_pct": null,
@@ -51,9 +51,9 @@
      "hit_rate_pct": null
     },
     "5": {
-     "avg_excess_pct": 2.21,
-     "graded": 20,
-     "hit_rate_pct": 65.0
+     "avg_excess_pct": null,
+     "graded": 0,
+     "hit_rate_pct": null
     },
     "60": {
      "avg_excess_pct": null,
@@ -66,446 +66,13 @@
  "calls_logged": 78,
  "disclaimer": "Not investment advice.",
  "entry_rule": "next trading day close",
- "graded": [
-  {
-   "date": "2026-10-14",
-   "excess": 0.0203,
-   "label": "Bearish",
-   "lens": "short_term",
-   "stock_return": -0.0515,
-   "ticker": "9988.HK",
-   "window": 5
-  },
-  {
-   "date": "2026-10-14",
-   "excess": 0.0925,
-   "label": "Bullish",
-   "lens": "short_term",
-   "stock_return": 0.0613,
-   "ticker": "ADBE",
-   "window": 5
-  },
-  {
-   "date": "2026-10-14",
-   "excess": -0.0539,
-   "label": "Bearish",
-   "lens": "mispricing",
-   "stock_return": 0.0227,
-   "ticker": "B3SA3.SA",
-   "window": 5
-  },
-  {
-   "date": "2026-10-14",
-   "excess": 0.0093,
-   "label": "Bullish",
-   "lens": "mispricing",
-   "stock_return": -0.0219,
-   "ticker": "COST",
-   "window": 5
-  },
-  {
-   "date": "2026-10-14",
-   "excess": 0.1228,
-   "label": "Bullish",
-   "lens": "swing",
-   "stock_return": 0.0916,
-   "ticker": "INGA.AS",
-   "window": 5
-  },
-  {
-   "date": "2026-10-14",
-   "excess": -0.0901,
-   "label": "Bearish",
-   "lens": "swing",
-   "stock_return": 0.0589,
-   "ticker": "ITX.MC",
-   "window": 5
-  },
-  {
-   "date": "2026-10-14",
-   "excess": 0.0158,
-   "label": "Bullish",
-   "lens": "swing",
-   "stock_return": -0.0154,
-   "ticker": "TD.TO",
-   "window": 5
-  },
-  {
-   "date": "2026-10-15",
-   "excess": -0.0018,
-   "label": "Bearish",
-   "lens": "swing",
-   "stock_return": 0.0004,
-   "ticker": "6501.T",
-   "window": 5
-  },
-  {
-   "date": "2026-10-15",
-   "excess": 0.0475,
-   "label": "Bearish",
-   "lens": "short_term",
-   "stock_return": -0.0488,
-   "ticker": "ABT",
-   "window": 5
-  },
-  {
-   "date": "2026-10-15",
-   "excess": 0.0467,
-   "label": "Bullish",
-   "lens": "swing",
-   "stock_return": 0.0453,
-   "ticker": "ADBE",
-   "window": 5
-  },
-  {
-   "date": "2026-10-15",
-   "excess": 0.0132,
-   "label": "Bearish",
-   "lens": "mispricing",
-   "stock_return": -0.0145,
-   "ticker": "CNR.TO",
-   "window": 5
-  },
-  {
-   "date": "2026-10-15",
-   "excess": 0.0317,
-   "label": "Bullish",
-   "lens": "short_term",
-   "stock_return": 0.0303,
-   "ticker": "CRM",
-   "window": 5
-  },
-  {
-   "date": "2026-10-15",
-   "excess": -0.0487,
-   "label": "Bullish",
-   "lens": "swing",
-   "stock_return": -0.05,
-   "ticker": "DTE.DE",
-   "window": 5
-  },
-  {
-   "date": "2026-10-15",
-   "excess": -0.0055,
-   "label": "Bullish",
-   "lens": "mispricing",
-   "stock_return": -0.0069,
-   "ticker": "INTU",
-   "window": 5
-  },
-  {
-   "date": "2026-10-16",
-   "excess": 0.0058,
-   "label": "Bearish",
-   "lens": "mispricing",
-   "stock_return": 0.0203,
-   "ticker": "7203.T",
-   "window": 5
-  },
-  {
-   "date": "2026-10-16",
-   "excess": -0.0201,
-   "label": "Bearish",
-   "lens": "swing",
-   "stock_return": 0.0461,
-   "ticker": "AIR.DE",
-   "window": 5
-  },
-  {
-   "date": "2026-10-16",
-   "excess": 0.01,
-   "label": "Bullish",
-   "lens": "swing",
-   "stock_return": 0.0361,
-   "ticker": "AMD",
-   "window": 5
-  },
-  {
-   "date": "2026-10-16",
-   "excess": -0.0281,
-   "label": "Bullish",
-   "lens": "mispricing",
-   "stock_return": -0.0021,
-   "ticker": "CAT",
-   "window": 5
-  },
-  {
-   "date": "2026-10-16",
-   "excess": 0.0351,
-   "label": "Bearish",
-   "lens": "short_term",
-   "stock_return": -0.0091,
-   "ticker": "DIS",
-   "window": 5
-  },
-  {
-   "date": "2026-10-16",
-   "excess": 0.0474,
-   "label": "Bullish",
-   "lens": "short_term",
-   "stock_return": 0.0735,
-   "ticker": "HON",
-   "window": 5
-  },
-  {
-   "date": "2026-10-16",
-   "excess": 0.1052,
-   "label": "Bullish",
-   "lens": "swing",
-   "stock_return": 0.1312,
-   "ticker": "MELI",
-   "window": 5
-  },
-  {
-   "date": "2026-10-19",
-   "excess": -0.0074,
-   "label": "Bearish",
-   "lens": "short_term",
-   "stock_return": 0.0139,
-   "ticker": "0941.HK",
-   "window": 5
-  },
-  {
-   "date": "2026-10-19",
-   "excess": -0.0646,
-   "label": "Bullish",
-   "lens": "mispricing",
-   "stock_return": -0.0581,
-   "ticker": "601318.SS",
-   "window": 5
-  },
-  {
-   "date": "2026-10-19",
-   "excess": 0.0034,
-   "label": "Bearish",
-   "lens": "swing",
-   "stock_return": 0.0031,
-   "ticker": "EL.PA",
-   "window": 5
-  },
-  {
-   "date": "2026-10-19",
-   "excess": 0.0136,
-   "label": "Bullish",
-   "lens": "swing",
-   "stock_return": 0.02,
-   "ticker": "HINDUNILVR.NS",
-   "window": 5
-  },
-  {
-   "date": "2026-10-19",
-   "excess": 0.0925,
-   "label": "Bullish",
-   "lens": "short_term",
-   "stock_return": 0.099,
-   "ticker": "INGA.AS",
-   "window": 5
-  },
-  {
-   "date": "2026-10-19",
-   "excess": 0.0771,
-   "label": "Bearish",
-   "lens": "swing",
-   "stock_return": -0.0706,
-   "ticker": "LIN",
-   "window": 5
-  },
-  {
-   "date": "2026-10-19",
-   "excess": -0.0057,
-   "label": "Bearish",
-   "lens": "mispricing",
-   "stock_return": 0.0122,
-   "ticker": "RR.L",
-   "window": 5
-  },
-  {
-   "date": "2026-10-20",
-   "excess": -0.0296,
-   "label": "Bearish",
-   "lens": "mispricing",
-   "stock_return": 0.069,
-   "ticker": "601398.SS",
-   "window": 5
-  },
-  {
-   "date": "2026-10-20",
-   "excess": -0.1002,
-   "label": "Bullish",
-   "lens": "mispricing",
-   "stock_return": -0.0608,
-   "ticker": "ATD.TO",
-   "window": 5
-  },
-  {
-   "date": "2026-10-20",
-   "excess": 0.0573,
-   "label": "Bearish",
-   "lens": "short_term",
-   "stock_return": -0.0179,
-   "ticker": "DBK.DE",
-   "window": 5
-  },
-  {
-   "date": "2026-10-20",
-   "excess": 0.0408,
-   "label": "Bearish",
-   "lens": "swing",
-   "stock_return": -0.0014,
-   "ticker": "ENB.TO",
-   "window": 5
-  },
-  {
-   "date": "2026-10-20",
-   "excess": 0.1056,
-   "label": "Bearish",
-   "lens": "swing",
-   "stock_return": -0.0662,
-   "ticker": "HDFCBANK.NS",
-   "window": 5
-  },
-  {
-   "date": "2026-10-20",
-   "excess": -0.0417,
-   "label": "Bullish",
-   "lens": "swing",
-   "stock_return": -0.0023,
-   "ticker": "ICICIBANK.NS",
-   "window": 5
-  },
-  {
-   "date": "2026-10-20",
-   "excess": 0.0281,
-   "label": "Bullish",
-   "lens": "short_term",
-   "stock_return": 0.0675,
-   "ticker": "MELI",
-   "window": 5
-  },
-  {
-   "date": "2026-10-21",
-   "excess": -0.035,
-   "label": "Bullish",
-   "lens": "mispricing",
-   "stock_return": 0.0012,
-   "ticker": "005930.KS",
-   "window": 5
-  },
-  {
-   "date": "2026-10-21",
-   "excess": -0.02,
-   "label": "Bearish",
-   "lens": "swing",
-   "stock_return": 0.0562,
-   "ticker": "CBA.AX",
-   "window": 5
-  },
-  {
-   "date": "2026-10-21",
-   "excess": 0.0764,
-   "label": "Bearish",
-   "lens": "swing",
-   "stock_return": -0.0402,
-   "ticker": "NOKIA.HE",
-   "window": 5
-  },
-  {
-   "date": "2026-10-21",
-   "excess": 0.0869,
-   "label": "Bearish",
-   "lens": "mispricing",
-   "stock_return": -0.0507,
-   "ticker": "SU.PA",
-   "window": 5
-  },
-  {
-   "date": "2026-10-21",
-   "excess": 0.0286,
-   "label": "Bullish",
-   "lens": "short_term",
-   "stock_return": 0.0648,
-   "ticker": "TRV",
-   "window": 5
-  },
-  {
-   "date": "2026-10-21",
-   "excess": 0.1161,
-   "label": "Bearish",
-   "lens": "short_term",
-   "stock_return": -0.0799,
-   "ticker": "TTE.PA",
-   "window": 5
-  },
-  {
-   "date": "2026-10-21",
-   "excess": 0.0229,
-   "label": "Bullish",
-   "lens": "swing",
-   "stock_return": 0.0591,
-   "ticker": "V",
-   "window": 5
-  },
-  {
-   "date": "2026-10-22",
-   "excess": 0.0582,
-   "label": "Bullish",
-   "lens": "short_term",
-   "stock_return": 0.0741,
-   "ticker": "601012.SS",
-   "window": 5
-  },
-  {
-   "date": "2026-10-22",
-   "excess": -0.0221,
-   "label": "Bullish",
-   "lens": "swing",
-   "stock_return": -0.0062,
-   "ticker": "9618.HK",
-   "window": 5
-  },
-  {
-   "date": "2026-10-22",
-   "excess": 0.0824,
-   "label": "Bearish",
-   "lens": "short_term",
-   "stock_return": -0.0665,
-   "ticker": "AAPL",
-   "window": 5
-  },
-  {
-   "date": "2026-10-22",
-   "excess": 0.0456,
-   "label": "Bearish",
-   "lens": "swing",
-   "stock_return": -0.0297,
-   "ticker": "MBG.DE",
-   "window": 5
-  },
-  {
-   "date": "2026-10-22",
-   "excess": 0.0487,
-   "label": "Bullish",
-   "lens": "short_term",
-   "stock_return": 0.0646,
-   "ticker": "NAB.AX",
-   "window": 5
-  },
-  {
-   "date": "2026-10-22",
-   "excess": 0.011,
-   "label": "Bullish",
-   "lens": "mispricing",
-   "stock_return": 0.0269,
-   "ticker": "RY.TO",
-   "window": 5
-  }
- ],
+ "graded": [],
  "min_days": 21,
- "note": "Only 13 trading days of calls so far (need 21). Treat results as noise.",
- "pending": 30,
- "sample": true,
+ "note": "Only 1 trading days of calls so far (need 21). Treat results as noise.",
+ "pending": 78,
+ "sample": false,
  "status": "still noise",
- "trading_days": 13,
+ "trading_days": 1,
  "windows": [
   5,
   20,
