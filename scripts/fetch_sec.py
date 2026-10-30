@@ -1,7 +1,9 @@
 """Fetch SEC companyfacts JSON for the S&P 500 into data/cache/sec/ (git-ignored).
 
 Needs a contact User-Agent in the SEC_USER_AGENT environment variable, as the SEC requires.
-Never hardcode a contact. Rate limited to 8 requests a second. Already cached files are skipped.
+Never hardcode a contact. Rate limited to 8 requests a second. Already cached files are skipped,
+unless SEC_MAX_AGE_DAYS is set: cached files older than that many days are fetched again (the weekly
+refresh workflow uses this so a restored cache still picks up new filings).
     SEC_USER_AGENT="<name and contact email>" python scripts/fetch_sec.py
 """
 from __future__ import annotations
@@ -51,9 +53,18 @@ def get_json(session, url: str, limiter: Limiter, tries: int = 4):
     return None
 
 
-def ticker_map(session, limiter: Limiter, cache: Path = CACHE) -> dict[str, int]:
+def is_fresh(f: Path, max_age_days: float | None, now: float | None = None) -> bool:
+    """True if the cached file exists and is young enough (no limit when max_age_days is None)."""
+    if not f.exists():
+        return False
+    if max_age_days is None:
+        return True
+    return ((now if now is not None else time.time()) - f.stat().st_mtime) < max_age_days * 86400
+
+
+def ticker_map(session, limiter: Limiter, cache: Path = CACHE, max_age_days: float | None = None) -> dict[str, int]:
     f = cache / "company_tickers.json"
-    if f.exists():
+    if is_fresh(f, max_age_days):
         raw = json.loads(f.read_text())
     else:
         raw = get_json(session, TICKERS_URL, limiter)
@@ -62,10 +73,11 @@ def ticker_map(session, limiter: Limiter, cache: Path = CACHE) -> dict[str, int]
     return {v["ticker"].upper(): int(v["cik_str"]) for v in raw.values()}
 
 
-def fetch_all(tickers: list[str], session, cache: Path = CACHE, limiter: Limiter | None = None) -> dict:
+def fetch_all(tickers: list[str], session, cache: Path = CACHE, limiter: Limiter | None = None,
+              max_age_days: float | None = None) -> dict:
     limiter = limiter or Limiter()
     cache.mkdir(parents=True, exist_ok=True)
-    tmap = ticker_map(session, limiter, cache)
+    tmap = ticker_map(session, limiter, cache, max_age_days)
     got, missing = 0, []
     for t in tickers:
         cik = tmap.get(t.upper()) or tmap.get(t.upper().replace("-", "."))
@@ -73,12 +85,15 @@ def fetch_all(tickers: list[str], session, cache: Path = CACHE, limiter: Limiter
             missing.append(t)
             continue
         f = cache / f"CIK{cik:010d}.json"
-        if f.exists():
+        if is_fresh(f, max_age_days):
             got += 1
             continue
         data = get_json(session, FACTS_URL.format(cik=cik), limiter)
         if data is None:
-            missing.append(t)
+            if f.exists():  # keep the stale copy rather than losing the name
+                got += 1
+            else:
+                missing.append(t)
             continue
         f.write_text(json.dumps(data))
         got += 1
@@ -94,7 +109,8 @@ def main() -> int:
 
     s = requests.Session()
     s.headers.update({"User-Agent": ua, "Accept-Encoding": "gzip, deflate"})
-    res = fetch_all(sp500_tickers(), s)
+    age = os.environ.get("SEC_MAX_AGE_DAYS", "").strip()
+    res = fetch_all(sp500_tickers(), s, max_age_days=float(age) if age else None)
     print(f"cached {res['fetched']} companies, missing {len(res['missing'])}: {res['missing']}")
     return 0
 

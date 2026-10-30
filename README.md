@@ -55,3 +55,5 @@ SEC_USER_AGENT="<name and contact email>" python scripts/fetch_sec.py   # cache 
 python scripts/build_longterm.py                                         # writes site/data/longterm.json
 ```
 Names with no usable 10-K facts (some banks, insurers, and a few with unusual tagging) show n/a rather than a guess. The SEC User-Agent is never stored in the repo.
+
+`.github/workflows/sec-refresh.yml` refreshes this weekly (Sundays 11:23 UTC, or run it by hand). Set the repo Variable `SEC_USER_AGENT` (Settings, Secrets and variables, Actions, Variables) to something like `MarketScanner your-email`; if it is unset the job exits with a notice. Raw SEC JSON is cached with `actions/cache` and files older than 25 days are refetched (`SEC_MAX_AGE_DAYS`), at no more than 8 requests a second. It commits `site/data/longterm.json`.

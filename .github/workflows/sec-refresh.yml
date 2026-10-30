@@ -1,0 +1,64 @@
+name: Weekly SEC refresh
+on:
+  schedule:
+    - cron: "23 11 * * 0"   # Sundays 11:23 UTC
+  workflow_dispatch:
+permissions:
+  contents: write
+concurrency:
+  group: sec-refresh
+  cancel-in-progress: false
+jobs:
+  refresh:
+    runs-on: ubuntu-latest
+    env:
+      # Repo Variable (Settings, Secrets and variables, Actions, Variables). Never hardcode a contact.
+      SEC_USER_AGENT: ${{ vars.SEC_USER_AGENT }}
+    steps:
+      - name: Check SEC_USER_AGENT
+        id: ua
+        run: |
+          if [ -z "${SEC_USER_AGENT// }" ]; then
+            echo "::notice title=SEC refresh skipped::Repo Variable SEC_USER_AGENT is not set (for example \"MarketScanner your-email\"). Nothing was fetched."
+            echo "run=false" >> "$GITHUB_OUTPUT"
+          else
+            echo "run=true" >> "$GITHUB_OUTPUT"
+          fi
+      - uses: actions/checkout@v4
+        if: steps.ua.outputs.run == 'true'
+      - uses: actions/setup-python@v5
+        if: steps.ua.outputs.run == 'true'
+        with: { python-version: "3.12", cache: pip }
+      - run: pip install -r requirements.txt pytest
+        if: steps.ua.outputs.run == 'true'
+      - name: Month key
+        id: month
+        if: steps.ua.outputs.run == 'true'
+        run: echo "ym=$(date -u +%Y-%m)" >> "$GITHUB_OUTPUT"
+      - name: Restore raw SEC JSON cache
+        if: steps.ua.outputs.run == 'true'
+        uses: actions/cache@v4
+        with:
+          path: data/cache/sec
+          key: sec-facts-${{ steps.month.outputs.ym }}
+          restore-keys: sec-facts-
+      - name: Fetch SEC companyfacts (max 8 req/s, files older than 25 days are refetched)
+        if: steps.ua.outputs.run == 'true'
+        env:
+          SEC_MAX_AGE_DAYS: "25"
+        run: python scripts/fetch_sec.py
+      - name: Build long-term data
+        if: steps.ua.outputs.run == 'true'
+        run: python scripts/build_longterm.py
+      - name: Tests
+        if: steps.ua.outputs.run == 'true'
+        run: python -m pytest -q
+      - name: Commit long-term data
+        if: steps.ua.outputs.run == 'true'
+        run: |
+          git config user.name "market-scanner-bot"
+          git config user.email "actions@users.noreply.github.com"
+          git add site/data/longterm.json
+          git commit -m "Weekly SEC refresh $(date +%F)" || echo "nothing to commit"
+          git pull --rebase
+          git push
