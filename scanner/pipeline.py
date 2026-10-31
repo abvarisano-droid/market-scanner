@@ -152,6 +152,7 @@ def run(indexes: list[str] | None = None, top_n: int = TOP_N, live_constituents:
 
     result = {
         "date": asof.date().isoformat(),
+        "dropped_baskets": [{"name": n, "reason": r} for n, r in universe.DROPPED.items()],
         "funnel": _funnel(tags, tickers, stock_prices, tech, len(eligible), len(picks)),
         "spy_spark": [round(float(x), 2) for x in bench.tail(60)],
         "technical": {k: tech[k] for k in ("asof", "dropped", "horizons", "scores", "spark")},

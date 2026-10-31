@@ -158,6 +158,11 @@
     return '<details class="byix"><summary class="label">Funnel by index (a stock in two indexes counts in both)</summary><div class="tw" tabindex="0" role="region" aria-label="Funnel by index"><table><thead><tr><th>Index</th><th>In</th><th>With data</th><th>Passed checks</th></tr></thead><tbody>' + rows + "</tbody></table></div></details>";
   }
 
+  function dropNote() {
+    var d = (S.latest && S.latest.dropped_baskets) || [];
+    return d.map(function (x) { return '<p class="note dropnote" role="status">' + esc(x.name) + " list unavailable on " + esc(x.date) + ", this scan ran without it.</p>"; }).join("");
+  }
+
   function home() {
     var L = S.latest;
     var f = L.funnel[S.hz];
@@ -176,7 +181,7 @@
       '<div class="field"><canvas id="cv" aria-label="Animated field of dots. Each dot is a stock, narrowing from the full universe to the final picks." role="img"></canvas>' +
       '<div class="stages">' + ["Universe", "Passed checks", "Scored", "Picks"].map(function (n) { return '<button type="button" class="stage"><span class="k">' + n + '</span><span class="n">0</span></button>'; }).join("") + "</div></div>" +
       '<div class="story"><p id="cap" class="cap" aria-live="polite"></p><div class="ctl"><button type="button" id="nx" class="btn">Next step</button><button type="button" id="sk" class="btn ghost">Skip animation</button></div></div>' + byIndexHtml(L.funnel) + '</section>' + sectorHtml(L.sectors) +
-      '<div class="ixs" tabindex="0" role="region" aria-label="Index moves today">' + chips + '</div><div class="tabs" role="tablist">' + tabs + "</div>" + body;
+      '<div class="ixs" tabindex="0" role="region" aria-label="Index moves today">' + chips + '</div>' + dropNote() + '<div class="tabs" role="tablist">' + tabs + "</div>" + body;
     sectorWire(L.sectors);
     requestAnimationFrame(function () { app.classList.remove("boot"); app.removeAttribute("aria-busy"); });
     if (window.V5) V5.changes(app);
@@ -370,7 +375,7 @@
     var wv = P.weights_pct;
     app.innerHTML = '<section class="hero"><span class="label">How it works</span><h1>Rules you can <em>read.</em></h1>' +
       '<p class="lede">Everything below is taken from the scanner\'s own code, and the numbers on this page are read from the same constants the scan uses. Mechanical rules on public price and valuation data: not forecasts, and nothing here is a recommendation. <strong>Not investment advice.</strong></p></section>' +
-      '<section class="mx"><h2>1. The universe</h2><p class="lede">Stocks come from the index lists. ' + esc(live) + ' are pulled live from Wikipedia when it is reachable. The other ' + bk.length + ' indexes use a fixed basket of large names (' + bn + ' tickers in total), so global coverage is thin. ' + U.index_levels + ' index levels and ' + esc(U.benchmark) + ' (the S&amp;P 500 fund used as the yardstick) are tracked for context and are not scored as stocks. The Russell 2000 uses its real constituents from the ' + esc(U.russell.source) + ' file (a pull under ' + U.russell.min_equities.toLocaleString() + ' equities is rejected as a bad file). Prices and fundamentals come from Yahoo Finance, which is free and can be delayed or wrong.</p></section>' +
+      '<section class="mx"><h2>1. The universe</h2><p class="lede">Stocks come from the index lists. ' + esc(live) + ' are pulled live from Wikipedia when it is reachable. The other ' + bk.length + ' indexes use a fixed basket of large names (' + bn + ' tickers in total), so global coverage is thin. ' + U.index_levels + ' index levels and ' + esc(U.benchmark) + ' (the S&amp;P 500 fund used as the yardstick) are tracked for context and are not scored as stocks. The Russell 2000 uses its real constituents from the ' + esc(U.russell.source) + ' file (a pull under ' + U.russell.min_equities.toLocaleString() + ' equities is rejected as a bad file). Prices and fundamentals come from Yahoo Finance, which is free and can be delayed or wrong.</p>' + dropNote() + '</section>' +
       '<section class="mx"><h2>2. The funnel</h2><p class="lede">Each stock must clear these data checks before any lens scores it. A stock that fails is dropped, and the site counts why.</p><ul class="mlist">' +
       "<li><b>History:</b> at least " + F.min_bars + " daily bars (about a year).</li>" +
       "<li><b>Fresh:</b> the latest bar is no more than " + F.stale_days + " calendar days older than the newest bar in the scan.</li>" +
