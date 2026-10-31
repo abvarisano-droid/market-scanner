@@ -43,7 +43,7 @@ def _last_monday(y: int, m: int) -> date:
 
 
 def _observed(d: date) -> date | None:
-    """NYSE rule: Saturday holidays are not moved back into the prior year; Sunday moves to Monday."""
+    """NYSE rule: a Saturday holiday is observed the Friday before, a Sunday holiday the Monday after (New Year on a Saturday is the exception, handled by the caller)."""
     if d.weekday() == 5:
         return d - timedelta(days=1)
     if d.weekday() == 6:
