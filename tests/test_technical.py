@@ -130,3 +130,15 @@ def test_scan_technical_funnel_counts():
         assert hz["scored"] == 10 and sum(hz["counts"].values()) == 10
         sc = [r["score"] for r in hz["top_bull"]]
         assert sc == sorted(sc, reverse=True) and len(hz["top_bull"]) <= s.TOP_N
+
+
+def test_signals_ignore_trailing_nan_close():
+    import numpy as np
+    import pandas as pd
+    from scanner import signals
+    idx = pd.bdate_range("2026-01-01", periods=300)
+    c = pd.Series(np.linspace(100, 120, 300), index=idx)
+    df = pd.DataFrame({"Open": c, "High": c, "Low": c, "Close": c, "Volume": 1e6}, index=idx)
+    df.loc[idx[-1], ["Close", "Volume"]] = np.nan
+    t = signals.technicals(df)
+    assert t["price"] == float(c.iloc[-2]) and np.isfinite(t["chg_1d"]) and np.isfinite(t["vol_ratio"])

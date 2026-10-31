@@ -8,7 +8,7 @@
   var S = { latest: null, track: null, hz: "mispricing", raf: 0 };
 
   function esc(s) { return String(s).replace(/[&<>"']/g, function (c) { return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]; }); }
-  function pct(x, d) { return (x >= 0 ? "+" : "") + (x * 100).toFixed(d == null ? 1 : d) + "%"; }
+  function pct(x, d) { if (x == null || x !== x) return "n/a"; return (x >= 0 ? "+" : "") + (x * 100).toFixed(d == null ? 1 : d) + "%"; }
   function sgn(v) { v = Math.round(v); return S.hz === "mispricing" ? (v > 0 ? "+" : "") + v : String(v); }
   function cls(l) { return l === "Bullish" ? "" : l === "Bearish" ? "bear" : "neutral"; }
   function load(u) { return fetch(u).then(function (r) { if (!r.ok) throw new Error(u); return r.json(); }); }
@@ -155,7 +155,7 @@
     var body = '<p class="note">' + HZHELP[S.hz] + '</p><div class="cols fade"><div class="bull"><div class="listhead"><h3>Bullish</h3><span class="label">' + h.counts.Bullish + ' of ' + f.scored + ' scored</span></div>' + listHtml(h.top_bull, "bull") +
       '</div><div class="bear"><div class="listhead"><h3>Bearish</h3><span class="label">' + h.counts.Bearish + ' of ' + f.scored + ' scored</span></div>' + listHtml(h.top_bear, "bear") + "</div></div>";
     var nIdx = Object.keys(L.funnel.by_index).length;
-    var chips = L.indexes.map(function (i) { return '<span class="ix"><span class="label">' + esc(i.name) + '</span><b class="' + (i.chg_1d < 0 ? "neg" : "pos") + '">' + pct(i.chg_1d) + "</b></span>"; }).join("");
+    var chips = L.indexes.map(function (i) { return '<span class="ix"><span class="label">' + esc(i.name) + '</span><b class="' + (i.chg_1d == null ? "" : i.chg_1d < 0 ? "neg" : "pos") + '">' + pct(i.chg_1d) + "</b></span>"; }).join("");
     app.innerHTML =
       '<section class="hero"><span class="label">Daily scan across ' + nIdx + ' indexes &middot; as of ' + esc(L.asof) + "</span>" +
       '<h1>' + f.universe.toLocaleString() + ' stocks in.<br><em>' + f.picks + ' setups out.</em></h1>' +
@@ -200,7 +200,7 @@
       if (!v) { res.innerHTML = ""; return; }
       var r = S.latest.lookup[v];
       if (!r) { res.innerHTML = '<p class="note">No scored data for "' + esc(v) + '" in the latest scan. It may be outside the universe or failed a data check.</p>'; return; }
-      res.innerHTML = '<div class="card fade"><span class="label">' + esc((r.i ? r.i + " | " : "") + (r.s || "")) + "</span><h2>" + esc(v) + " <span style=\"color:var(--muted);font-size:.5em\">" + esc(r.n) + '</span></h2><div class="meta"><span class="label">Last close ' + r.c.toFixed(2) + '</span><span class="label">As of ' + esc(S.latest.asof) + "</span></div>" +
+      res.innerHTML = '<div class="card fade"><span class="label">' + esc((r.i ? r.i + " | " : "") + (r.s || "")) + "</span><h2>" + esc(v) + " <span style=\"color:var(--muted);font-size:.5em\">" + esc(r.n) + '</span></h2><div class="meta"><span class="label">Last close ' + (r.c == null ? "n/a" : r.c.toFixed(2) + (r.cur ? " " + esc(r.cur) : "")) + '</span><span class="label">As of ' + esc(S.latest.asof) + "</span></div>" +
         spark(r.spark) + '<div class="hzs">' + hzCard("Mispricing", r.mp, true) + hzCard("Short-term", r.st) + hzCard("Swing", r.sw) + '</div><p class="note">Mechanical rules on past data, not a forecast. Not investment advice.</p></div>';
     }
     q.addEventListener("input", function () { show(q.value); });
@@ -339,10 +339,15 @@
     cancelAnimationFrame(S.raf);
     var h = location.hash.replace(/^#\/?/, ""), parts = h.split("/"), pg = parts[0] || "home";
     [].forEach.call(document.querySelectorAll("nav a"), function (a) { a.classList.toggle("on", a.getAttribute("data-nav") === pg); });
-    if (pg === "lookup") lookup(decodeURIComponent(parts[1] || ""));
-    else if (pg === "track") track();
-    else if (pg === "longterm") { if (S.lt) longterm(); else loadLT(); }
-    else home();
+    try {
+      if (pg === "lookup") lookup(decodeURIComponent(parts[1] || ""));
+      else if (pg === "track") track();
+      else if (pg === "longterm") { if (S.lt) longterm(); else loadLT(); }
+      else home();
+    } catch (e) {
+      if (window.console) console.warn("view failed", pg, e);
+      app.innerHTML = '<section class="hero"><h1>This view <em>hit a snag.</em></h1><p class="lede">Something in this page could not be drawn. Use the menu to open another view. Not investment advice.</p></section>';
+    }
     window.scrollTo(0, 0);
   }
 

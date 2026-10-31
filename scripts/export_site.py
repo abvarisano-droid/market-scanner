@@ -121,8 +121,11 @@ def build_latest(scan: dict, sample: bool) -> dict:
         m = table.get(t)
         if not m:
             continue
+        c = num(m.get("price"))
+        if c is None and spark:  # no usable last close: fall back to the last point of the sparkline
+            c = num(spark[-1])
         row = {"n": _name(t, m), "s": plain(m.get("sector") or ""), "i": m.get("index"),
-               "c": num(m.get("price")), "spark": spark}
+               "c": c, "cur": m.get("currency") or None, "spark": spark}
         if m.get("mispricing") is not None:
             row["mp"] = {"score": m["mispricing"], "label": mp_label(m["mispricing"]),
                          "reasons": [plain(x) for x in (m.get("valuation_reasons") or [])[:TOP_REASONS]]}
