@@ -152,3 +152,18 @@ def test_earnings_dates_times_out(monkeypatch):
     fast = types.SimpleNamespace(Ticker=lambda t: types.SimpleNamespace(calendar={"Earnings Date": ["2026-11-12"]}))
     monkeypatch.setitem(sys.modules, "yfinance", fast)
     assert data.earnings_dates("AAA") == ["2026-11-12"]
+
+
+def test_earnings_dates_timeout_does_not_hold_exit():
+    import subprocess
+    import sys
+    import time
+    code = (
+        "import sys, time, types\n"
+        "sys.modules['yfinance'] = types.SimpleNamespace(Ticker=lambda t: (time.sleep(30), None)[1])\n"
+        "from scanner import data\n"
+        "assert data.earnings_dates('AAA', timeout=0.1) == []\n"
+    )
+    t0 = time.monotonic()
+    subprocess.run([sys.executable, "-c", code], check=True, cwd=str(__import__("pathlib").Path(__file__).resolve().parents[1]), timeout=20)
+    assert time.monotonic() - t0 < 10
