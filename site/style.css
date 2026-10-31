@@ -163,3 +163,10 @@ td.stk{white-space:normal;min-width:150px;position:sticky;left:0;background:var(
 .how summary{cursor:pointer;color:var(--gold);font:11px var(--mono);letter-spacing:.14em;text-transform:uppercase;padding:10px 0}
 .how li{margin:8px 0}
 .lede.sample strong{color:var(--gold);font-weight:600}
+
+.mx h3{font-size:22px;margin:22px 0 6px;color:var(--gold)}
+.mx ul{color:#b9b3a2;font-size:15px;max-width:70ch;padding-left:20px}
+.mx li{margin:6px 0}
+.mx .lede{max-width:70ch;overflow-wrap:anywhere}
+.mx b{color:var(--text);font-weight:600}
+nav{flex-wrap:wrap}

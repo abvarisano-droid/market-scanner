@@ -16,6 +16,8 @@ from . import data, news_ai, signals, technical, tracker, universe, valuation
 log = logging.getLogger(__name__)
 ROOT = Path(__file__).resolve().parent.parent
 LATEST = ROOT / "data" / "latest_scan.json"
+MIN_COVERAGE = 0.4  # share of value and quality metrics a stock needs before its Mispricing score is ranked
+TOP_N = 12  # Mispricing picks on the high side; half as many on the low side
 
 
 _RUN_ID = os.getenv("GITHUB_RUN_ID") or uuid.uuid4().hex[:12]
@@ -65,7 +67,7 @@ def index_snapshot(price_map: dict[str, pd.DataFrame]) -> list[dict]:
     return out
 
 
-def run(indexes: list[str] | None = None, top_n: int = 12, live_constituents: bool = True,
+def run(indexes: list[str] | None = None, top_n: int = TOP_N, live_constituents: bool = True,
         max_tickers: int | None = None) -> dict:
     uni = universe.full_universe(indexes, live=live_constituents)
     tickers = list(uni)[:max_tickers] if max_tickers else list(uni)
@@ -90,7 +92,7 @@ def run(indexes: list[str] | None = None, top_n: int = 12, live_constituents: bo
     passed = set(tech["spark"])
 
     # rank the most mispriced in both directions, only where we have real data
-    eligible = table[(table["coverage"] >= 0.4) & table.index.isin(passed)]
+    eligible = table[(table["coverage"] >= MIN_COVERAGE) & table.index.isin(passed)]
     cands = pd.concat([eligible.nlargest(top_n, "mispricing"), eligible.nsmallest(top_n // 2, "mispricing")])
 
     picks = []

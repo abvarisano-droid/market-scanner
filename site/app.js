@@ -334,6 +334,54 @@
       .catch(function () { app.innerHTML = '<section class="hero"><h1>Long-term data <em>unavailable.</em></h1><p class="lede">The SEC data file could not be loaded. Not investment advice.</p></section>'; });
   }
 
+  /* ---------- how it works (every number comes from data/method.json, built from the code constants) ---------- */
+  var MNAME = { forwardPE: "forward P/E", trailingPE: "trailing P/E", enterpriseToEbitda: "EV/EBITDA", priceToBook: "price to book", fcf_yield: "free cash flow yield", returnOnEquity: "return on equity", profitMargins: "profit margin", revenueGrowth: "revenue growth", debtToEquity: "debt to equity" };
+  var RNAME = { ma20: "Price vs its 20-day average", momentum: "5 and 10 day momentum", rsi: "RSI(14)", volume: "Volume vs its 20-day average", ma50: "Price vs its 50-day average", ma200: "Price vs its 200-day average", slope: "Slope of the 50 and 200-day averages", rs: "3-month return vs the S&amp;P 500", high52: "Distance from the 52-week high" };
+  function mlist(a) { return a.map(function (k) { return MNAME[k] || k; }).join(", "); }
+  function wtable(w) { return "<ul>" + Object.keys(w).sort(function (a, b) { return w[b] - w[a]; }).map(function (k) { return "<li><b>" + w[k] + "%</b> " + RNAME[k] + "</li>"; }).join("") + "</ul>"; }
+  function methodology() {
+    var M = S.method, U = M.universe, F = M.funnel, P = M.mispricing, T = M.technical, G = M.grading, w = G.windows;
+    var live = U.live.join(", "), bk = Object.keys(U.baskets), bn = bk.reduce(function (s, k) { return s + U.baskets[k]; }, 0);
+    var wv = P.weights_pct;
+    app.innerHTML = '<section class="hero"><span class="label">How it works</span><h1>Rules you can <em>read.</em></h1>' +
+      '<p class="lede">Everything below is taken from the scanner\'s own code, and the numbers on this page are read from the same constants the scan uses. Mechanical rules on public price and valuation data: not forecasts, and nothing here is a recommendation. <strong>Not investment advice.</strong></p></section>' +
+      '<section class="mx"><h2>1. The universe</h2><p class="lede">Stocks come from the index lists. ' + esc(live) + ' are pulled live from Wikipedia when it is reachable. The other ' + bk.length + ' indexes use a fixed basket of large names (' + bn + ' tickers in total), so global coverage is thin. ' + U.index_levels + ' index levels and ' + esc(U.benchmark) + ' (the S&amp;P 500 fund used as the yardstick) are tracked for context and are not scored as stocks. Prices and fundamentals come from Yahoo Finance, which is free and can be delayed or wrong.</p></section>' +
+      '<section class="mx"><h2>2. The funnel</h2><p class="lede">Each stock must clear these data checks before any lens scores it. A stock that fails is dropped, and the site counts why.</p><ul class="mlist">' +
+      "<li><b>History:</b> at least " + F.min_bars + " daily bars (about a year).</li>" +
+      "<li><b>Fresh:</b> the latest bar is no more than " + F.stale_days + " calendar days older than the newest bar in the scan.</li>" +
+      "<li><b>Clean:</b> no zero or negative closes, no missing close or volume.</li>" +
+      "<li><b>Liquid:</b> average daily dollar volume (close times volume) over the last 20 days of at least $" + F.min_dollar_vol.toLocaleString() + ".</li>" +
+      "<li><b>Mispricing only:</b> at least " + F.min_coverage_pct + "% of its value and quality metrics must exist, or it is not ranked.</li>" +
+      "<li><b>Picks:</b> each technical lens lists up to " + F.top_n + " names per side. Mispricing lists the top " + F.mp_top + " and the bottom " + F.mp_low + ".</li></ul></section>" +
+      '<section class="mx"><h2>3. The three lenses</h2>' +
+      '<h3>Mispricing, -100 to +100</h3><p class="lede">Each metric is compared with sector peers (market-wide if a sector has fewer than 3 usable names), trimmed at the 5th and 95th percentile, and turned into a score. Negative multiples are ignored. The blocks are weighted: <b>' + wv.value + '% value</b> (' + esc(mlist(P.value)) + '), <b>' + wv.quality + '% quality</b> (' + esc(mlist(P.quality)) + '), <b>' + wv.analyst + '% analyst gap</b> (the average Street target vs the last close, scaled by how many analysts cover it, full weight at 10 or more), and <b>' + wv.momentum + '% recent stretch</b> (a deep 3-month drop scores as cheap, a big run-up as stretched, relative to the stock\'s own volatility). A score of ' + P.call_at + ' or more is Bullish and ' + (-P.call_at) + ' or less is Bearish, after a small nudge from headline wording. With an AI key set, a language model can write the thesis and call from the same numbers; otherwise the rules decide.</p>' +
+      '<h3>Short-term, 0 to 100</h3><p class="lede">Needs at least ' + T.min_short + ' bars. Weighted rules:</p>' + wtable(T.short_weights_pct) +
+      '<h3>Swing, 0 to 100</h3><p class="lede">Needs at least ' + T.min_swing + ' bars plus the S&amp;P 500 on matching dates. Weighted rules:</p>' + wtable(T.swing_weights_pct) +
+      '<p class="lede">Each rule scores from 0 (bearish) to 1 (bullish), and the lens score is 100 times the weighted average. The three strongest pulls become the reasons shown.</p></section>' +
+      '<section class="mx"><h2>4. How calls are labeled</h2><p class="lede">Short-term and Swing: <b>Bullish</b> at ' + T.bull_at + ' or more, <b>Bearish</b> at ' + T.bear_at + ' or less, <b>Neutral</b> in between. Mispricing uses the +/-' + P.call_at + ' cut above. Only Bullish and Bearish calls are logged; Neutral is never graded. Older logs used other names, which still load and map to these three.</p></section>' +
+      '<section class="mx"><h2>5. How calls are graded</h2><ul class="mlist">' +
+      "<li><b>Entry</b> is the close of the next trading day after the signal date, never the signal\'s own close. The S&amp;P 500 uses the same entry day.</li>" +
+      "<li><b>Windows</b> are " + w.join(", ") + " trading days counted from that entry close.</li>" +
+      "<li><b>A win</b> for a Bullish call is beating the S&amp;P 500 over the window. For a Bearish call it is lagging it.</li>" +
+      "<li><b>Still noise:</b> until the log covers " + G.min_days + " trading days, the whole record is labeled still noise. Even after that, a few weeks of calls is a small sample.</li>" +
+      "<li>Rows logged under an older same-day entry rule keep it, so history is not rewritten.</li></ul></section>" +
+      '<section class="mx"><h2>6. The Long-term tab</h2><p class="lede">It uses only annual SEC 10-K filings, not Yahoo data, for S&amp;P 500 names, and links each figure to its filing. Six yes or no checks are counted: ' + M.longterm.rules.map(esc).join("; ") + '. They describe past reported numbers.</p></section>' +
+      '<section class="mx"><h2>7. Honest limits</h2><ul class="mlist">' +
+      "<li>Free data: Yahoo Finance fundamentals can be stale, missing or restated, and prices are adjusted for splits and dividends by the provider.</li>" +
+      "<li>There are no earnings estimate revisions, no insider or options data, and no sector-specific models. The analyst gap uses one average Street target only.</li>" +
+      "<li>Banks, insurers and other unusual reporters often lack clean multiples and show gaps.</li>" +
+      "<li>Technical rules look only at price and volume, so they say nothing about why a stock moved.</li>" +
+      "<li>The track record is short and each lens has few calls, so hit rates swing widely. Calls ignore trading costs and taxes.</li>" +
+      "<li>The global baskets are fixed lists, not full index membership.</li></ul>" +
+      '<p class="disc" style="margin-top:20px"><strong>Not investment advice.</strong> Read the <a href="#/track">track record</a> before trusting any lens.</p></section>';
+    window.scrollTo(0, 0);
+  }
+  function loadMethod() {
+    app.innerHTML = '<section class="hero"><span class="label">How it works</span><p class="lede">Loading...</p></section>';
+    load("data/method.json").then(function (d) { S.method = d; if (location.hash.indexOf("#/how") === 0) methodology(); })
+      .catch(function () { app.innerHTML = '<section class="hero"><h1>Method <em>unavailable.</em></h1><p class="lede">The method file could not be loaded. Not investment advice.</p></section>'; });
+  }
+
   /* ---------- router ---------- */
   function route() {
     cancelAnimationFrame(S.raf);
@@ -342,6 +390,7 @@
     try {
       if (pg === "lookup") lookup(decodeURIComponent(parts[1] || ""));
       else if (pg === "track") track();
+      else if (pg === "how") { if (S.method) methodology(); else loadMethod(); }
       else if (pg === "longterm") { if (S.lt) longterm(); else loadLT(); }
       else home();
     } catch (e) {
