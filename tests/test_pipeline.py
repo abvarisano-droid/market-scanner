@@ -7,6 +7,9 @@ from tests.fixtures.synthetic import fake_prices, patch_engine
 
 def test_run(tmp_path, monkeypatch):
     patch_engine(monkeypatch, tmp_path)
+    rows = [{"ticker": t, "name": "", "sector": "", "weight": ""} for t in ["AAPL"] + [f"RUT{i:03d}" for i in range(40)]]
+    universe.write_russell_cache("2026-10-29", rows, tmp_path / "r.csv")
+    monkeypatch.setattr(universe, "RUSSELL_CACHE", tmp_path / "r.csv")
     res = pipeline.run(live_constituents=False)
     assert len(res["table"]) > 150 and len(res["indexes"]) == len(universe.INDEXES)
     assert {p["call"] for p in res["picks"]} <= {"Bullish", "Bearish", "Neutral"}
@@ -15,7 +18,10 @@ def test_run(tmp_path, monkeypatch):
     f = res["funnel"]
     for k in ("mispricing", "short_term", "swing"):
         assert f[k]["universe"] >= f[k]["with_data"] >= f[k]["passed_checks"] >= f[k]["scored"] >= 0
-    assert sum(f["by_index"].values()) == f["mispricing"]["universe"]
+    # Russell 2000 is scanned; AAPL is in both S&P 500 and Russell (here) so it keeps both tags
+    assert f["by_index"]["Russell 2000"] == 41 and f["by_index_stages"]["passed_checks"]["Russell 2000"] <= 41
+    assert sum(f["by_index"].values()) > f["mispricing"]["universe"]  # overlaps count in every index
+    assert next(r for r in res["table"] if r["ticker"] == "AAPL")["indexes"][0] == "S&P 500" and "Russell 2000" in next(r for r in res["table"] if r["ticker"] == "AAPL")["indexes"]
     assert res["scorecard"]["status"] == "still noise"
     led = tracker.load()
     assert set(led["lens"]) == {"mispricing", "short_term", "swing"}

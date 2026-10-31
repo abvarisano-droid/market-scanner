@@ -163,3 +163,5 @@ td.stk{white-space:normal;min-width:150px;position:sticky;left:0;background:var(
 .how summary{cursor:pointer;color:var(--gold);font:11px var(--mono);letter-spacing:.14em;text-transform:uppercase;padding:10px 0}
 .how li{margin:8px 0}
 .lede.sample strong{color:var(--gold);font-weight:600}
+
+.byix{margin-top:14px}.byix summary{cursor:pointer;padding:6px 0}.byix table{min-width:0}

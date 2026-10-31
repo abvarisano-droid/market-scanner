@@ -145,6 +145,16 @@
   }
   function tw_more(tw) { tw.parentNode.classList.toggle("more", tw.scrollWidth - tw.clientWidth - tw.scrollLeft > 4); }
 
+  function byIndexHtml(f) {
+    var st = f.by_index_stages;
+    if (!st) return "";
+    var names = Object.keys(st.universe).sort(function (a, b) { return st.universe[b] - st.universe[a]; });
+    var rows = names.map(function (n) {
+      return "<tr><td>" + esc(n) + "</td><td>" + st.universe[n].toLocaleString() + "</td><td>" + (st.with_data[n] || 0).toLocaleString() + "</td><td>" + (st.passed_checks[n] || 0).toLocaleString() + "</td></tr>";
+    }).join("");
+    return '<details class="byix"><summary class="label">Funnel by index (a stock in two indexes counts in both)</summary><div class="tw" tabindex="0" role="region" aria-label="Funnel by index"><table><thead><tr><th>Index</th><th>In</th><th>With data</th><th>Passed checks</th></tr></thead><tbody>' + rows + "</tbody></table></div></details>";
+  }
+
   function home() {
     var L = S.latest;
     var f = L.funnel[S.hz];
@@ -162,7 +172,7 @@
       '<p class="lede">Every weekday after the close we run each stock from the major indexes through data checks, a valuation model and a handful of plain price rules, then rank the strongest bullish and bearish setups. Every call is logged and graded against the S&amp;P 500, in public.</p>' +
       '<div class="field"><canvas id="cv" aria-label="Animated field of dots. Each dot is a stock, narrowing from the full universe to the final picks." role="img"></canvas>' +
       '<div class="stages">' + ["Universe", "Passed checks", "Scored", "Picks"].map(function (n) { return '<button type="button" class="stage"><span class="k">' + n + '</span><span class="n">0</span></button>'; }).join("") + "</div></div>" +
-      '<div class="story"><p id="cap" class="cap" aria-live="polite"></p><div class="ctl"><button type="button" id="nx" class="btn">Next step</button><button type="button" id="sk" class="btn ghost">Skip animation</button></div></div></section>' + sectorHtml(L.sectors) +
+      '<div class="story"><p id="cap" class="cap" aria-live="polite"></p><div class="ctl"><button type="button" id="nx" class="btn">Next step</button><button type="button" id="sk" class="btn ghost">Skip animation</button></div></div>' + byIndexHtml(L.funnel) + '</section>' + sectorHtml(L.sectors) +
       '<div class="ixs" tabindex="0" role="region" aria-label="Index moves today">' + chips + '</div><div class="tabs" role="tablist">' + tabs + "</div>" + body;
     sectorWire(L.sectors);
     var cv = document.getElementById("cv");
@@ -200,7 +210,7 @@
       if (!v) { res.innerHTML = ""; return; }
       var r = S.latest.lookup[v];
       if (!r) { res.innerHTML = '<p class="note">No scored data for "' + esc(v) + '" in the latest scan. It may be outside the universe or failed a data check.</p>'; return; }
-      res.innerHTML = '<div class="card fade"><span class="label">' + esc((r.i ? r.i + " | " : "") + (r.s || "")) + "</span><h2>" + esc(v) + " <span style=\"color:var(--muted);font-size:.5em\">" + esc(r.n) + '</span></h2><div class="meta"><span class="label">Last close ' + (r.c == null ? "n/a" : r.c.toFixed(2) + (r.cur ? " " + esc(r.cur) : "")) + '</span><span class="label">As of ' + esc(S.latest.asof) + "</span></div>" +
+      res.innerHTML = '<div class="card fade"><span class="label">' + esc((r.ix && r.ix.length > 1 ? r.ix.join(", ") + " | " : r.i ? r.i + " | " : "") + (r.s || "")) + "</span><h2>" + esc(v) + " <span style=\"color:var(--muted);font-size:.5em\">" + esc(r.n) + '</span></h2><div class="meta"><span class="label">Last close ' + (r.c == null ? "n/a" : r.c.toFixed(2) + (r.cur ? " " + esc(r.cur) : "")) + '</span><span class="label">As of ' + esc(S.latest.asof) + "</span></div>" +
         spark(r.spark) + '<div class="hzs">' + hzCard("Mispricing", r.mp, true) + hzCard("Short-term", r.st) + hzCard("Swing", r.sw) + '</div><p class="note">Mechanical rules on past data, not a forecast. Not investment advice.</p></div>';
     }
     q.addEventListener("input", function () { show(q.value); });

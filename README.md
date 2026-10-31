@@ -5,7 +5,7 @@ A daily scan of global stock indexes that finds stocks that look mispriced, rank
 **Not investment advice.** Scores are mechanical rules on valuation, price and volume. They are not forecasts, and nothing here is a recommendation to trade. Data comes from Yahoo Finance and can be delayed or wrong.
 
 ## What it does
-- **Universe:** the S&P 500 plus 8 to 15 of the largest names from each of 12 other indexes; Russell 2000, Dow and Nasdaq 100 levels shown (see `scanner/universe.py`; this line is the one to update when the universe changes).
+- **Universe:** the S&P 500, Nasdaq 100 and Dow, the Russell 2000 (its real constituents, about 1,900 US stocks from the iShares IWM holdings file, not just the index level), plus 8 to 15 of the largest names from each of the other major indexes (see `scanner/universe.py`; this line is the one to update when the universe changes).
 - **Daily pass:** every weekday after the close each stock in the universe goes through data checks, a valuation model and a handful of plain price rules, then the strongest bullish and bearish setups are ranked. Every call is logged and graded against the S&P 500, in public (same wording as the site's opening line).
 - **Three views of every stock:**
   - **Mispricing** (-100 to +100): valuation vs sector peers (P/E, EV/EBITDA, P/B, FCF yield), quality, the analyst consensus gap and stretch vs the recent move, with a plain "why". With an Anthropic key, Claude writes a thesis with catalysts and risks from the numbers and headlines.
@@ -14,6 +14,13 @@ A daily scan of global stock indexes that finds stocks that look mispriced, rank
 - **Labels:** every call is **Bullish**, **Bearish** or **Neutral**. (Older logs used BUY/SELL/WATCH; those still load and map to the new names.)
 - **Funnel:** universe, stocks with data, passed data checks (history, freshness, liquidity), scored, picks.
 - **Track record:** every Bullish or Bearish call is logged and graded vs SPY.
+
+## Russell 2000 coverage
+- **Constituents:** each scan downloads the iShares IWM holdings CSV (equities only; cash, futures, money market and non-US lines dropped; `BRK.B` becomes `BRK-B`) and caches it to `data/universe/russell2000.csv` with the file's as-of date. If the download fails or the file looks wrong (under 1,000 equities, or not a CSV), the committed cache is used and the old file is never overwritten.
+- **Overlaps:** a stock in several indexes is scanned once and keeps every index tag. The funnel shows each index's counts (a stock in two indexes counts in both).
+- **Filters unchanged:** 252 bars of history, fresh within 5 days, 20-day average dollar volume of at least $1M, sane values. Illiquid small caps drop out and show in the "dropped" counts. Fundamentals are fetched only for names that pass, to keep the run short.
+- **Run time (estimate, unmeasured on live Yahoo):** about 2,600 tickers in batches of 250 (threaded, 60 s timeout per call, one retry, 25 minute total budget), then about 2,300 fundamentals calls with 16 workers. Expect 10 to 20 minutes nightly; the workflow stops at 45. A synthetic 2,100-stock offline scan runs in under 30 seconds, so the engine itself is not the bottleneck; Yahoo is.
+- **Site data:** about 1KB per stock in `site/data/latest.json`, so roughly 2.5MB with the Russell 2000 (limit in tests is 3MB; the host serves it gzipped).
 
 ## How calls are graded
 - **Entry is the next trading day's close** after the signal date, never the signal's own close. SPY uses the same entry day.
