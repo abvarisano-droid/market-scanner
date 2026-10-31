@@ -9,7 +9,7 @@
   "top_n": 15
  },
  "grading": {
-  "min_days": 21,
+  "min_days": 60,
   "windows": [
    5,
    20,

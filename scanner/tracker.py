@@ -7,7 +7,8 @@ technical rules, called a "lens") is logged with the signal date. Grading rules:
   the signal's own close). The benchmark (SPY) uses the same entry day.
 * Windows are 5, 20 and 60 trading days counted from that entry close.
 * A Bullish call wins by beating SPY over the window, a Bearish call by lagging it.
-* Under 21 trading days of history the whole record is "still noise".
+* Under 60 trading days of history the whole record is "still noise".
+* data/picks.csv is append-only and hash-chained (see calllog.py).
 * Rows logged before this rule existed (entry_rule blank) keep the old same-day
   entry so history is not rewritten. Old BUY/SELL/WATCH values load as
   Bullish/Bearish/Neutral.
@@ -19,6 +20,7 @@ from pathlib import Path
 
 import pandas as pd
 
+from . import calllog
 from .labels import BEARISH, BULLISH, normalize, sign
 
 LEDGER = Path(__file__).resolve().parent.parent / "data" / "picks.csv"
@@ -26,8 +28,9 @@ COLS = ["date", "ticker", "index", "call", "confidence", "entry", "bench_entry",
         "source", "lens", "score", "entry_rule", "run_id"]
 HORIZONS = {"5d": 5, "20d": 20, "60d": 60}
 LENSES = ("mispricing", "short_term", "swing")
-MIN_DAYS = 21
+MIN_DAYS = 60  # "still noise" until the log covers 60 trading days (the longest grading window)
 NEXT_CLOSE = "next_close"
+DI, TI, LI, RI = (COLS.index(c) for c in ("date", "ticker", "lens", "run_id"))
 
 
 def load() -> pd.DataFrame:
@@ -49,7 +52,6 @@ def log_picks(picks: list[dict], bench_price: float, today=None, run_id: str | N
     Rows are never replaced by a later run: only a rewrite inside the same run (same run_id) may replace its own rows.
     A call that an earlier run already logged for that date is kept as it was and the new copy is dropped."""
     today = pd.Timestamp(today or date.today()).normalize()
-    led = load()
     rows = []
     for p in picks:
         call = normalize(p["call"])
@@ -61,17 +63,22 @@ def log_picks(picks: list[dict], bench_price: float, today=None, run_id: str | N
                      "source": p.get("source"), "lens": p.get("lens", "mispricing"), "score": p.get("score"),
                      "entry_rule": NEXT_CLOSE, "run_id": run_id})
     new = pd.DataFrame(rows, columns=COLS)
-    if not led.empty and not new.empty:
-        key = set(zip(new["ticker"], new["lens"]))
-        in_key = pd.Series([(t, l) in key for t, l in zip(led["ticker"], led["lens"])], index=led.index)
-        mine = led["run_id"].notna() & (led["run_id"] == run_id) if run_id else pd.Series(False, index=led.index)
-        led = led[~((led["date"] == today) & in_key & mine)]  # same-run rewrite only
-        kept = set(zip(led.loc[led["date"] == today, "ticker"], led.loc[led["date"] == today, "lens"]))
-        new = new[[(t, l) not in kept for t, l in zip(new["ticker"], new["lens"])]]  # earlier runs win
-    led = pd.concat([led, new], ignore_index=True) if not led.empty else new
-    LEDGER.parent.mkdir(parents=True, exist_ok=True)
-    led.to_csv(LEDGER, index=False)
-    return led
+    # Append-only and hash-chained (scanner/calllog.py): earlier rows are kept as their raw CSV text so their chain
+    # values never change. Nothing may be logged for a date earlier than the newest logged date.
+    old_rows = calllog.read_raw(LEDGER, COLS) if LEDGER.exists() else []
+    day = today.strftime("%Y-%m-%d")
+    if old_rows and day < max(r[DI] for r in old_rows):
+        raise ValueError(f"cannot log calls for {day}: the log already holds later dates (it is append-only)")
+    new_rows = calllog.read_raw(new.to_csv(index=False), COLS) if not new.empty else []
+    key = {(r[TI], r[LI]) for r in new_rows}
+    rid = str(run_id) if run_id else None
+    # same-run rewrite only: a later run (or a row with no run_id) is never replaced
+    old_rows = [r for r in old_rows
+                if not (rid and r[DI] == day and (r[TI], r[LI] or "mispricing") in key and r[RI] == rid)]
+    kept = {(r[TI], r[LI] or "mispricing") for r in old_rows if r[DI] == day}
+    new_rows = [r for r in new_rows if (r[TI], r[LI]) not in kept]  # earlier runs win
+    calllog.write_sealed(LEDGER, old_rows + new_rows, COLS)
+    return load()
 
 
 def _naive(s: pd.Series) -> pd.Series:
