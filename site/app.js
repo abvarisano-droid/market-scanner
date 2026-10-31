@@ -178,7 +178,7 @@
       '<div class="story"><p id="cap" class="cap" aria-live="polite"></p><div class="ctl"><button type="button" id="nx" class="btn">Next step</button><button type="button" id="sk" class="btn ghost">Skip animation</button></div></div>' + byIndexHtml(L.funnel) + '</section>' + sectorHtml(L.sectors) +
       '<div class="ixs" tabindex="0" role="region" aria-label="Index moves today">' + chips + '</div><div class="tabs" role="tablist">' + tabs + "</div>" + body;
     sectorWire(L.sectors);
-    requestAnimationFrame(function () { app.classList.remove("boot"); });
+    requestAnimationFrame(function () { app.classList.remove("boot"); app.removeAttribute("aria-busy"); });
     if (window.V5) V5.changes(app);
     var cv = document.getElementById("cv");
     funnel(cv, f, [].slice.call(app.querySelectorAll(".stage .n")), [].slice.call(app.querySelectorAll(".stage")));
@@ -206,7 +206,7 @@
       app.classList.remove("boot");
       app.innerHTML = '<section class="hero"><span class="label">Ticker lookup</span><h1>Look up <em>any</em> name.</h1><p class="lede" role="status">Loading every scored ticker...</p></section>';
       load("data/latest.json").then(function (d) { S.lk = d.lookup; if (/^#\/lookup/.test(location.hash)) lookup(sym); })
-        .catch(function () { app.innerHTML = '<section class="hero"><h1>Lookup <em>unavailable.</em></h1><p class="lede">The ticker file could not be loaded. Try again later. Not investment advice.</p></section>'; });
+        .catch(function () { if (!/^#\/lookup/.test(location.hash)) return; app.innerHTML = '<section class="hero"><h1>Lookup <em>unavailable.</em></h1><p class="lede">The ticker file could not be loaded. Try again later. Not investment advice.</p></section>'; });
       return;
     }
     var LK = S.lk, keys = Object.keys(LK).sort();
@@ -410,7 +410,7 @@
   function route() {
     cancelAnimationFrame(S.raf);
     var h = location.hash.replace(/^#\/?/, ""), parts = h.split("/"), pg = parts[0] || "home";
-    if (pg !== "home") app.classList.remove("boot");
+    if (pg !== "home") { app.classList.remove("boot"); app.removeAttribute("aria-busy"); }
     [].forEach.call(document.querySelectorAll("nav a"), function (a) { a.classList.toggle("on", a.getAttribute("data-nav") === pg); });
     try {
       if (pg === "stock" && window.V5) V5.stock(app, decodeURIComponent(parts[1] || ""));
@@ -420,6 +420,7 @@
       else if (pg === "longterm") { if (S.lt) longterm(); else loadLT(); }
       else home();
     } catch (e) {
+      app.classList.remove("boot"); app.removeAttribute("aria-busy");
       if (window.console) console.warn("view failed", pg, e);
       app.innerHTML = '<section class="hero"><h1>This view <em>hit a snag.</em></h1><p class="lede">Something in this page could not be drawn. Use the menu to open another view. Not investment advice.</p></section>';
     }
@@ -434,6 +435,7 @@
     var rt; window.addEventListener("resize", function () { clearTimeout(rt); rt = setTimeout(function () { if (!location.hash || location.hash === "#/") home(); }, 250); });
     route();
   }).catch(function () {
+    app.classList.remove("boot"); app.removeAttribute("aria-busy");
     app.innerHTML = '<section class="hero"><h1>Scan data <em>unavailable.</em></h1><p class="lede">The data files could not be loaded. Try again later. Not investment advice.</p></section>';
   });
 })();
