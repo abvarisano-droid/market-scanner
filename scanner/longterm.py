@@ -47,6 +47,7 @@ RULES = [
 
 
 FIN_NR = "Financial company: debt and EBITDA are not meaningful for banks, insurers and lenders"
+FIN_ROIC_NR = "Financial company: invested capital is mostly customer money for banks, insurers and lenders, so ROIC is not meaningful"
 SPLIT_NR = "Share count and price disagree (possible split since the last 10-K)"
 SMALL_EBITDA_NR = "EBITDA too small to be meaningful"
 MIN_CAP_VS_REV = 0.10  # invested capital under 10% of revenue: ROIC proxy is not meaningful
@@ -243,7 +244,7 @@ def extract(facts: dict, sector: str | None = None) -> dict | None:
     cash = _at(series(facts, TAGS["cash"], "instant"), anchor)
     roic = None
     if financial:  # banks and insurers often report no operating income line: say why ROIC is missing either way
-        out["nr"]["roic"] = FIN_NR
+        out["nr"]["roic"] = FIN_ROIC_NR
     elif o0 and eq:
         tax = _at(series(facts, TAGS["tax"], "duration"), anchor)
         pre = _at(series(facts, TAGS["pretax"], "duration"), anchor)
@@ -256,7 +257,9 @@ def extract(facts: dict, sector: str | None = None) -> dict | None:
         elif r0 and r0["val"] > 0 and cap < MIN_CAP_VS_REV * r0["val"]:
             out["nr"]["roic"] = "Invested capital is tiny next to revenue, so the ratio is not meaningful"
         elif cap > 0:
-            roic = _m(o0["val"] * (1 - rate) / cap, o0["accn"], aa, rate=round(rate, 3))
+            # cr = invested capital / revenue, shipped so the offline guard can apply the same rule (None: no revenue)
+            cr = round(cap / r0["val"], 4) if r0 and r0["val"] > 0 else None
+            roic = _m(o0["val"] * (1 - rate) / cap, o0["accn"], aa, rate=round(rate, 3), cr=cr)
     out["roic"] = roic
 
     # share count change over 2 years (diluted weighted average, both ends from the newest filing so splits line up)

@@ -63,12 +63,15 @@ def _coverage(rows: list[dict]) -> dict:
 
 
 def _capital_ok(roic: dict, om: dict | None) -> bool:
-    """True when the shipped numbers show invested capital of at least 10% of revenue (the exact build rule).
+    """True when invested capital is at least 10% of revenue (the exact build rule), from the shipped numbers.
 
-    ROIC = op income x (1 - rate) / capital and op margin = op income / revenue for the same 10-K, so
-    capital / revenue = op margin x (1 - rate) / ROIC. Without an op margin the offline guard cannot tell,
-    so it falls back to treating ROIC over 100% as not meaningful. A small tolerance absorbs the 4-decimal rounding.
+    Rows built since the capital ratio was shipped carry roic["cr"] (capital / revenue, or None when the 10-K had no
+    revenue, in which case the exact build applies no capital check either). Older rows fall back to
+    op margin x (1 - rate) / ROIC, which equals capital / revenue for the same 10-K; with neither, the guard cannot
+    tell and treats ROIC over 100% as not meaningful. A small tolerance absorbs the 4-decimal rounding.
     """
+    if "cr" in roic:
+        return roic["cr"] is None or roic["cr"] >= lt.MIN_CAP_VS_REV * 0.98
     if not om or om.get("v") is None or om["v"] <= 0 or roic["v"] <= 0:
         return False
     return om["v"] * (1 - roic.get("rate", 0.21)) / roic["v"] >= lt.MIN_CAP_VS_REV * 0.98
@@ -79,8 +82,9 @@ def reguard(data: dict, latest: dict | None = None) -> dict:
 
     Used when the cache is not available (offline). It works from the numbers shipped in each row, so two rules are
     approximations of the exact build-time ones: a market cap check from FCF / FCF yield (or EV less debt), and
-    ROIC over 100% is kept only when the shipped op margin, tax rate and ROIC imply invested capital of at least 10% of
-    revenue (the exact rule); otherwise it stands in for negative equity or tiny invested capital. The weekly SEC refresh
+    ROIC over 100% is kept only when the shipped capital ratio (roic["cr"], or op margin, tax rate and ROIC on older rows)
+    shows invested capital of at least 10% of revenue (the exact rule); otherwise it stands in for negative equity or
+    tiny invested capital. The weekly SEC refresh
     recomputes everything exactly and replaces this output.
     """
     latest = latest or json.loads((ROOT / "site" / "data" / "latest.json").read_text())
@@ -88,9 +92,11 @@ def reguard(data: dict, latest: dict | None = None) -> dict:
         nr = dict(r.get("nr") or {})
         fin = (r.get("s") or "") == "Financial Services"
         if fin:
-            for k in ("debt_ebitda", "ev_ebitda", "roic"):
+            for k in ("debt_ebitda", "ev_ebitda"):
                 if r.pop(k, None) is not None or k not in nr:
                     nr[k] = lt.FIN_NR
+            r.pop("roic", None)
+            nr["roic"] = lt.FIN_ROIC_NR
         ref = latest["lookup"].get(r["t"], {}).get("mc")
         fcf, fy, de, ev = (r.get("fcf_margin") or {}).get("f"), r.get("fcf_yield"), r.get("debt_ebitda"), r.get("ev_ebitda")
         calc = None
