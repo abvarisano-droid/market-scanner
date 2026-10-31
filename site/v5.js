@@ -100,7 +100,7 @@
         '<p class="lede">What the scanner currently says in each view, how its calls on this name have changed, and how they graded.</p>' +
         '<p class="v5link"><a class="btn ghost" href="#/lookup/' + encodeURIComponent(t) + '">Open in lookup</a></p></section>' +
         '<section><h2>Current call by view</h2><div class="hzs">' + cur + "</div></section>" +
-        "<section><h2>Call and score history</h2><p class=\"note\" style=\"margin-top:6px\">" + n + " logged date" + (n === 1 ? "" : "s") + (n === 1 ? ". Only one scan so far, so there is no trend to show yet." : ".") + '</p><div class="twrap"><div class="tw" tabindex="0" role="region" aria-label="Call history"><table><tbody>' + hist + "</tbody></table></div></div></section>" +
+        "<section><h2>Call and score history</h2><p class=\"note\" style=\"margin-top:6px\">" + n + " logged date" + (n === 1 ? "" : "s") + (n === 1 ? ". Only one scan so far, so there is no trend to show yet." : ".") + '</p><div class="twrap hist"><div class="tw" tabindex="0" role="region" aria-label="Call history"><table><tbody>' + hist + "</tbody></table></div></div></section>" +
         "<section><h2>Graded calls</h2>" + gr + '<p class="note">Mechanical rules on past data, not a forecast. Not investment advice.</p></section>';
     }).catch(function () { root.innerHTML = '<section class="hero"><h1>Stock data <em>unavailable.</em></h1><p class="lede">Not investment advice.</p></section>'; });
   }
