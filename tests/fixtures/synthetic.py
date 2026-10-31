@@ -89,8 +89,10 @@ def fake_news(t, limit=8):
 
 def patch_engine(monkeypatch, tmp_path):
     """Point the engine at fake data and a temp folder. No network."""
-    from scanner import data, pipeline, tracker
+    from scanner import data, pipeline, tracker, universe
     monkeypatch.setattr(tracker, "LEDGER", tmp_path / "picks.csv")
+    # never scan the real committed Russell 2000 list in tests (about 1,900 tickers); a test that needs it writes its own
+    monkeypatch.setattr(universe, "RUSSELL_CACHE", tmp_path / "russell2000.csv")
     monkeypatch.setattr(pipeline, "LATEST", tmp_path / "latest_scan.json")
     monkeypatch.setattr(pipeline, "ROOT", tmp_path)
     monkeypatch.setattr(data, "prices", fake_prices)
