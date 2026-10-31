@@ -1,6 +1,7 @@
 """Refresh data/charts.json (3 year candles for every called ticker) without a full scan.
 
-    python scripts/build_charts.py
+    python scripts/build_charts.py           # fresh download
+    python scripts/build_charts.py --refan   # offline: recompute the volatility range in data/charts.json
 
 The nightly scan does this itself (scanner.pipeline); this is for a one-off refresh. Real Yahoo
 Finance bars only, the same fetcher the scan uses. Then run scripts/export_site.py.
@@ -17,6 +18,10 @@ sys.path.insert(0, str(ROOT))
 from scanner import charts  # noqa: E402
 
 if __name__ == "__main__":
+    if "--refan" in sys.argv:
+        out = charts.save(charts.refan(charts.load()))
+        print("volatility range recomputed in", out)
+        sys.exit(0)
     scan = json.loads((ROOT / "data" / "latest_scan.json").read_text())
     called = sorted({r["ticker"] for r in scan.get("ledger") or []})
     cur = {r["ticker"]: r.get("currency") for r in scan["table"] if isinstance(r.get("currency"), str)}

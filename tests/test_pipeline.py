@@ -1,5 +1,5 @@
-import json
 """Offline end-to-end test with fake market data. No network."""
+import json
 import pandas as pd
 
 from scanner import pipeline, tracker, universe

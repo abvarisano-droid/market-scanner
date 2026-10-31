@@ -22,13 +22,13 @@ def ohlc(close, start="2023-11-01"):
     return pd.DataFrame({"Open": c * 0.995, "High": c * 1.01, "Low": c * 0.99, "Close": c, "Volume": 1e6}, index=idx)
 
 
-def test_fan_constant_growth_has_no_spread():
-    # 20% a year, every day the same: zero volatility, so all three paths meet at +20%
+def test_fan_is_centered_on_no_change_even_for_a_steady_riser():
+    # 20% a year, every day the same: zero volatility, and the range must not carry the past trend forward
     c = 100 * np.exp(np.log(1.2) / 252 * np.arange(600))
     f = charts.fan(pd.Series(c))
-    assert f["sigma"] == pytest.approx(0, abs=1e-6)
-    assert f["base_pct"] == pytest.approx(20.0, abs=0.1)
-    assert f["good_pct"] == f["base_pct"] == f["bad_pct"]
+    assert f["sigma"] == pytest.approx(0, abs=1e-6) and f["drift"] == 0
+    assert f["up_pct"] == f["flat_pct"] == f["down_pct"] == 0
+    assert f["flat"] == pytest.approx(c[-1], rel=1e-4)
 
 
 def test_fan_matches_hand_math_on_random_walk():
@@ -36,16 +36,22 @@ def test_fan_matches_hand_math_on_random_walk():
     lr = rng.normal(0.0003, 0.02, 760)
     c = pd.Series(50 * np.exp(np.cumsum(lr)))
     f = charts.fan(c)
-    lc = np.log(c)
-    sigma = lc.diff().dropna().std(ddof=1) * math.sqrt(252)
-    m = (lc - lc.shift(252)).dropna().median()
-    assert f["sigma"] == pytest.approx(sigma, abs=1e-4) and f["median_log"] == pytest.approx(m, abs=1e-4)
-    assert f["good_pct"] == pytest.approx(100 * (math.exp(m + sigma) - 1), abs=0.06)
-    assert f["bad_pct"] == pytest.approx(100 * (math.exp(m - sigma) - 1), abs=0.06)
-    assert f["bad_pct"] < f["base_pct"] < f["good_pct"] and f["bad_pct"] > -100
-    assert f["good"] == pytest.approx(c.iloc[-1] * (1 + f["good_pct"] / 100), rel=1e-3)
-    p = charts.path(100, m, sigma, 1)
-    assert p[0] == 100 and p[-1] == pytest.approx(100 * math.exp(m + sigma))
+    sigma = np.log(c).diff().dropna().std(ddof=1) * math.sqrt(252)
+    assert f["sigma"] == pytest.approx(sigma, abs=1e-4)
+    assert f["flat_pct"] == 0
+    assert f["up_pct"] == pytest.approx(100 * (math.exp(sigma) - 1), abs=0.06)
+    assert f["down_pct"] == pytest.approx(100 * (math.exp(-sigma) - 1), abs=0.06)
+    assert f["down_pct"] < 0 < f["up_pct"]
+    assert f["up"] == pytest.approx(c.iloc[-1] * (1 + f["up_pct"] / 100), rel=1e-3)
+    p = charts.path(100, sigma, 1)
+    assert p[0] == 100 and p[-1] == pytest.approx(100 * math.exp(sigma))
+
+
+def test_refan_recomputes_from_stored_sigma():
+    store = {"AAA": {"last": 200.0, "fan": {"sigma": 0.3, "median_log": 0.39, "base_pct": 47.9, "years": 3}}}
+    f = charts.refan(store)["AAA"]["fan"]
+    assert "base_pct" not in f and "median_log" not in f and f["flat"] == 200.0
+    assert f["up_pct"] == pytest.approx(100 * (math.exp(0.3) - 1), abs=0.06)
 
 
 def test_fan_needs_a_year_of_history():

@@ -1,13 +1,14 @@
 """Compact price charts for called tickers: 3 years of candles, 50 and 200 day averages, and a
-volatility fan twelve months out.
+one-year volatility range.
 
-The fan is an illustration from the stock's own past volatility, not a forecast:
-  sigma = standard deviation of daily log returns over the history, times sqrt(252)
-  m     = median of the rolling 252 trading day log returns over the history
-  Base     = exp(m) - 1
-  Good year = exp(m + sigma) - 1
-  Bad year  = exp(m - sigma) - 1
-Each path is drawn as close * exp(m * t + k * sigma * sqrt(t)) for t in years (k = +1, 0, -1).
+The range is an illustration from the stock's own past volatility, not a forecast. It is centered
+on no change (zero drift) so it never implies an expected return or a price level to aim at:
+  sigma = standard deviation of daily log returns over the history, times sqrt(252), which is the
+          usual estimate of one standard deviation of the stock's yearly log moves
+  Flat  = 0%   (DRIFT = 0)
+  Upper = exp(+sigma) - 1
+  Lower = exp(-sigma) - 1
+Each path is drawn as close * exp(DRIFT * t + k * sigma * sqrt(t)) for t in years (k = +1, 0, -1).
 
 Candles are daily for the last DAILY_BARS sessions and weekly (Friday weeks) before that so each
 file stays small. The full daily close series ("dc") ships too, so the page computes the 50 and
@@ -32,7 +33,8 @@ PERIOD = "3y"
 DAILY_BARS = 126       # about six months of daily candles
 YEAR = 252             # trading days in a year
 MIN_BARS = YEAR + 20   # need a bit more than a year of history to draw a fan
-LEVELS = (("good", 1.0, "Good year"), ("base", 0.0, "Base"), ("bad", -1.0, "Bad year"))
+DRIFT = 0.0           # no drift: the range is centered on the last close, never on a past return
+LEVELS = (("up", 1.0, "Upper"), ("flat", 0.0, "Flat"), ("down", -1.0, "Lower"))
 
 
 def _sig(x: float, n: int = 5) -> float:
@@ -43,29 +45,42 @@ def _sig(x: float, n: int = 5) -> float:
     return round(float(x), max(d, 0)) if d > 0 else float(round(x, d))
 
 
+def levels(last: float, sigma: float) -> dict:
+    """Upper / Flat / Lower one year out from the last close and a yearly sigma (zero drift)."""
+    out = {"sigma": round(sigma, 4), "drift": DRIFT}
+    for key, k, _ in LEVELS:
+        g = math.exp(DRIFT + k * sigma) - 1
+        out[key + "_pct"] = round(100 * g, 1)
+        out[key] = _sig(last * (1 + g))
+    return out
+
+
 def fan(close: pd.Series) -> dict | None:
-    """Good year / Base / Bad year moves from past daily closes. None if under MIN_BARS of history."""
+    """One-year volatility range from past daily closes. None if under MIN_BARS of history."""
     c = pd.Series(close, dtype=float).dropna()
     c = c[c > 0]
     if len(c) < MIN_BARS:
         return None
     lr = np.log(c).diff().dropna()
     sigma = float(lr.std(ddof=1) * math.sqrt(YEAR))
-    annual = (np.log(c) - np.log(c.shift(YEAR))).dropna()
-    m = float(annual.median())
-    out = {"sigma": round(sigma, 4), "median_log": round(m, 4), "years": round(len(lr) / YEAR, 2),
-           "windows": int(len(annual))}
-    last = float(c.iloc[-1])
-    for key, k, _ in LEVELS:
-        g = math.exp(m + k * sigma) - 1
-        out[key + "_pct"] = round(100 * g, 1)
-        out[key] = _sig(last * (1 + g))
+    out = levels(float(c.iloc[-1]), sigma)
+    out["years"] = round(len(lr) / YEAR, 2)
     return out
 
 
-def path(last: float, m: float, sigma: float, k: float, steps: int = 12) -> list[float]:
-    """Points of one fan path at t = 0, 1/steps, ..., 1 years."""
-    return [last * math.exp(m * (i / steps) + k * sigma * math.sqrt(i / steps)) for i in range(steps + 1)]
+def refan(store: dict) -> dict:
+    """Recompute every stored range with the current formula from its stored sigma and last close.
+    Offline: no download, so committed files can be regenerated from committed data."""
+    for p in store.values():
+        f = p.get("fan")
+        if f and f.get("sigma") is not None and p.get("last"):
+            p["fan"] = {**levels(float(p["last"]), float(f["sigma"])), "years": f.get("years")}
+    return store
+
+
+def path(last: float, sigma: float, k: float, steps: int = 12) -> list[float]:
+    """Points of one range path at t = 0, 1/steps, ..., 1 years (zero drift)."""
+    return [last * math.exp(DRIFT * (i / steps) + k * sigma * math.sqrt(i / steps)) for i in range(steps + 1)]
 
 
 def _naive(idx) -> pd.DatetimeIndex:

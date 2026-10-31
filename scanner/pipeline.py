@@ -144,9 +144,9 @@ def run(indexes: list[str] | None = None, top_n: int = TOP_N, live_constituents:
     try:  # 3 year candles for every called ticker: one extra batched download of about 70 names
         called = sorted(set(led["ticker"])) if ledger_rows else []
         cur = {t: table.loc[t, "currency"] for t in called if t in table.index and "currency" in table}
-        if called:
-            charts.save(charts.collect(called, currencies={k: v for k, v in cur.items() if isinstance(v, str)}),
-                        ROOT / "data" / "charts.json")
+        got = charts.collect(called, currencies={k: v for k, v in cur.items() if isinstance(v, str)}) if called else {}
+        if got:  # an empty download keeps the previous file instead of wiping every chart
+            charts.save(got, ROOT / "data" / "charts.json")
     except Exception as exc:  # charts are optional; the scan and ledger never depend on them
         log.warning("charts step failed (%s); keeping the previous data/charts.json", exc)
 

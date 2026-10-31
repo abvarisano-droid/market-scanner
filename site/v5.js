@@ -58,19 +58,19 @@
   }
 
 
-  /* ---------- price chart: 3 years of candles, chosen layers, volatility fan ----------
+  /* ---------- price chart: 3 years of candles, chosen layers, volatility cone ----------
      Spec: main plot 320px (<760) / 460px (>=760); RSI and MACD panels 84px / 110px each.
      The box height is set from the layer state before data arrives, so loading never shifts layout.
      Palette: up #5fa97c, down #cb5d46, 50d #d4af37, 200d #9c8fd0, Bollinger #6fa8c8, grid #1c1a14.
-     Type: mono 10px axis (11px desktop), mono 11px fan labels (12px desktop).
-     Motion: fan fades in, opacity only, 700ms cubic-bezier(.2,.8,.2,1), 250ms delay. Reduced motion: none.
+     Type: mono 10px axis (11px desktop), mono 11px cone labels (12px desktop).
+     Motion: cone fades in, opacity only, 700ms cubic-bezier(.2,.8,.2,1), 250ms delay. Reduced motion: none.
      Static fallback: the visually hidden table and the role=img summary carry the key numbers.
      Layer state lives in the URL hash (?on=...), never in storage. */
   var CH = {}, IND = null, indP = null, MON = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
-  var LAYERS = [["vol", "Volume"], ["ma50", "50 day MA"], ["ma200", "200 day MA"], ["bb", "Bollinger (20, 2)"], ["rsi", "RSI (14)"],
-    ["macd", "MACD (12, 26, 9)"], ["hl", "52-week high and low"], ["fan", "Scenario fan"], ["earn", "Earnings date"]];
+  var LAYERS = [["vol", "Volume"], ["ma50", "50-day SMA"], ["ma200", "200-day SMA"], ["bb", "Bollinger Bands (20, 2)"], ["rsi", "RSI (14)"],
+    ["macd", "MACD (12, 26, 9)"], ["hl", "52-week range"], ["fan", "Volatility cone (\u00b11\u03c3)"], ["earn", "Next earnings"]];
   var DEF = ["ma50", "ma200", "fan"], STATS = ["Last close", "1 year", "52-week range", "Yearly volatility", "Next event"];
-  var COL = { up: "#5fa97c", dn: "#cb5d46", m50: "#d4af37", m200: "#9c8fd0", bb: "#6fa8c8", good: "#5fa97c", base: "#ebe6d8", bad: "#cb5d46" };
+  var COL = { up: "#5fa97c", dn: "#cb5d46", m50: "#d4af37", m200: "#9c8fd0", bb: "#6fa8c8", up1: "#5fa97c", flat: "#ebe6d8", dn1: "#cb5d46" };
   function getChart(t) {
     if (!CH[t]) CH[t] = fetch("data/charts/" + encodeURIComponent(t) + ".json").then(function (r) { if (!r.ok) throw new Error("chart"); return r.json(); });
     return CH[t];
@@ -134,9 +134,10 @@
     var vals = p.l.concat(p.h).filter(function (v) { return v != null && v > 0; }), keep = function (arr) { arr.forEach(function (v) { if (v != null && v > 0) vals.push(v); }); };
     if (st.has("ma50")) keep(I.m50); if (st.has("ma200")) keep(I.m200); if (st.has("bb")) { keep(I.bbu); keep(I.bbl); } if (st.has("hl")) keep([p.hi52, p.lo52]);
     var paths = [];
-    if (f) [["good", 1, "Good year"], ["base", 0, "Base"], ["bad", -1, "Bad year"]].forEach(function (s) {
-      var pts = []; for (var i = 0; i <= 12; i++) { var t = i / 12; pts.push(p.last * Math.exp(f.median_log * t + s[1] * f.sigma * Math.sqrt(t))); }
-      keep(pts); paths.push({ name: s[2], col: COL[s[0]], pts: pts, pct: f[s[0] + "_pct"], lvl: f[s[0]] });
+    if (f) [["up", 1, "+1\u03c3", "up1"], ["flat", 0, "No change", "flat"], ["down", -1, "-1\u03c3", "dn1"]].forEach(function (s) {
+      /* zero drift: the cone is centered on the last close, plus and minus one yearly standard deviation */
+      var pts = []; for (var i = 0; i <= 12; i++) { var t = i / 12; pts.push(p.last * Math.exp(s[1] * f.sigma * Math.sqrt(t))); }
+      keep(pts); paths.push({ name: s[2], col: COL[s[3]], pts: pts, pct: f[s[0] + "_pct"], lvl: f[s[0]], k: s[1] });
     });
     var lo = Math.log(Math.min.apply(null, vals)), hi = Math.log(Math.max.apply(null, vals)), pad = (hi - lo) * 0.06 || 0.05;
     lo -= pad; hi += pad;
@@ -225,7 +226,7 @@
       });
       spread(tags, wide ? 34 : 28, padT + 12, padT + pph - 16).forEach(function (t) {
         var s = t.s, ty = t.y, xt = wide ? xEnd + 10 : xEnd - 6, anc = wide ? "" : ' text-anchor="end"';
-        fo.push('<text x="' + xt.toFixed(1) + '" y="' + (ty - 2).toFixed(1) + '" font-size="' + lf + '" class="cfl ch" fill="' + s.col + '"' + anc + ">" + (wide ? s.name.toUpperCase() : s.name.split(" ")[0]) + " " + sp(s.pct) + "</text>" +
+        fo.push('<text x="' + xt.toFixed(1) + '" y="' + (ty - 2).toFixed(1) + '" font-size="' + lf + '" class="cfl ch" fill="' + s.col + '"' + anc + ">" + (s.k ? s.name + " " + sp(s.pct) : wide ? s.name.toUpperCase() : s.name) + "</text>" +
           '<text x="' + xt.toFixed(1) + '" y="' + (ty + (wide ? 13 : 11)).toFixed(1) + '" font-size="' + fs + '" class="ct ch"' + anc + ">" + fmt(s.lvl) + "</text>");
       });
       o.push('<g class="cfang">' + fo.join("") + "</g>");
@@ -269,14 +270,14 @@
   function summary(p, st) {
     var f = p.fan, I = calc(p), n = p.c.length, L = [p.t + " price from " + longDate(p.d0) + " to " + longDate(p.asof) + ", shown as " + (st.mode === "line" ? "a closing price line" : "weekly candles, then daily candles for the last six months") +
       ". Last close " + fmt(p.last) + (p.cur ? " " + p.cur : "") + (p.chg_1y == null ? "" : ", " + sp(p.chg_1y) + " over one year") + "."];
-    if (st.has("ma50")) L.push("50 day average " + fmt(I.m50[n - 1]) + ".");
-    if (st.has("ma200")) L.push("200 day average " + fmt(I.m200[n - 1]) + ".");
+    if (st.has("ma50")) L.push("50-day SMA " + fmt(I.m50[n - 1]) + ".");
+    if (st.has("ma200")) L.push("200-day SMA " + fmt(I.m200[n - 1]) + ".");
     if (st.has("bb")) L.push("Bollinger Bands " + fmt(I.bbl[n - 1]) + " to " + fmt(I.bbu[n - 1]) + ".");
     if (st.has("hl")) L.push("52-week high " + fmt(p.hi52) + ", low " + fmt(p.lo52) + ".");
     if (st.has("rsi") && I.rsi[n - 1] != null) L.push("RSI 14 at " + I.rsi[n - 1].toFixed(0) + ".");
     if (st.has("macd") && I.macd[n - 1] != null) L.push("MACD " + fmt(I.macd[n - 1]) + ", signal " + fmt(I.sig[n - 1]) + ".");
     if (st.has("earn") && p.event) L.push("Next earnings " + longDate(p.event.date) + ".");
-    if (st.has("fan") && f) L.push("Illustration from past volatility, not a forecast: Good year " + sp(f.good_pct) + " (" + fmt(f.good) + "), Base " + sp(f.base_pct) + " (" + fmt(f.base) + "), Bad year " + sp(f.bad_pct) + " (" + fmt(f.bad) + ").");
+    if (st.has("fan") && f) L.push("Volatility cone, an illustration from past volatility, not a forecast: centered on no change at " + fmt(p.last) + ", plus one standard deviation " + sp(f.up_pct) + " (" + fmt(f.up) + "), minus one standard deviation " + sp(f.down_pct) + " (" + fmt(f.down) + ").");
     return L.join(" ");
   }
   function table(p) {
@@ -294,14 +295,14 @@
     plot.innerHTML = '<svg viewBox="0 0 ' + W + " " + r.H + '" width="' + W + '" height="' + r.H + '" role="img" aria-label="' + esc(summary(p, st)) + '">' + r.svg + "</svg>";
   }
   function chipRow(st) {
-    var seg = [["candles", "Candles"], ["line", "Line"]].map(function (m) { return '<button type="button" class="tg seg" data-mode="' + m[0] + '" aria-pressed="' + (st.mode === m[0]) + '">' + m[1] + "</button>"; }).join("");
+    var seg = [["candles", "Candlesticks"], ["line", "Line"]].map(function (m) { return '<button type="button" class="tg seg" data-mode="' + m[0] + '" aria-pressed="' + (st.mode === m[0]) + '">' + m[1] + "</button>"; }).join("");
     return '<div class="tgs" role="group" aria-label="Chart layers"><span class="tgseg" role="group" aria-label="Price style">' + seg + "</span>" +
-      LAYERS.map(function (l) { return '<button type="button" class="tg" data-k="' + l[0] + '" aria-pressed="' + st.has(l[0]) + '">' + l[1] + "</button>"; }).join("") + "</div>";
+      LAYERS.map(function (l) { return '<button type="button" class="tg" data-k="' + l[0] + '" aria-pressed="' + st.has(l[0]) + '"><span>' + l[1].replace("\u03c3", '<span style="text-transform:none">\u03c3</span>') + "</span></button>"; }).join("") + "</div>";
   }
   function chartBox(t) {
     var st = state();
     return '<div class="chartbox" data-t="' + esc(t) + '"><div class="cstats">' + STATS.map(function (l) { return '<div class="cs"><span class="label">' + l + "</span><b>&nbsp;</b></div>"; }).join("") + "</div>" + chipRow(st) +
-      '<div class="cplot" style="height:' + (dims(st).total + 28) + 'px"></div><p class="ccap"><strong>Illustration from past volatility, not a forecast.</strong> Base is the median one-year move across up to three years of daily closes. Good year and Bad year add and subtract one standard deviation of yearly moves (daily volatility times the square root of 252), so the fan widens with time. Candles are weekly, then daily for the last six months; indicators are computed on daily closes. Prices from Yahoo Finance daily bars, split and dividend adjusted. Not investment advice.</p><div class="cdata"></div></div>';
+      '<div class="cplot" style="height:' + (dims(st).total + 28) + 'px"></div><p class="ccap"><strong>Illustration from past volatility, not a forecast.</strong> The volatility cone is centered on no change from the last close. Its edges are plus and minus one standard deviation of the stock\u2019s own yearly moves (daily volatility over up to three years times the square root of 252), so it widens with time. It is a range of typical moves, not an expected price. Candles are weekly, then daily for the last six months; indicators are computed on daily closes. Prices from Yahoo Finance daily bars, split and dividend adjusted. Not investment advice.</p><div class="cdata"></div></div>';
   }
   function wire(box) {
     [].forEach.call(box.querySelectorAll(".tg"), function (b) {
