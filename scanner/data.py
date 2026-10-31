@@ -111,9 +111,20 @@ def news(ticker: str, limit: int = 8) -> list[dict]:
     return out
 
 
-def earnings_dates(ticker: str) -> list:
-    """Published upcoming earnings date(s) from the Yahoo Finance calendar (may be empty or change)."""
-    import yfinance as yf
+def earnings_dates(ticker: str, timeout: float = 10) -> list:
+    """Published upcoming earnings date(s) from the Yahoo Finance calendar (may be empty or change).
 
-    cal = yf.Ticker(ticker).calendar or {}
+    yfinance's calendar call takes no timeout argument, so it runs in a worker thread and is
+    abandoned after `timeout` seconds (an empty list), so one slow ticker cannot stall the export."""
+    import yfinance as yf
+    from concurrent.futures import TimeoutError as FutTimeout
+
+    ex = ThreadPoolExecutor(max_workers=1)
+    try:
+        cal = ex.submit(lambda: yf.Ticker(ticker).calendar).result(timeout=timeout) or {}
+    except FutTimeout:
+        log.warning("earnings calendar for %s timed out after %ss", ticker, timeout)
+        return []
+    finally:
+        ex.shutdown(wait=False)
     return list(cal.get("Earnings Date") or []) if isinstance(cal, dict) else []
