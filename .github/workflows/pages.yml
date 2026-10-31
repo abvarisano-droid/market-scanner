@@ -5,7 +5,7 @@ on:
     branches: [main]
     paths: ["site/**"]
   workflow_run:
-    workflows: ["Daily scan", "Weekly SEC refresh"]
+    workflows: ["Daily scan", "Weekly SEC refresh", "Scan watchdog"]
     types: [completed]
   workflow_dispatch:
 
@@ -20,7 +20,8 @@ concurrency:
 
 jobs:
   deploy:
-    if: github.event_name != 'workflow_run' || (github.event.workflow_run.conclusion == 'success')
+    # Scan watchdog fails on purpose when a scan is missed, after committing watchdog.json, so deploy after it either way
+    if: github.event_name != 'workflow_run' || github.event.workflow_run.conclusion == 'success' || github.event.workflow_run.name == 'Scan watchdog'
     runs-on: ubuntu-latest
     environment:
       name: github-pages

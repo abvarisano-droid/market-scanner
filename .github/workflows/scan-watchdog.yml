@@ -1,7 +1,7 @@
 name: Scan watchdog
 on:
   schedule:
-    - cron: "7 13 * * 1-5"   # 13:07 UTC weekdays, after the 12:00 UTC deadline for the previous day's scan
+    - cron: "7 13 * * 1-6"   # 13:07 UTC Mon to Sat, after the 12:00 UTC deadline for the previous trading day (Saturday catches a missed Friday)
   workflow_dispatch:
 permissions:
   contents: write
