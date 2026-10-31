@@ -76,3 +76,39 @@ def test_evaluate_aligns_benchmark_by_date_not_position():
     ev = tr.evaluate(led, {"AAA": st}, bench)
     # entry idx[3]; 5d window ends idx[8]: stock flat 0%, benchmark flat 0% on the same dates
     assert abs(ev["ret_5d"].iloc[0]) < 1e-12 and abs(ev["alpha_5d"].iloc[0]) < 1e-12
+
+
+def test_scan_survives_stage_failures(tmp_path, monkeypatch):
+    """A bad ticker, a failing news step, tracker and report must be logged and skipped, never kill the run."""
+    import numpy as np
+    from scanner import data, news_ai
+    from tests.fixtures.synthetic import patch_engine
+    patch_engine(monkeypatch, tmp_path)
+
+    def nan_tail_prices(tickers, period="1y", n=300):
+        out = fake_prices(tickers, period, n)
+        for t in list(out)[:15]:
+            if t != "SPY":
+                out[t] = out[t].copy()
+                out[t].iloc[-1, :] = np.nan  # partial final bar: NaN close and volume
+        return out
+
+    monkeypatch.setattr(data, "prices", nan_tail_prices)
+    monkeypatch.setattr(news_ai, "analyze", lambda row, h: (_ for _ in ()).throw(RuntimeError("api down")))
+    monkeypatch.setattr(tracker, "evaluate", lambda *a, **k: (_ for _ in ()).throw(RuntimeError("boom")))
+    monkeypatch.setattr(pipeline, "write_report", lambda res: (_ for _ in ()).throw(RuntimeError("fmt")))
+    res = pipeline.run(live_constituents=False)
+    assert res["picks"] and all(p["thesis"] for p in res["picks"])
+    assert res["scorecard"]["status"] == "still noise" and res["ledger"] == []
+    assert (tmp_path / "latest_scan.json").exists()
+
+
+def test_report_handles_missing_numbers(tmp_path, monkeypatch):
+    monkeypatch.setattr(pipeline, "ROOT", tmp_path)
+    res = {"date": "2026-10-30", "indexes": [{"name": "X", "level": None, "chg_1d": None, "chg_1m": None,
+                                              "chg_3m": None, "pct_from_high": None}],
+           "picks": [{"ticker": "A", "call": "Bullish", "mispricing": None, "price": None}],
+           "technical": {"horizons": {"short_term": {"top_bull": [], "top_bear": []},
+                                      "swing": {"top_bull": [], "top_bear": []}}},
+           "movers": [], "scorecard": {}}
+    assert pipeline.write_report(res).exists()
