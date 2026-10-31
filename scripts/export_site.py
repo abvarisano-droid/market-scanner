@@ -129,6 +129,8 @@ def build_latest(scan: dict, sample: bool) -> dict:
                "c": c, "cur": m.get("currency") or None, "spark": spark}
         if num(m.get("marketCap"), 0):
             row["mc"] = num(m["marketCap"], 0)
+        if len(m.get("indexes") or []) > 1:
+            row["ix"] = m["indexes"]
         if m.get("mispricing") is not None:
             row["mp"] = {"score": m["mispricing"], "label": mp_label(m["mispricing"]),
                          "reasons": [plain(x) for x in (m.get("valuation_reasons") or [])[:TOP_REASONS]]}
@@ -223,12 +225,13 @@ def make_sample(tmp: Path) -> dict:
     """Run the real engine on synthetic data, then back-date the calls so the track record has rows."""
     from unittest import mock
 
-    from scanner import data, pipeline
+    from scanner import data, pipeline, universe
     from tests.fixtures import synthetic as syn
 
     with mock.patch.object(tracker, "LEDGER", tmp / "picks.csv"), mock.patch.object(pipeline, "LATEST", tmp / "latest_scan.json"), \
             mock.patch.object(pipeline, "ROOT", tmp), mock.patch.object(data, "prices", syn.fake_prices), \
             mock.patch.object(data, "fundamentals", syn.fake_fund), mock.patch.object(data, "news", syn.fake_news), \
+            mock.patch.object(universe, "russell_constituents", lambda live=True: ["AAPL", "MSFT"] + [f"RUT{i:03d}" for i in range(400)]), \
             mock.patch.dict("os.environ", {"ANTHROPIC_API_KEY": ""}):
         res = pipeline.run(live_constituents=False)
         led = tracker.load()

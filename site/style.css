@@ -180,3 +180,4 @@ nav{flex-wrap:wrap}
 .chip.bear{color:var(--bear)}
 .v5link{margin:14px 0 0}
 #v5-report table td,.v5link+.twrap td{vertical-align:top}
+.byix{margin-top:14px}.byix summary{cursor:pointer;padding:6px 0}.byix table{min-width:0}

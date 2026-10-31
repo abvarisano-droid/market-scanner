@@ -15,7 +15,8 @@ def test_committed_site_data_keys_and_label():
         assert lat["banner"].startswith("Sample data") and tr["banner"].startswith("Sample data")
     t, r = next(iter(lat["lookup"].items()))
     assert {"n", "c", "spark"} <= set(r) and len(r["spark"]) <= 60 and r["st"]["reasons"]
-    assert (SITE / "data/latest.json").stat().st_size < 1_500_000
+    # Limit raised from 1.5MB: the Russell 2000 adds ~1,800 lookup rows (~1KB each, ~2.5MB real). Hosts serve gzip (~4x smaller).
+    assert (SITE / "data/latest.json").stat().st_size < 3_000_000
     assert "Not investment advice" in lat["disclaimer"]
 
 

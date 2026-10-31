@@ -21,23 +21,49 @@ FUNDAMENTAL_FIELDS = [
 ]
 
 
-def prices(tickers: list[str], period: str = "1y") -> dict[str, pd.DataFrame]:
-    """Daily OHLCV per ticker."""
+CHUNK = 250            # tickers per yf.download call
+DOWNLOAD_TIMEOUT = 60  # seconds per call (passed to yfinance)
+DOWNLOAD_BUDGET = 25 * 60  # stop starting new chunks after this many seconds in total
+
+
+def _split(raw: pd.DataFrame, chunk: list[str]) -> dict[str, pd.DataFrame]:
+    out = {}
+    multi = isinstance(raw.columns, pd.MultiIndex)
+    for t in chunk:
+        try:
+            df = raw[t] if multi else raw
+            df = df.dropna(how="all")
+        except KeyError:
+            continue
+        if len(df) > 30:
+            out[t] = df
+    return out
+
+
+def prices(tickers: list[str], period: str = "1y", chunk_size: int = CHUNK,
+           budget: float = DOWNLOAD_BUDGET) -> dict[str, pd.DataFrame]:
+    """Daily OHLCV per ticker, downloaded in batches with threads, a per-call timeout and one retry.
+
+    A failed batch is logged and skipped (those tickers count as "no data"), and no new batch starts
+    once the total time budget is spent, so a slow Yahoo day cannot hang the nightly job.
+    """
     import yfinance as yf
 
     out: dict[str, pd.DataFrame] = {}
-    for i in range(0, len(tickers), 100):
-        chunk = tickers[i:i + 100]
-        raw = yf.download(chunk, period=period, interval="1d", group_by="ticker",
-                          auto_adjust=True, progress=False, threads=True)
-        for t in chunk:
+    start = time.monotonic()
+    for i in range(0, len(tickers), chunk_size):
+        chunk = tickers[i:i + chunk_size]
+        if time.monotonic() - start > budget:
+            log.warning("download budget spent, skipping %d tickers", len(tickers) - i)
+            break
+        for attempt in (1, 2):
             try:
-                df = raw[t] if len(chunk) > 1 else raw
-                df = df.dropna(how="all")
-                if len(df) > 30:
-                    out[t] = df
-            except KeyError:
-                continue
+                raw = yf.download(chunk, period=period, interval="1d", group_by="ticker", auto_adjust=True,
+                                  progress=False, threads=True, timeout=DOWNLOAD_TIMEOUT)
+                out.update(_split(raw, chunk))
+                break
+            except Exception as exc:
+                log.warning("batch %d-%d attempt %d failed: %s", i, i + len(chunk), attempt, exc)
     return out
 
 
@@ -58,7 +84,7 @@ def _info(ticker: str) -> dict:
     return row
 
 
-def fundamentals(tickers: list[str], workers: int = 8) -> pd.DataFrame:
+def fundamentals(tickers: list[str], workers: int = 16) -> pd.DataFrame:
     with ThreadPoolExecutor(workers) as ex:
         rows = list(ex.map(_info, tickers))
     return pd.DataFrame(rows, index=tickers)

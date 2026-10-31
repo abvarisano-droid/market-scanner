@@ -35,7 +35,8 @@ def _asof(price_map: dict[str, pd.DataFrame]) -> pd.Timestamp:
     return max(last).normalize()
 
 
-def build_table(price_map: dict[str, pd.DataFrame], fundamentals: pd.DataFrame, uni: dict[str, str]) -> pd.DataFrame:
+def build_table(price_map: dict[str, pd.DataFrame], fundamentals: pd.DataFrame, uni: dict[str, str],
+                tags: dict[str, list[str]] | None = None) -> pd.DataFrame:
     rows = []
     for t, df in price_map.items():
         try:
@@ -44,7 +45,7 @@ def build_table(price_map: dict[str, pd.DataFrame], fundamentals: pd.DataFrame, 
         except Exception as exc:  # one bad ticker must not kill the scan
             log.warning("skipping %s: signals failed (%s)", t, exc)
             continue
-        rows.append({"ticker": t, "index": uni.get(t), **tech})
+        rows.append({"ticker": t, "index": uni.get(t), "indexes": (tags or {}).get(t) or [uni.get(t)], **tech})
     table = pd.DataFrame(rows).set_index("ticker")
     table = table.join(fundamentals, how="left")
     return valuation.score(table)
@@ -69,20 +70,16 @@ def index_snapshot(price_map: dict[str, pd.DataFrame]) -> list[dict]:
 
 def run(indexes: list[str] | None = None, top_n: int = TOP_N, live_constituents: bool = True,
         max_tickers: int | None = None) -> dict:
-    uni = universe.full_universe(indexes, live=live_constituents)
+    tags = universe.universe_tags(indexes, live=live_constituents)
+    uni = {t: v[0] for t, v in tags.items()}
     tickers = list(uni)[:max_tickers] if max_tickers else list(uni)
     log.info("scanning %d stocks", len(tickers))
 
     price_map = data.prices(tickers + list(universe.INDEXES.values()) + [universe.BENCHMARK], period="2y")
     stock_prices = {t: price_map[t] for t in tickers if t in price_map}
-    try:
-        fund = data.fundamentals(list(stock_prices))
-    except Exception as exc:
-        log.warning("fundamentals failed (%s); scoring on prices only", exc)
-        fund = pd.DataFrame(index=list(stock_prices), columns=data.FUNDAMENTAL_FIELDS)
-    table = build_table(stock_prices, fund, uni)
 
-    # technical rules (short-term and swing) on the same price data, SPY as the market reference
+    # technical rules (short-term and swing) on the same price data, SPY as the market reference.
+    # The history, freshness and liquidity checks run first so illiquid names never cost a fundamentals call.
     bench_df = price_map[universe.BENCHMARK]
     bench = bench_df["Close"].dropna()
     asof = _asof(price_map)
@@ -90,6 +87,14 @@ def run(indexes: list[str] | None = None, top_n: int = TOP_N, live_constituents:
                                     technical.from_ohlcv(bench_df))
     tech["dropped"]["no data"] += len(tickers) - len(stock_prices)
     passed = set(tech["spark"])
+
+    checked = {t: df for t, df in stock_prices.items() if t in passed}
+    try:
+        fund = data.fundamentals(list(checked))
+    except Exception as exc:
+        log.warning("fundamentals failed (%s); scoring on prices only", exc)
+        fund = pd.DataFrame(index=list(checked), columns=data.FUNDAMENTAL_FIELDS)
+    table = build_table(checked, fund, uni, tags)
 
     # rank the most mispriced in both directions, only where we have real data
     eligible = table[(table["coverage"] >= MIN_COVERAGE) & table.index.isin(passed)]
@@ -138,7 +143,7 @@ def run(indexes: list[str] | None = None, top_n: int = TOP_N, live_constituents:
 
     result = {
         "date": asof.date().isoformat(),
-        "funnel": _funnel(uni, tickers, stock_prices, tech, len(eligible), len(picks)),
+        "funnel": _funnel(tags, tickers, stock_prices, tech, len(eligible), len(picks)),
         "spy_spark": [round(float(x), 2) for x in bench.tail(60)],
         "technical": {k: tech[k] for k in ("asof", "dropped", "horizons", "scores", "spark")},
         "indexes": index_snapshot(price_map),
@@ -158,13 +163,20 @@ def run(indexes: list[str] | None = None, top_n: int = TOP_N, live_constituents:
     return result
 
 
-def _funnel(uni, tickers, stock_prices, tech, n_scored, n_picks) -> dict:
+def _funnel(tags, tickers, stock_prices, tech, n_scored, n_picks) -> dict:
     base = {"universe": len(tickers), "with_data": len(stock_prices), "passed_checks": tech["passed_checks"]}
-    by_index: dict[str, int] = {}
+    # per index: a stock in two indexes counts once in each, so these can sum to more than the universe
+    stages: dict[str, dict] = {"universe": {}, "with_data": {}, "passed_checks": {}}
+    passed = set(tech["spark"])
     for t in tickers:
-        by_index[uni.get(t)] = by_index.get(uni.get(t), 0) + 1
+        for ix in tags.get(t) or [None]:
+            stages["universe"][ix] = stages["universe"].get(ix, 0) + 1
+            if t in stock_prices:
+                stages["with_data"][ix] = stages["with_data"].get(ix, 0) + 1
+            if t in passed:
+                stages["passed_checks"][ix] = stages["passed_checks"].get(ix, 0) + 1
     f = {"mispricing": {**base, "scored": n_scored, "picks": n_picks},
-         "by_index": by_index, "dropped": tech["dropped"]}
+         "by_index": stages["universe"], "by_index_stages": stages, "dropped": tech["dropped"]}
     for hz, h in tech["horizons"].items():
         f[hz] = {**base, "scored": h["scored"], "picks": len(h["top_bull"]) + len(h["top_bear"])}
     return f

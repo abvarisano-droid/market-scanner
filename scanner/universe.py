@@ -1,8 +1,11 @@
 """Index definitions and constituent universes (US + global)."""
 from __future__ import annotations
 
+import csv
 import io
 import logging
+import re
+from pathlib import Path
 
 import pandas as pd
 
@@ -87,7 +90,100 @@ def _wiki_constituents(name: str) -> list[str]:
     raise ValueError(f"no table with column {col}")
 
 
+# ---- Russell 2000 (iShares IWM holdings) ------------------------------------
+RUSSELL = "Russell 2000"
+RUSSELL_CACHE = Path(__file__).resolve().parent.parent / "data" / "universe" / "russell2000.csv"
+IWM_URL = ("https://www.ishares.com/us/products/239710/ishares-russell-2000-etf/1467271812596.ajax"
+           "?fileType=csv&fileName=IWM_holdings&dataType=fund")
+FETCH_TIMEOUT = 30
+MIN_RUSSELL = 1000  # a real pull has ~1,900+ US equities; anything far below is a bad file
+_TICKER = re.compile(r"^[A-Z]{1,5}(\.[A-Z])?$")
+
+
+def parse_ishares_holdings(text: str) -> tuple[str, list[dict]]:
+    """Parse an iShares holdings CSV into (as-of date ISO, equity rows).
+
+    Keeps US-listed USD equities only; drops cash, futures, money market and non-US lines.
+    Tickers are mapped to Yahoo format (BRK.B -> BRK-B). Raises ValueError if it is not a holdings CSV.
+    """
+    lines = text.lstrip("\ufeff").splitlines()
+    asof = ""
+    start = None
+    for i, line in enumerate(lines):
+        row = next(csv.reader([line]), [])
+        if row and row[0].strip().lower().startswith("fund holdings as of") and len(row) > 1:
+            asof = pd.to_datetime(row[1].strip(), errors="coerce")
+            asof = "" if pd.isna(asof) else asof.date().isoformat()
+        if row and row[0].strip() == "Ticker" and "Asset Class" in row:
+            start = i
+            break
+    if start is None:
+        raise ValueError("not an iShares holdings CSV")
+    rows = []
+    for r in csv.DictReader(lines[start:]):
+        if (r.get("Asset Class") or "").strip() != "Equity":
+            continue
+        if (r.get("Location") or "").strip() not in ("United States", ""):
+            continue
+        if (r.get("Currency") or "USD").strip() not in ("USD", ""):
+            continue
+        raw = (r.get("Ticker") or "").strip().upper()
+        if not _TICKER.match(raw):
+            continue
+        t = raw.replace(".", "-")
+        rows.append({"ticker": t, "name": (r.get("Name") or "").strip(), "sector": (r.get("Sector") or "").strip(),
+                     "weight": (r.get("Weight (%)") or "").strip()})
+    seen, out = set(), []
+    for r in rows:
+        if r["ticker"] not in seen:
+            seen.add(r["ticker"])
+            out.append(r)
+    return asof, out
+
+
+def write_russell_cache(asof: str, rows: list[dict], path: Path | None = None) -> Path:
+    path = path or RUSSELL_CACHE
+    path.parent.mkdir(parents=True, exist_ok=True)
+    pd.DataFrame(rows, columns=["ticker", "name", "sector", "weight"]).assign(asof=asof).to_csv(path, index=False)
+    return path
+
+
+def read_russell_cache(path: Path | None = None) -> tuple[str, list[str]]:
+    path = path or RUSSELL_CACHE
+    if not path.exists():
+        return "", []
+    df = pd.read_csv(path, dtype=str, keep_default_na=False)
+    return (df["asof"].iloc[0] if len(df) else ""), df["ticker"].tolist()
+
+
+def fetch_russell(path: Path | None = None) -> tuple[str, list[str]]:
+    """Download IWM holdings and refresh the cache. Raises on any problem; the old cache stays untouched."""
+    import requests
+
+    ua = {"User-Agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0 Safari/537.36"}
+    text = requests.get(IWM_URL, headers=ua, timeout=FETCH_TIMEOUT).text
+    asof, rows = parse_ishares_holdings(text)
+    if len(rows) < MIN_RUSSELL:
+        raise ValueError(f"only {len(rows)} equities parsed, refusing to overwrite the cache")
+    write_russell_cache(asof, rows, path)
+    return asof, [r["ticker"] for r in rows]
+
+
+def russell_constituents(live: bool = True) -> list[str]:
+    if live:
+        try:
+            return fetch_russell()[1]
+        except Exception as exc:
+            log.warning("live Russell 2000 holdings failed (%s), using cached list", exc)
+    asof, tickers = read_russell_cache()
+    if not tickers:
+        log.warning("no cached Russell 2000 list at %s: Russell 2000 stocks are skipped this run", RUSSELL_CACHE)
+    return tickers
+
+
 def constituents(name: str, live: bool = True) -> list[str]:
+    if name == RUSSELL:
+        return russell_constituents(live)
     if live and name in WIKI:
         try:
             return _wiki_constituents(name)
@@ -96,10 +192,20 @@ def constituents(name: str, live: bool = True) -> list[str]:
     return list(FALLBACK.get(name, []))
 
 
-def full_universe(indexes: list[str] | None = None, live: bool = True) -> dict[str, str]:
-    """Return {ticker: index_name}. First index listed wins for duplicates."""
-    out: dict[str, str] = {}
-    for name in indexes or list(FALLBACK):
+DEFAULT_INDEXES = list(FALLBACK) + [RUSSELL]
+
+
+def universe_tags(indexes: list[str] | None = None, live: bool = True) -> dict[str, list[str]]:
+    """Return {ticker: [index names]} in index order. A stock in two indexes keeps both tags."""
+    out: dict[str, list[str]] = {}
+    for name in indexes or DEFAULT_INDEXES:
         for t in constituents(name, live=live):
-            out.setdefault(t, name)
+            tags = out.setdefault(t, [])
+            if name not in tags:
+                tags.append(name)
     return out
+
+
+def full_universe(indexes: list[str] | None = None, live: bool = True) -> dict[str, str]:
+    """Return {ticker: primary index_name}. First index listed wins for the primary tag."""
+    return {t: tags[0] for t, tags in universe_tags(indexes, live).items()}
