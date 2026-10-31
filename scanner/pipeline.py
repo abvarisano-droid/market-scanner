@@ -103,7 +103,7 @@ def run(indexes: list[str] | None = None, top_n: int = 12, live_constituents: bo
         log.info("as-of %s is already in the ledger and is before today (holiday or stale data): not logging again", asof.date())
         led = prior
     else:
-        led = tracker.log_picks(picks + tech_calls, bench_at, today=asof)
+        led = tracker.log_picks(picks + tech_calls, bench_at, today=asof, run_id=_RUN_ID)
     hist = {t: df["Close"] for t, df in price_map.items()}
     missing = [t for t in led["ticker"].unique() if t not in hist]
     if missing:

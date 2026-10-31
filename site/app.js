@@ -321,7 +321,7 @@
       '<div class="c" role="img" aria-label="' + esc(noise ? "still noise" : "readable") + ", " + T.trading_days + " of " + T.min_days + ' trading days"><b>' + T.trading_days + '</b><span class="label">of ' + T.min_days + ' trading days</span><span class="label" style="color:var(--gold);margin-top:6px">' + (noise ? "still noise" : "readable") + "</span></div></div>" +
       '<div class="stats">' + stat("mispricing") + stat("short_term") + stat("swing") + '<div class="stat"><span class="label">Calls logged</span><div class="v">' + T.calls_logged.toLocaleString() + '</div><span class="label">' + T.pending + " pending</span></div>" +
       '<div class="stat"><span class="label">Rule</span><div class="v" style="font-size:18px">Nothing is hidden or removed after the fact.</div></div></div></div></section>' +
-      '<section><h2>Graded calls</h2><p class="lede" style="margin-top:6px">Most recent 40. Neutral names are never called. Results this early are not evidence of skill.</p>' + tbl + "</section>";
+      '<section><h2>Graded calls</h2><p class="lede" style="margin-top:6px">Most recent 40 of the latest 300 graded calls shown here. <a href="https://github.com/abvarisano-droid/market-scanner/blob/main/data/picks.csv" target="_blank" rel="noopener">Full ledger</a> (every call, logged once and never replaced by a later run). Neutral names are never called. Results this early are not evidence of skill.</p>' + tbl + "</section>";
     watchScroll("graded");
     var pr = document.getElementById("pr");
     if (reduce) pr.style.strokeDashoffset = C * (1 - p);

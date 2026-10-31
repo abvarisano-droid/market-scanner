@@ -1,3 +1,5 @@
+from pathlib import Path
+
 import pandas as pd
 
 from scanner import tracker
@@ -64,3 +66,31 @@ def test_scorecard_by_lens():
     sc = tracker.scorecard(tracker.evaluate(led, {"AAA": st}, spy), 30)
     assert sc["by_lens"]["swing"]["calls"] == 1 and sc["by_lens"]["short_term"]["calls"] == 0
     assert sc["hit_rate_5d"] == 1.0
+
+
+def test_later_run_cannot_replace_earlier_rows(tmp_path, monkeypatch):
+    monkeypatch.setattr(tracker, "LEDGER", tmp_path / "p.csv")
+    first = [{"ticker": "A", "call": "Bullish", "price": 1.0, "thesis": "original"}]
+    tracker.log_picks(first, 400.0, today="2026-10-30", run_id="run1")
+    # same run rewrites its own rows
+    led = tracker.log_picks([{"ticker": "A", "call": "Bullish", "price": 1.0, "thesis": "rewrite"}], 400.0,
+                            today="2026-10-30", run_id="run1")
+    assert list(led["thesis"]) == ["rewrite"]
+    # a later run (or one with no id) cannot replace it, but can add new tickers
+    later = [{"ticker": "A", "call": "Bearish", "price": 9.0, "thesis": "changed"},
+             {"ticker": "B", "call": "Bullish", "price": 2.0}]
+    led = tracker.log_picks(later, 400.0, today="2026-10-30", run_id="run2")
+    a = led[led.ticker == "A"]
+    assert len(a) == 1 and a.iloc[0]["thesis"] == "rewrite" and a.iloc[0]["call"] == "Bullish" and len(led) == 2
+    assert len(tracker.log_picks(later, 400.0, today="2026-10-30")) == 2
+    # legacy rows with no run_id are never replaced
+    p = tmp_path / "p.csv"
+    old = tracker.load().drop(columns=["run_id"])
+    old.to_csv(p, index=False)
+    led = tracker.log_picks(first, 400.0, today="2026-10-30", run_id="run3")
+    assert len(led) == 2 and led[led.ticker == "A"].iloc[0]["thesis"] == "rewrite"
+
+
+def test_site_points_to_full_ledger_and_says_300_shown():
+    js = (Path(__file__).resolve().parent.parent / "site" / "app.js").read_text()
+    assert "github.com/abvarisano-droid/market-scanner/blob/main/data/picks.csv" in js and "latest 300 graded" in js
