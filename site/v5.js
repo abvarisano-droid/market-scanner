@@ -345,7 +345,7 @@
     ["fwd_pe", "Forward P/E", "Price divided by expected earnings for the next 12 months; analysts use it to compare how much the market pays for future profit across peers."],
     ["ttm_pe", "Trailing P/E", "Price divided by the last 12 months of reported earnings; the classic check of what you pay for profit already earned."],
     ["ev_ebitda", "EV/EBITDA", "Company value including debt, divided by operating cash earnings; used to compare businesses with different debt and tax setups."],
-    ["consensus_gap", "Analyst consensus gap", "How far the average analyst fair value estimate sits above or below the last close; used to gauge how far Street sentiment is from price."],
+    ["consensus_gap", "Analyst consensus gap", "How far the average published analyst estimate sits from the last close, shown as context on sentiment. It is not a forecast."],
     ["sector", "Sector", "The industry group; analysts compare a stock's multiples with its own sector, not the whole market."],
     ["mcap", "Market cap", "Share price times shares outstanding; used to size a company and pick its peer group."]
   ];
