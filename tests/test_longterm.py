@@ -287,6 +287,25 @@ def test_ev_ebitda_over_100x_is_withheld():
     assert ex["ev_ebitda"] is None and ex["nr"]["ev_ebitda"] == "EBITDA too small to be meaningful"
 
 
+def test_reguard_keeps_high_roic_only_when_capital_is_real():
+    from scripts.build_longterm import reguard
+    base = {"t": "X", "s": "Technology", "fy": "2025-12-31", "a": "0000000000-25-000001"}
+    real = dict(base, roic={"v": 1.14, "rate": 0.131}, op_margin={"v": 0.7575, "d": 0.8})  # capital 58% of revenue
+    tiny = dict(base, t="Y", roic={"v": 1.5, "rate": 0.25}, op_margin={"v": 0.1, "d": 0.0})  # capital 5% of revenue
+    bare = dict(base, t="Z", roic={"v": 1.5, "rate": 0.25})  # legacy row, no op margin: cannot tell, withheld
+    # built rows carry the capital ratio, so no op margin is needed (op margin is None without 5 years of history)
+    shipped = dict(base, t="S", roic={"v": 1.2, "rate": 0.2, "cr": 0.25})
+    shipped_tiny = dict(base, t="T", roic={"v": 1.2, "rate": 0.2, "cr": 0.05})
+    no_rev = dict(base, t="U", roic={"v": 1.2, "rate": 0.2, "cr": None})  # no revenue: the build applies no capital check
+    rows = [real, tiny, bare, shipped, shipped_tiny, no_rev]
+    out = {r["t"]: r for r in reguard({"rows": json.loads(json.dumps(rows))}, latest={"lookup": {}})["rows"]}
+    assert out["S"]["roic"]["v"] == 1.2 and out["U"]["roic"]["v"] == 1.2
+    assert "roic" not in out["T"] and out["T"]["nr"]["roic"]
+    assert out["X"]["roic"]["v"] == 1.14 and "roic" not in (out["X"].get("nr") or {})
+    assert "roic" not in out["Y"] and out["Y"]["nr"]["roic"]
+    assert "roic" not in out["Z"] and out["Z"]["nr"]["roic"]
+
+
 def test_reguard_fixes_shipped_numbers_and_committed_file_is_clean():
     from scripts.build_longterm import reguard
     d = json.loads((SITE / "data/longterm.json").read_text())
@@ -294,8 +313,13 @@ def test_reguard_fixes_shipped_numbers_and_committed_file_is_clean():
     assert "fcf_yield" not in rows["BKNG"] and "split" in rows["BKNG"]["nr"]["fcf_yield"]
     assert "ev_ebitda" not in rows["PKG"] and "fcf_yield" not in rows["PKG"]
     assert all(k not in rows["RF"] for k in ("debt_ebitda", "ev_ebitda", "roic"))
-    for t in ("MCK", "CAH", "DECK", "APP", "OTIS"):
+    for t in ("MCK", "CAH", "OTIS"):  # negative equity: withheld by the exact build and by the offline guard
         assert "roic" not in rows[t] and rows[t]["nr"]["roic"]
+    # any ROIC over 100% that ships must rest on invested capital of at least 10% of revenue (op margin x (1 - rate) / ROIC)
+    from scripts.build_longterm import _capital_ok
+    for r in d["rows"]:
+        if r.get("roic") and r["roic"]["v"] > 1:
+            assert _capital_ok(r["roic"], r.get("op_margin")), r["t"]
     for t in ("AXON", "TTWO"):
         assert "ev_ebitda" not in rows[t]
     assert max(r["ev_ebitda"]["v"] for r in d["rows"] if "ev_ebitda" in r) <= 100
@@ -304,3 +328,22 @@ def test_reguard_fixes_shipped_numbers_and_committed_file_is_clean():
     for t in ("DUK", "SO", "AEE", "BA", "ORCL"):
         assert rows[t]["fcf_yield"]["v"] < 0 and "fcf_yield" not in (rows[t].get("nr") or {})
 
+
+
+def test_build_ships_capital_ratio_with_roic():
+    ex = lt.extract(sample_facts())
+    assert ex["roic"] and "cr" in ex["roic"] and (ex["roic"]["cr"] is None or ex["roic"]["cr"] >= lt.MIN_CAP_VS_REV)
+
+
+def test_reguard_keeps_high_roic_without_op_margin_when_capital_ratio_shipped():
+    """QA case: SNDK has ROIC but no op margin (under 5 years of history); a build at ROIC 120% must survive reguard."""
+    from scripts.build_longterm import reguard
+    row = {"t": "SNDK", "s": "Technology", "fy": "2026-06-30", "a": "x", "roic": {"v": 1.2, "rate": 0.122, "cr": 0.4}}
+    d = {"rows": [json.loads(json.dumps(row))]}
+    out = reguard(d, latest={"lookup": {}})["rows"][0]
+    assert out["roic"] == row["roic"] and "roic" not in (out.get("nr") or {})
+    assert reguard(json.loads(json.dumps({"rows": [out]})), latest={"lookup": {}})["rows"][0] == out
+
+
+def test_financial_roic_has_its_own_reason():
+    assert "ROIC" in lt.FIN_ROIC_NR and lt.FIN_ROIC_NR != lt.FIN_NR

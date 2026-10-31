@@ -62,12 +62,29 @@ def _coverage(rows: list[dict]) -> dict:
     return {k: sum(1 for r in rows if k in r) for k in KEYS}
 
 
+def _capital_ok(roic: dict, om: dict | None) -> bool:
+    """True when invested capital is at least 10% of revenue (the exact build rule), from the shipped numbers.
+
+    Rows built since the capital ratio was shipped carry roic["cr"] (capital / revenue, or None when the 10-K had no
+    revenue, in which case the exact build applies no capital check either). Older rows fall back to
+    op margin x (1 - rate) / ROIC, which equals capital / revenue for the same 10-K; with neither, the guard cannot
+    tell and treats ROIC over 100% as not meaningful. A small tolerance absorbs the 4-decimal rounding.
+    """
+    if "cr" in roic:
+        return roic["cr"] is None or roic["cr"] >= lt.MIN_CAP_VS_REV * 0.98
+    if not om or om.get("v") is None or om["v"] <= 0 or roic["v"] <= 0:
+        return False
+    return om["v"] * (1 - roic.get("rate", 0.21)) / roic["v"] >= lt.MIN_CAP_VS_REV * 0.98
+
+
 def reguard(data: dict, latest: dict | None = None) -> dict:
     """Apply the same guards as scanner/longterm.py to an already built longterm.json, without the raw SEC cache.
 
     Used when the cache is not available (offline). It works from the numbers shipped in each row, so two rules are
     approximations of the exact build-time ones: a market cap check from FCF / FCF yield (or EV less debt), and
-    "ROIC over 100%" standing in for negative equity or invested capital under 10% of revenue. The weekly SEC refresh
+    ROIC over 100% is kept only when the shipped capital ratio (roic["cr"], or op margin, tax rate and ROIC on older rows)
+    shows invested capital of at least 10% of revenue (the exact rule); otherwise it stands in for negative equity or
+    tiny invested capital. The weekly SEC refresh
     recomputes everything exactly and replaces this output.
     """
     latest = latest or json.loads((ROOT / "site" / "data" / "latest.json").read_text())
@@ -75,9 +92,11 @@ def reguard(data: dict, latest: dict | None = None) -> dict:
         nr = dict(r.get("nr") or {})
         fin = (r.get("s") or "") == "Financial Services"
         if fin:
-            for k in ("debt_ebitda", "ev_ebitda", "roic"):
+            for k in ("debt_ebitda", "ev_ebitda"):
                 if r.pop(k, None) is not None or k not in nr:
                     nr[k] = lt.FIN_NR
+            r.pop("roic", None)
+            nr["roic"] = lt.FIN_ROIC_NR
         ref = latest["lookup"].get(r["t"], {}).get("mc")
         fcf, fy, de, ev = (r.get("fcf_margin") or {}).get("f"), r.get("fcf_yield"), r.get("debt_ebitda"), r.get("ev_ebitda")
         calc = None
@@ -93,7 +112,8 @@ def reguard(data: dict, latest: dict | None = None) -> dict:
         if ev and ev["v"] > lt.MAX_EV_EBITDA:
             r.pop("ev_ebitda")
             nr["ev_ebitda"] = lt.SMALL_EBITDA_NR
-        if r.get("roic") and r["roic"]["v"] > 1:
+        roic = r.get("roic")
+        if roic and roic["v"] > 1 and not _capital_ok(roic, r.get("op_margin")):
             r.pop("roic")
             nr["roic"] = "Invested capital is tiny or equity is negative, so return on invested capital is not meaningful"
         if nr:
