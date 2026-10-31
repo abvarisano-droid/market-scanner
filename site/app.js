@@ -393,7 +393,7 @@
       '<section class="mx"><h2>6. The Long-term tab</h2><p class="lede">It uses only annual SEC 10-K filings, not Yahoo data, for S&amp;P 500 names, and links each figure to its filing. Six yes or no checks are counted: ' + M.longterm.rules.map(esc).join("; ") + '. They describe past reported numbers.</p></section>' +
       '<section class="mx"><h2>7. Honest limits</h2><ul class="mlist">' +
       "<li>Free data: Yahoo Finance fundamentals can be stale, missing or restated, and prices are adjusted for splits and dividends by the provider.</li>" +
-      "<li>There are no earnings estimate revisions, no insider or options data, and no sector-specific models. The analyst gap uses one average analyst target only.</li>" +
+      "<li>There are no earnings estimate revisions, no insider or options data, and no sector-specific models. The analyst gap uses one average analyst estimate only.</li>" +
       "<li>Banks, insurers and other unusual reporters often lack clean multiples and show gaps.</li>" +
       "<li>Technical rules look only at price and volume, so they say nothing about why a stock moved.</li>" +
       "<li>The track record is short and each lens has few calls, so hit rates swing widely. Calls ignore trading costs and taxes.</li>" +
