@@ -2,7 +2,7 @@
   "use strict";
   var HZ = [["mispricing", "Mispricing"], ["short_term", "Short-term"], ["swing", "Swing"]];
   var HZNAME = { mispricing: "Mispricing", short_term: "Short-term", swing: "Swing" };
-  var HZHELP = { mispricing: "Valuation vs peers, quality, the Street gap and recent stretch. Score runs from -100 (looks rich) to +100 (looks cheap).", short_term: "Price vs its 20-day average, 5 and 10 day momentum, RSI and volume. Score 0 to 100.", swing: "50 and 200-day averages, their slope, 3-month strength vs the S&amp;P 500 and distance from the 52-week high. Score 0 to 100." };
+  var HZHELP = { mispricing: "Valuation vs peers, quality, the analyst consensus gap and recent stretch. Score runs from -100 (looks rich) to +100 (looks cheap).", short_term: "Price vs its 20-day average, 5 and 10 day momentum, RSI and volume. Score 0 to 100.", swing: "50 and 200-day averages, their slope, 3-month strength vs the S&amp;P 500 and distance from the 52-week high. Score 0 to 100." };
   var reduce = window.matchMedia && matchMedia("(prefers-reduced-motion: reduce)").matches;
   var app = document.getElementById("app");
   var S = { latest: null, track: null, hz: "mispricing", raf: 0 };
@@ -123,7 +123,7 @@
         '<span class="cell" style="background:' + heatColor(s.rel_1m, mx) + '"><span class="label">1 month</span><b>' + relTxt(s.rel_1m) + '</b></span>' +
         '<span class="bb"><span class="pos">' + s.bullish + ' Bullish</span><span class="neg">' + s.bearish + ' Bearish</span></span></button>';
     }).join("");
-    return '<section class="heat"><h2>Sector heat</h2><p class="lede">Each sector\'s average move minus the S&amp;P 500 (SPY) over 1 week and 1 month, with how many of its stocks the mispricing view calls Bullish or Bearish. Gold is ahead of the index, red is behind, gray is level. Tap a tile for the other views.</p>' +
+    return '<section class="heat"><h2>Sector heat</h2><p class="lede">Each sector\'s average move in local currency returns minus the S&amp;P 500 (SPY) over 1 week and 1 month, with how many of its stocks the mispricing view calls Bullish or Bearish. Gold is ahead of the index, red is behind, gray is level. Tap a tile for the other views.</p>' +
       '<div class="twrap"><span class="swipe" id="hsw" aria-hidden="true">Swipe for more &rarr;</span><div class="tw heatrow" id="hrow">' + tiles + '</div></div>' +
       '<p class="note" id="hdet" aria-live="polite">Tap a sector to see its calls in every view.</p></section>';
   }

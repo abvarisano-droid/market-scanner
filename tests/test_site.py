@@ -49,3 +49,12 @@ def test_lookup_close_falls_back_to_sparkline_and_exports_currency():
                           "horizons": {k: {"counts": {}, "top_bull": [], "top_bear": []} for k in ("short_term", "swing")}}}
     row = build_latest(scan, False)["lookup"]["AAA"]
     assert row["c"] == 3.5 and row["cur"] == "INR"
+
+
+def test_wording_extras():
+    js = (SITE / "app.js").read_text()
+    assert "local currency returns" in js and "Street" not in js
+    assert "Graded results are illustrative only" in __import__("scripts.export_site", fromlist=["x"]).SAMPLE_NOTE
+    root = SITE.parent
+    assert "target_return" not in (root / "scanner/news_ai.py").read_text()
+    assert "4:30pm ET" in (root / ".github/workflows/daily-scan.yml").read_text()

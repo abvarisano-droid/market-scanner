@@ -1,7 +1,7 @@
 name: Daily scan
 on:
   schedule:
-    - cron: "30 21 * * 1-5"   # 5:30pm ET weekdays, after US close
+    - cron: "30 21 * * 1-5"   # 4:30pm ET weekdays after Nov 1 (US clocks go back), 5:30pm ET before; always after the US close
   workflow_dispatch:
 permissions:
   contents: write

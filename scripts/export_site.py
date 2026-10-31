@@ -24,7 +24,7 @@ from scanner import tracker  # noqa: E402
 from scanner.labels import BEARISH, BULLISH, NEUTRAL, normalize  # noqa: E402
 
 BULL_AT = 35  # mispricing score that counts as Bullish / Bearish (before news adjustment)
-SAMPLE_NOTE = "Sample data. Synthetic prices, replaced by the first real daily scan."
+SAMPLE_NOTE = "Sample data. Synthetic prices, replaced by the first real daily scan. Graded results are illustrative only."
 DISCLAIMER = "Not investment advice."
 BANNED = re.compile(r"\b(buy|buys|buying|sell|sells|selling|price targets?)\b", re.I)
 TOP_REASONS = 3
@@ -170,7 +170,7 @@ def build_track(scan: dict, sample: bool) -> dict:
                                               "graded": v.get(f"n_{h}", 0)} for h, n in tracker.HORIZONS.items()}}
     return {"asof": scan["date"], "sample": sample, "banner": SAMPLE_NOTE if sample else "",
             "status": sc.get("status", "still noise"), "trading_days": days, "min_days": tracker.MIN_DAYS,
-            "note": plain(sc.get("note", "")), "entry_rule": "next trading day close",
+            "note": re.sub(r"\b1 trading days\b", "1 trading day", plain(sc.get("note", ""))), "entry_rule": "next trading day close",
             "windows": list(tracker.HORIZONS.values()), "by_lens": by_lens,
             "calls_logged": len(led), "pending": pending, "graded": graded[-300:], "disclaimer": DISCLAIMER}
 
