@@ -19,6 +19,7 @@
 <meta name="twitter:image" content="https://abvarisano-droid.github.io/market-scanner/og.png">
 <meta name="theme-color" content="#050505">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' fill='%23050505'/%3E%3Ccircle cx='16' cy='16' r='6' fill='%23d4af37'/%3E%3C/svg%3E">
+<link rel="preload" href="data/summary.json" as="fetch" crossorigin>
 <link rel="stylesheet" href="style.css">
 </head>
 <body>
@@ -34,13 +35,13 @@
   </nav>
 </header>
 
-<main id="app" aria-live="polite"></main>
+<main id="app" class="boot" aria-live="polite"><section class="hero" aria-hidden="true"><span class="label">Daily scan across the major indexes</span><h1>Loading the <em>latest scan.</em></h1></section></main>
 
 <footer>
   <p class="disc"><strong>Not investment advice.</strong> Scores are mechanical rules on valuation, price and volume. They are not forecasts and nothing here is a recommendation. Data may be delayed or wrong.</p>
   <p class="label"><a href="#/track">Public track record</a> &middot; Updated every weekday after the US close <span id="asof"></span></p>
 </footer>
-<script src="v5.js"></script>
-<script src="app.js"></script>
+<script src="v5.js" defer></script>
+<script src="app.js" defer></script>
 </body>
 </html>

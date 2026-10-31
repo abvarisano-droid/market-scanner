@@ -18,6 +18,7 @@ nav{display:flex;gap:18px}
 nav a{text-decoration:none;padding:6px 0;border-bottom:1px solid transparent}
 nav a.on,nav a:hover{color:var(--gold);border-color:var(--gold)}
 main{max-width:1200px;margin:0 auto;padding:0 16px 48px}
+main.boot{min-height:2400px}
 h1,h2,h3{font-weight:400;margin:0}
 h1{font-size:clamp(34px,8.5vw,76px);line-height:1.04;letter-spacing:-.015em}
 h1 em{color:var(--gold);font-style:italic}

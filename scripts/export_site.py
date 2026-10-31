@@ -1,5 +1,5 @@
 """Turn the engine's latest scan (data/latest_scan.json) into the files the static site reads:
-site/data/latest.json and site/data/track.json.
+site/data/latest.json, site/data/summary.json (latest minus the heavy lookup, for the home page) and site/data/track.json.
 
 Live:    python scripts/export_site.py
 Sample:  python scripts/export_site.py --sample   (synthetic data, labeled "Sample data")
@@ -211,11 +211,19 @@ def build_method() -> dict:
     }
 
 
+def build_summary(latest: dict) -> dict:
+    """Everything the home page needs, without the heavy per-ticker lookup (site/data/summary.json)."""
+    out = {k: v for k, v in latest.items() if k not in ("lookup", "spy_spark")}
+    out["lookup_n"] = len(latest.get("lookup", {}))
+    return out
+
+
 def export(scan: dict, site_dir, sample=False):
     latest, tr = build_latest(scan, sample), build_track(scan, sample)
     d = Path(site_dir) / "data"
     d.mkdir(parents=True, exist_ok=True)
     (d / "latest.json").write_text(json.dumps(latest, separators=(",", ":"), sort_keys=True))
+    (d / "summary.json").write_text(json.dumps(build_summary(latest), separators=(",", ":"), sort_keys=True))
     (d / "track.json").write_text(json.dumps(tr, indent=1, sort_keys=True))
     (d / "method.json").write_text(json.dumps(build_method(), indent=1, sort_keys=True))
     from scripts import export_v5; export_v5.export(scan, latest, site_dir)  # v5 data: stock pages, changes, report card
