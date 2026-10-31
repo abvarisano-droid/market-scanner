@@ -19,6 +19,9 @@ A daily scan of global stock indexes that finds stocks that look mispriced, rank
 - **Windows are 5, 20 and 60 trading days** counted from that entry close.
 - A Bullish call wins by beating SPY over the window, a Bearish call by lagging it. Neutral is never graded.
 - **Still noise:** until the log covers 21 trading days the whole record is labeled "still noise".
+- **Append-only log:** every row of `data/picks.csv` ends with a `chain` value (sha256 of the previous chain value plus the row's raw fields). `python scripts/check_call_log.py` fails if any past row is edited, removed or reordered; with `--base origin/main` it also fails if a past row differs from the published version even when the chain was recomputed. Only the newest date's rows can be replaced (a same-day re-run). CI runs it on every pull request and the daily scan runs it before committing.
+- **Weekly snapshots:** `scripts/snapshot_record.py` writes `data/snapshots/<year>-W<week>.json` once per ISO week (row count, chain head, the record per window). The check fails if a snapshot's head no longer matches the log.
+- **Hit rate:** the Track record page shows, per window, n graded, hit rate versus SPY and a 95 percent Wilson interval, labeled "still noise" until 21 trading days, with a link to the raw log (`site/data/picks.csv`).
 - Rows logged before this rule (blank `entry_rule` in `data/picks.csv`) keep their original same-day entry, so history is not rewritten.
 
 ## Run it
