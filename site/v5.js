@@ -433,7 +433,7 @@
         s.graded.map(function (g) { return "<tr><td>" + esc(g.date) + "</td><td>" + esc(NAMES[g.lens]) + "</td><td>" + esc(g.call) + '</td><td class="num">' + g.window + 'd</td><td class="num">' + pctTxt(g.stock_return) + '</td><td class="num">' + pctTxt(g.excess) + "</td></tr>"; }).join("") +
         "</tbody></table></div></div>" : '<p class="note">Not graded yet. A call is graded from the next trading day\'s close, over 5, 20 and 60 trading days.</p>';
       var n = Object.keys(dates).length;
-      root.innerHTML = '<section class="hero"><span class="label">' + esc((s.index ? s.index + " | " : "") + (s.sector || "")) + "</span><h1>" + esc(t) + ' <em style="font-size:.5em">' + esc(s.name) + "</em></h1>" +
+      root.innerHTML = '<section class="hero"><span class="label">' + esc("Stock | " + (s.index ? s.index + " | " : "") + (s.sector || "")) + "</span><h1>" + esc(t) + ' <em style="font-size:.5em">' + esc(s.name) + "</em></h1>" +
         '<p class="lede">What the scanner currently says in each view, how its calls on this name have changed, and how they graded.</p>' +
         '<p class="v5link"><a class="btn ghost" href="#/lookup/' + encodeURIComponent(t) + '">Open in lookup</a></p></section>' +
         (s.chart ? '<section class="csec" aria-label="Price chart"><h2>Three years of price</h2>' + chartBox(t) + "</section>" : "") + fundCard(s.fund) +
@@ -443,6 +443,23 @@
       var cb = root.querySelector(".chartbox"); if (cb) chart(cb);
     }).catch(function () { root.classList.remove("boot"); root.innerHTML = '<section class="hero"><h1>Stock data <em>unavailable.</em></h1><p class="lede">Not investment advice.</p></section>'; });
   }
+
+  /* tooltips close on Escape and on a tap outside. Escape keeps focus on the info button (the tip hides, nothing moves);
+     the tip comes back on the next focus change or once the pointer leaves the label */
+  var root = document.documentElement;
+  function tipsOff() { root.classList.add("tipx"); }
+  document.addEventListener("keydown", function (e) { if (e.key === "Escape" || e.key === "Esc") tipsOff(); });
+  document.addEventListener("pointerdown", function (e) {
+    var lb = e.target.closest && e.target.closest(".fc .label");
+    if (lb) { root.classList.remove("tipx"); return; }
+    tipsOff();
+    var a = document.activeElement; if (a && a.classList && a.classList.contains("info")) a.blur();
+  });
+  document.addEventListener("focusin", function () { root.classList.remove("tipx"); });
+  document.addEventListener("mouseout", function (e) {
+    var lb = e.target.closest && e.target.closest(".fc .label");
+    if (lb && !(e.relatedTarget && lb.contains(e.relatedTarget))) root.classList.remove("tipx");
+  });
 
   window.V5 = { changes: changes, report: report, link: link, stock: stock, chartBox: chartBox, chart: chart };
 })();

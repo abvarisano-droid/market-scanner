@@ -5,7 +5,9 @@
   var HZHELP = { mispricing: "Valuation vs peers, quality, the analyst consensus gap and recent stretch. Score runs from -100 (looks rich) to +100 (looks cheap).", short_term: "Price vs its 20-day average, 5 and 10 day momentum, RSI and volume. Score 0 to 100.", swing: "50 and 200-day averages, their slope, 3-month strength vs the S&amp;P 500 and distance from the 52-week high. Score 0 to 100." };
   var reduce = window.matchMedia && matchMedia("(prefers-reduced-motion: reduce)").matches;
   var app = document.getElementById("app");
-  var S = { latest: null, track: null, hz: "mispricing", raf: 0 };
+  var S = { latest: null, track: null, hz: "mispricing", raf: 0, fstep: 0, keep: false, sec: null };
+  /* iOS Safari only shows :active press feedback when a touch listener exists; this one does nothing else */
+  document.addEventListener("touchstart", function () {}, { passive: true });
 
   function esc(s) { return String(s).replace(/[&<>"']/g, function (c) { return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]; }); }
   function pct(x, d) { if (x == null || x !== x) return "n/a"; return (x >= 0 ? "+" : "") + (x * 100).toFixed(d == null ? 1 : d) + "%"; }
@@ -38,13 +40,14 @@
       dots.push({ x: rnd(), y: rnd(), ph: rnd() * 6.28, lvl: lvl, r: 1.2 + rnd() * 1.4 });
     }
     var vals = [f.universe, f.passed_checks, f.scored, f.picks];
-    var DUR = 1.7, HOLD = 0.9;
+    /* counters start from the number on screen, so a tap mid-count or a step back never snaps to zero first */
+    var shown = [0, 0, 0, 0], from = [0, 0, 0, 0];
     function setStage(s, p) {
       for (var q = 0; q < 4; q++) {
         stages[q].classList.toggle("on", q <= s);
-        var from = q === 0 ? 0 : vals[q - 1], base = q < s ? 1 : q === s ? p : 0;
-        counters[q].textContent = q === 0 && s === 0 ? Math.round(vals[0] * p).toLocaleString() : Math.round(vals[q] * (q <= s ? (q === s ? p : 1) : 0)).toLocaleString();
-        void from; void base;
+        var to = q <= s ? vals[q] : 0;
+        shown[q] = from[q] + (to - from[q]) * p;
+        counters[q].textContent = Math.round(shown[q]).toLocaleString();
       }
     }
     function draw(time, stage, p) {
@@ -69,8 +72,11 @@
       }
       ctx.shadowBlur = 0;
     }
-    var cur = reduce ? 3 : 0, ts = performance.now(), timer = 0, desktop = window.innerWidth >= 760;
-    function go(s, instant) { cur = Math.max(0, Math.min(3, s)); ts = instant ? -1e9 : performance.now(); caption(); }
+    /* a lens switch redraws the view; it keeps the step the reader was on instead of restarting the story */
+    var keep = S.keep; S.keep = false;
+    var cur = reduce ? 3 : keep ? S.fstep : 0, ts = keep ? -1e9 : performance.now(), timer = 0, desktop = window.innerWidth >= 760;
+    S.fstep = cur;
+    function go(s, instant) { from = shown.slice(); cur = Math.max(0, Math.min(3, s)); S.fstep = cur; ts = instant ? -1e9 : performance.now(); caption(); }
     function stop() { clearTimeout(timer); timer = 0; }
     function caption() {
       var c = document.getElementById("cap"); if (!c) return;
@@ -79,12 +85,13 @@
       var nx = document.getElementById("nx"); if (nx) nx.textContent = cur === 3 ? "Replay" : "Next step";
     }
     function tick() { if (cur < 3) { go(cur + 1); timer = setTimeout(tick, 2300); } else timer = 0; }
+    if (keep) from = [0, 1, 2, 3].map(function (q) { return q <= cur ? vals[q] : 0; });
     stages.forEach(function (el, q) { el.addEventListener("click", function () { stop(); go(q); }); });
     var nx = document.getElementById("nx"), sk = document.getElementById("sk");
     if (nx) nx.addEventListener("click", function () { stop(); go(cur === 3 ? 0 : cur + 1); });
     if (sk) sk.addEventListener("click", function () { stop(); go(3, true); });
     caption();
-    if (!reduce && desktop) timer = setTimeout(tick, 1200);
+    if (!reduce && desktop && !keep) timer = setTimeout(tick, 1200);
     var seen = true, last = 0;
     if (window.IntersectionObserver) new IntersectionObserver(function (e) { seen = e[0].isIntersecting; }).observe(canvas);
     (function loop(now) {
@@ -135,7 +142,7 @@
     if (!row) return;
     [].forEach.call(row.querySelectorAll(".sec"), function (b) {
       b.addEventListener("click", function () {
-        var s = secs[+b.getAttribute("data-i")];
+        var s = secs[+b.getAttribute("data-i")]; S.sec = +b.getAttribute("data-i");
         [].forEach.call(row.querySelectorAll(".sec"), function (o) { o.setAttribute("aria-pressed", o === b ? "true" : "false"); });
         det.textContent = s.name + ", " + s.n + " stocks. 1 week " + relTxt(s.rel_1w) + " and 1 month " + relTxt(s.rel_1m) + " vs SPY. Bullish / Bearish: " + HZ.map(function (h) { var c = s.calls[h[0]]; return h[1] + " " + c.Bullish + " / " + c.Bearish; }).join(", ") + ".";
       });
@@ -145,6 +152,7 @@
       if (row.scrollLeft > 8 && sw) sw.hidden = true;
     };
     row.addEventListener("scroll", upd, { passive: true }); window.addEventListener("resize", upd); upd();
+    if (S.sec != null) { var sb = row.querySelector('.sec[data-i="' + S.sec + '"]'); if (sb) sb.click(); }
   }
   function tw_more(tw) { tw.parentNode.classList.toggle("more", tw.scrollWidth - tw.clientWidth - tw.scrollLeft > 4); }
 
@@ -188,7 +196,11 @@
     var cv = document.getElementById("cv");
     funnel(cv, f, [].slice.call(app.querySelectorAll(".stage .n")), [].slice.call(app.querySelectorAll(".stage")));
     [].forEach.call(app.querySelectorAll(".tab"), function (b) {
-      b.addEventListener("click", function () { S.hz = b.getAttribute("data-hz"); home(); });
+      b.addEventListener("click", function () {
+        S.hz = b.getAttribute("data-hz"); S.keep = true; home();
+        /* the view is redrawn, so focus goes back to the tab the reader pressed */
+        var nb = app.querySelector(".tab[aria-selected=true]"); if (nb) nb.focus({ preventScroll: true });
+      });
     });
   }
 
@@ -417,7 +429,7 @@
     cancelAnimationFrame(S.raf);
     var h = location.hash.replace(/^#\/?/, "").split("?")[0], parts = h.split("/"), pg = parts[0] || "home";
     if (pg !== "home") { app.classList.remove("boot"); app.removeAttribute("aria-busy"); }
-    [].forEach.call(document.querySelectorAll("nav a"), function (a) { a.classList.toggle("on", a.getAttribute("data-nav") === pg); });
+    [].forEach.call(document.querySelectorAll("nav a"), function (a) { var on = a.getAttribute("data-nav") === pg; a.classList.toggle("on", on); if (on) a.setAttribute("aria-current", "page"); else a.removeAttribute("aria-current"); });
     try {
       if (pg === "stock" && window.V5) V5.stock(app, decodeURIComponent(parts[1] || ""));
       else if (pg === "lookup") lookup(decodeURIComponent(parts[1] || ""));
