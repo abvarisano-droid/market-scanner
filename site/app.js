@@ -42,12 +42,16 @@
     var vals = [f.universe, f.passed_checks, f.scored, f.picks];
     /* counters start from the number on screen, so a tap mid-count or a step back never snaps to zero first */
     var shown = [0, 0, 0, 0], from = [0, 0, 0, 0];
+    /* writes only what changed, so a running count touches one text node per frame instead of restyling all four stages */
+    var onState = [null, null, null, null], txt = ["", "", "", ""];
     function setStage(s, p) {
       for (var q = 0; q < 4; q++) {
-        stages[q].classList.toggle("on", q <= s);
-        var to = q <= s ? vals[q] : 0;
+        var on = q <= s;
+        if (onState[q] !== on) { stages[q].classList.toggle("on", on); onState[q] = on; }
+        var to = on ? vals[q] : 0;
         shown[q] = from[q] + (to - from[q]) * p;
-        counters[q].textContent = Math.round(shown[q]).toLocaleString();
+        var t = Math.round(shown[q]).toLocaleString();
+        if (txt[q] !== t) { counters[q].textContent = t; txt[q] = t; }
       }
     }
     function draw(time, stage, p) {
@@ -76,7 +80,7 @@
     var keep = S.keep; S.keep = false;
     var cur = reduce ? 3 : keep ? S.fstep : 0, ts = keep ? -1e9 : performance.now(), timer = 0, desktop = window.innerWidth >= 760;
     S.fstep = cur;
-    function go(s, instant) { from = shown.slice(); cur = Math.max(0, Math.min(3, s)); S.fstep = cur; ts = instant ? -1e9 : performance.now(); caption(); }
+    function go(s, instant) { from = shown.slice(); cur = Math.max(0, Math.min(3, s)); S.fstep = cur; ts = instant ? -1e9 : performance.now(); lastP = 0; caption(); wake(); }
     function stop() { clearTimeout(timer); timer = 0; }
     function caption() {
       var c = document.getElementById("cap"); if (!c) return;
@@ -92,14 +96,40 @@
     if (sk) sk.addEventListener("click", function () { stop(); go(3, true); });
     caption();
     if (!reduce && desktop && !keep) timer = setTimeout(tick, 1200);
-    var seen = true, last = 0;
-    if (window.IntersectionObserver) new IntersectionObserver(function (e) { seen = e[0].isIntersecting; }).observe(canvas);
-    (function loop(now) {
+    /* The frame loop only runs while something moves: a stage transition, or the idle drift while the field is on
+       screen, the tab is visible and someone was active in the last 10 s. Phones and reduced motion get no idle drift,
+       so the field settles into a still frame and the main thread goes quiet. Anything that wakes it restarts the loop. */
+    var seen = true, last = 0, lastP = 0, poke = performance.now(), running = false, myRaf = 0;
+    var driftOK = !reduce && desktop && !(window.matchMedia && matchMedia("(hover: none)").matches);
+    function moving(now) { return now - ts < 1100 || (driftOK && seen && !document.hidden && now - poke < 10000); }
+    function loop(now) {
+      running = false;
+      if (S.raf !== myRaf) return; /* a newer view owns the loop */
       var p = Math.min(1, (now - ts) / 1100); p = 1 - Math.pow(1 - p, 3);
-      /* idle drift is drawn at about 24 fps and only while the field is on screen */
-      if (p < 1 || (seen && !document.hidden && now - last > 40)) { setStage(cur, p); draw(now, cur, p); last = now; }
-      if (!reduce || p < 1) S.raf = requestAnimationFrame(loop);
-    })(performance.now());
+      /* idle drift is drawn at about 24 fps; transitions every frame */
+      if (p < 1 || lastP < 1 || now - last > 40) { setStage(cur, p); draw(now, cur, p); last = now; lastP = p; }
+      if (moving(now)) { running = true; myRaf = S.raf = requestAnimationFrame(loop); }
+    }
+    function wake() { poke = performance.now(); if (!running && canvas.isConnected) { running = true; myRaf = S.raf = requestAnimationFrame(loop); } }
+    if (window.IntersectionObserver) new IntersectionObserver(function (e) { seen = e[0].isIntersecting; if (seen) wake(); }).observe(canvas);
+    /* the hero's CSS light drift pauses while the hero is off screen (class read by style.css) */
+    var hero = canvas.closest(".hero");
+    if (hero && window.IntersectionObserver) new IntersectionObserver(function (e) { hero.classList.toggle("still", !e[0].isIntersecting); }).observe(hero);
+    /* it also holds still while the page scrolls: the light moving under the glass nav made the nav blur re-render every frame */
+    S.hero = hero;
+    if (!S.scrollWired) {
+      S.scrollWired = true;
+      var st = 0;
+      window.addEventListener("scroll", function () {
+        var h = S.hero; if (!h || !h.isConnected) return;
+        if (!st) h.classList.add("scrolling");
+        clearTimeout(st); st = setTimeout(function () { st = 0; if (S.hero) S.hero.classList.remove("scrolling"); }, 180);
+      }, { passive: true });
+    }
+    canvas.parentNode.addEventListener("pointermove", function () { if (driftOK && performance.now() - poke > 500) wake(); }, { passive: true });
+    if (!S.visWired) { S.visWired = true; document.addEventListener("visibilitychange", function () { if (!document.hidden && S.wake) S.wake(); }); }
+    S.wake = wake;
+    wake();
     S.stop = stop;
   }
 
