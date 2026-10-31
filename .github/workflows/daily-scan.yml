@@ -26,13 +26,17 @@ jobs:
           ANTHROPIC_API_KEY: ${{ secrets.MARKET_TEAM_ANTHROPIC_API_KEY }}
       - name: Export site data
         run: python scripts/export_site.py
+      - name: Weekly record snapshot
+        run: python scripts/snapshot_record.py
+      - name: Call log check (history must be append-only)
+        run: python scripts/check_call_log.py
       - name: Tests
         run: python -m pytest -q
       - name: Commit reports, picks and site data
         run: |
           git config user.name "market-scanner-bot"
           git config user.email "actions@users.noreply.github.com"
-          git add reports data/picks.csv data/latest_scan.json site/data
+          git add reports data/picks.csv data/snapshots data/latest_scan.json site/data
           git commit -m "Daily scan $(date +%F)" || echo "nothing to commit"
           for attempt in 1 2 3; do
             if git pull --rebase && git push; then

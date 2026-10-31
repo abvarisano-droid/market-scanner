@@ -301,6 +301,24 @@
     draw(); watchScroll("lt");
   }
 
+  function recordSection(T) {
+    var R = T.record, L = T.log || {};
+    if (!R) return "";
+    var rows = R.windows.map(function (w) {
+      var none = !w.n;
+      return "<tr><td>" + w.window + ' trading days</td><td class="num">' + w.n + '</td><td class="num">' + (none ? "none yet" : w.hit_rate_pct.toFixed(1) + "%") + '</td><td class="num">' + (none ? "n/a" : w.ci_low_pct.toFixed(1) + "% to " + w.ci_high_pct.toFixed(1) + "%") +
+        '</td><td class="num ' + (w.avg_excess_pct != null && w.avg_excess_pct < 0 ? "neg" : "") + '">' + (w.avg_excess_pct == null ? "n/a" : (w.avg_excess_pct >= 0 ? "+" : "") + w.avg_excess_pct.toFixed(2) + "%") + "</td><td>" + esc(w.label) + "</td></tr>";
+    }).join("");
+    var tbl = scrollRegion('<table><thead><tr><th>Window</th><th>Graded (n)</th><th>Hit rate vs S&amp;P</th><th>95% range</th><th>Avg vs S&amp;P</th><th>Reading</th></tr></thead><tbody>' + rows + "</tbody></table>", "Hit rate versus the S&P 500 by window", "record");
+    var raw = L.raw_url ? '<a href="' + esc(L.raw_url) + '">raw call log (CSV)</a>' : "raw call log (not published for sample data)";
+    return '<section id="record"><h2>Record versus the S&amp;P 500</h2>' +
+      '<p class="lede" style="margin-top:6px">First call logged ' + esc(R.first_logged || "not yet") + ". " + T.trading_days + " of " + R.target_days + " trading days logged" + (R.days_to_target ? ", " + R.days_to_target + " to go." : ".") +
+      " The hit rate is the share of graded calls that won, shown whatever it turns out to be. A coin flip is 50%.</p>" + tbl +
+      '<p class="note">n is the number of calls graded in that window. The 95% range is a Wilson interval; it is wide when n is small. A window reads "still noise" until the log covers ' + T.min_days + " trading days. " + esc(R.caveat) + "</p>" +
+      '<p class="note">History cannot be edited quietly: every row in the ' + raw + " carries a hash chain value, a check fails if any past row changes, and a snapshot of this record is saved each week" +
+      (L.head ? " (chain head " + esc(L.head.slice(0, 12)) + ", " + L.rows + " rows)" : "") + '. <a href="https://github.com/abvarisano-droid/market-scanner/tree/main/data/snapshots">Weekly snapshots</a>. Not investment advice.</p></section>';
+  }
+
   function track() {
     var T = S.track, C = 2 * Math.PI * 96, p = Math.min(1, T.trading_days / T.min_days), noise = T.trading_days < T.min_days;
     function stat(k) {
@@ -321,8 +339,8 @@
       '<div class="c" role="img" aria-label="' + esc(noise ? "still noise" : "readable") + ", " + T.trading_days + " of " + T.min_days + ' trading days"><b>' + T.trading_days + '</b><span class="label">of ' + T.min_days + ' trading days</span><span class="label" style="color:var(--gold);margin-top:6px">' + (noise ? "still noise" : "readable") + "</span></div></div>" +
       '<div class="stats">' + stat("mispricing") + stat("short_term") + stat("swing") + '<div class="stat"><span class="label">Calls logged</span><div class="v">' + T.calls_logged.toLocaleString() + '</div><span class="label">' + T.pending + " pending</span></div>" +
       '<div class="stat"><span class="label">Rule</span><div class="v" style="font-size:18px">Nothing is hidden or removed after the fact.</div></div></div></div></section>' +
-      '<section><h2>Graded calls</h2><p class="lede" style="margin-top:6px">Most recent 40. Neutral names are never called. Results this early are not evidence of skill.</p>' + tbl + "</section>";
-    watchScroll("graded");
+      recordSection(T) + '<section><h2>Graded calls</h2><p class="lede" style="margin-top:6px">Most recent 40. Neutral names are never called. Results this early are not evidence of skill.</p>' + tbl + "</section>";
+    watchScroll("record"); watchScroll("graded");
     var pr = document.getElementById("pr");
     if (reduce) pr.style.strokeDashoffset = C * (1 - p);
     else requestAnimationFrame(function () { requestAnimationFrame(function () { pr.style.strokeDashoffset = C * (1 - p); }); });
