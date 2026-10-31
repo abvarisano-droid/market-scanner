@@ -143,3 +143,26 @@ def test_committed_log_is_valid_and_script_exits_clean():
 def test_load_ignores_chain_column(tmp_path, monkeypatch):
     build(tmp_path, monkeypatch)
     assert list(tracker.load().columns) == COLS and isinstance(tracker.load()["date"].iloc[0], pd.Timestamp)
+
+
+def test_newest_date_row_change_passes_nightly_but_fails_strict(tmp_path, monkeypatch):
+    p = build(tmp_path, monkeypatch)
+    base = p.read_text()
+    rows = calllog.read_raw(base, COLS)
+    assert rows[-1][0] == "2026-10-28"  # newest date
+    rows[-1][4] = "99.0"  # change a newest-date row, then recompute a valid chain
+    forged = calllog.render(rows, COLS)
+    assert check_call_log.run(forged, base_text=base, snap_dir=tmp_path / "none") == []  # nightly (daily scan)
+    problems = check_call_log.run(forged, base_text=base, snap_dir=tmp_path / "none", strict=True)  # CI
+    assert any("frozen row" in x for x in problems)
+    dropped = calllog.render(rows[:-1], COLS)
+    assert check_call_log.run(dropped, base_text=base, snap_dir=tmp_path / "none", strict=True)
+    appended = calllog.render(calllog.read_raw(base, COLS) + [["2026-10-29"] + rows[0][1:]], COLS)
+    assert check_call_log.run(appended, base_text=base, snap_dir=tmp_path / "none", strict=True) == []
+
+
+def test_ci_uses_strict_and_daily_scan_uses_nightly():
+    ci = (ROOT / ".github/workflows/ci.yml").read_text()
+    daily = (ROOT / ".github/workflows/daily-scan.yml").read_text()
+    assert "check_call_log.py --base origin/main --strict" in ci
+    assert "check_call_log.py --base HEAD" in daily and "--strict" not in daily

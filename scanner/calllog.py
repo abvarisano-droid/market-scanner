@@ -9,8 +9,9 @@ Two checks use this module:
 
 * ``verify`` recomputes the chain of one file (catches a hand edit to a past row).
 * ``compare_to_base`` compares a candidate file with the version on the main branch (catches an
-  edit that also recomputes the chain). Rows dated before the newest base date are frozen. The
-  newest date's rows may be replaced, because a same-day re-run of the scan replaces that day.
+  edit that also recomputes the chain). In strict mode (CI) every published row is frozen. In nightly
+  mode (the daily scan) rows dated before the newest base date are frozen and the newest date's rows
+  may be replaced, because a same-run rewrite of the scan replaces its own rows for that day.
   New rows must be dated on or after the newest base date.
 """
 from __future__ import annotations
@@ -90,8 +91,12 @@ def verify(text: str, cols: list[str]) -> dict:
     return {"ok": True, "n": len(rows), "head": want[-1] if want else GENESIS, "first_bad": None, "error": ""}
 
 
-def compare_to_base(base_text: str, head_text: str, cols: list[str], date_col: str = "date") -> list[str]:
-    """List problems if head rewrites history relative to base. Empty list means append-only."""
+def compare_to_base(base_text: str, head_text: str, cols: list[str], date_col: str = "date",
+                    strict: bool = False) -> list[str]:
+    """List problems if head rewrites history relative to base. Empty list means append-only.
+
+    Nightly mode (default, the daily scan against its own last commit): the newest base date's rows may still be
+    replaced by a same-run rewrite. Strict mode (CI on pull requests and pushes): every base row is frozen."""
     if not base_text.strip():
         return []
     di = cols.index(date_col)
@@ -99,7 +104,7 @@ def compare_to_base(base_text: str, head_text: str, cols: list[str], date_col: s
     if not base:
         return []
     newest = max(r[di] for r in base)
-    frozen = [r for r in base if r[di] < newest]
+    frozen = list(base) if strict else [r for r in base if r[di] < newest]
     problems = []
     if head[:len(frozen)] != frozen:
         for i, (a, b) in enumerate(zip(frozen, head), start=1):

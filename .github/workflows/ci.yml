@@ -18,7 +18,7 @@ jobs:
         run: |
           git fetch origin main --depth=1000 || true
           if git rev-parse --verify origin/main >/dev/null 2>&1; then
-            python scripts/check_call_log.py --base origin/main
+            python scripts/check_call_log.py --base origin/main --strict
           else
             python scripts/check_call_log.py
           fi
