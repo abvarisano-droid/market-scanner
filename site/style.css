@@ -367,7 +367,10 @@ input[type=search],.lt input,.lt select{background:rgba(255,244,214,.04);border-
   .hero:has(#cv){background:#0e0c09}
 }
 @supports not ((backdrop-filter:blur(1px)) or (-webkit-backdrop-filter:blur(1px))){.top{background:rgba(10,9,7,.97)}}
+.hero:has(#cv).still::before,.hero:has(#cv).scrolling::before{animation-play-state:paused}
 @media(prefers-reduced-motion:reduce){.hero:has(#cv)::before{animation:none;will-change:auto}}
+/* phones and touch screens: no live blur on the nav pill (it repainted on every scroll frame); a near-opaque fill reads the same */
+@media(hover:none),(max-width:900px){.top{-webkit-backdrop-filter:none;backdrop-filter:none;background:rgba(12,11,9,.94)}}
 @media print{body::before,.hero:has(#cv)::before{display:none}.top{position:static;box-shadow:none;backdrop-filter:none;-webkit-backdrop-filter:none}}
 .heat .twrap.more::after{top:25px}
 @media(max-width:759px){.top{position:relative;top:auto}}
