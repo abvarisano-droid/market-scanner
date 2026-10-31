@@ -7,18 +7,27 @@
    "windows": {
     "20": {
      "avg_excess_pct": null,
+     "ci_high_pct": null,
+     "ci_low_pct": null,
      "graded": 0,
-     "hit_rate_pct": null
+     "hit_rate_pct": null,
+     "hits": 0
     },
     "5": {
      "avg_excess_pct": null,
+     "ci_high_pct": null,
+     "ci_low_pct": null,
      "graded": 0,
-     "hit_rate_pct": null
+     "hit_rate_pct": null,
+     "hits": 0
     },
     "60": {
      "avg_excess_pct": null,
+     "ci_high_pct": null,
+     "ci_low_pct": null,
      "graded": 0,
-     "hit_rate_pct": null
+     "hit_rate_pct": null,
+     "hits": 0
     }
    }
   },
@@ -27,18 +36,27 @@
    "windows": {
     "20": {
      "avg_excess_pct": null,
+     "ci_high_pct": null,
+     "ci_low_pct": null,
      "graded": 0,
-     "hit_rate_pct": null
+     "hit_rate_pct": null,
+     "hits": 0
     },
     "5": {
      "avg_excess_pct": null,
+     "ci_high_pct": null,
+     "ci_low_pct": null,
      "graded": 0,
-     "hit_rate_pct": null
+     "hit_rate_pct": null,
+     "hits": 0
     },
     "60": {
      "avg_excess_pct": null,
+     "ci_high_pct": null,
+     "ci_low_pct": null,
      "graded": 0,
-     "hit_rate_pct": null
+     "hit_rate_pct": null,
+     "hits": 0
     }
    }
   },
@@ -47,18 +65,27 @@
    "windows": {
     "20": {
      "avg_excess_pct": null,
+     "ci_high_pct": null,
+     "ci_low_pct": null,
      "graded": 0,
-     "hit_rate_pct": null
+     "hit_rate_pct": null,
+     "hits": 0
     },
     "5": {
      "avg_excess_pct": null,
+     "ci_high_pct": null,
+     "ci_low_pct": null,
      "graded": 0,
-     "hit_rate_pct": null
+     "hit_rate_pct": null,
+     "hits": 0
     },
     "60": {
      "avg_excess_pct": null,
+     "ci_high_pct": null,
+     "ci_low_pct": null,
      "graded": 0,
-     "hit_rate_pct": null
+     "hit_rate_pct": null,
+     "hits": 0
     }
    }
   }
@@ -66,9 +93,16 @@
  "calls_logged": 78,
  "disclaimer": "Not investment advice.",
  "entry_rule": "next trading day close",
+ "first_logged": "2026-10-30",
  "graded": [],
- "min_days": 21,
- "note": "Only 0 trading days of calls so far (need 21). Treat results as noise.",
+ "interval": "95% Wilson interval",
+ "log": {
+  "head": "aaec419c24dbcf4c53fa2f003ce0c47e3e5786c39b1ebbde006e5d12d45499d2",
+  "rows": 78,
+  "verified": true
+ },
+ "min_days": 60,
+ "note": "Only 0 trading days of calls so far (need 60). Treat results as noise.",
  "pending": 78,
  "sample": false,
  "status": "still noise",

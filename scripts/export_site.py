@@ -20,7 +20,7 @@ sys.path.insert(0, str(ROOT))
 
 import pandas as pd  # noqa: E402
 
-from scanner import longterm, pipeline, tracker, universe, valuation  # noqa: E402
+from scanner import calllog, longterm, pipeline, record, tracker, universe, valuation  # noqa: E402
 from scanner import technical as tech_rules  # noqa: E402
 from scanner.labels import BEARISH, BULLISH, NEUTRAL, normalize  # noqa: E402
 
@@ -166,16 +166,24 @@ def build_track(scan: dict, sample: bool) -> dict:
                        "excess": num(r[f"alpha_{h}"], 4)})
     graded.sort(key=lambda g: (g["date"], g["ticker"]))
     days = sc.get("trading_days", 0)
+    fresh = tracker.scorecard(pd.DataFrame(), days)  # status and note from the current threshold (tracker.MIN_DAYS)
     by_lens = {}
     for lens, v in sc.get("by_lens", {}).items():
         by_lens[lens] = {"calls": v.get("calls", 0),
                          "windows": {str(n): {"hit_rate_pct": None if f"hit_rate_{h}" not in v else round(100 * v[f"hit_rate_{h}"], 1),
                                               "avg_excess_pct": None if f"avg_alpha_{h}" not in v else round(100 * v[f"avg_alpha_{h}"], 2),
-                                              "graded": v.get(f"n_{h}", 0)} for h, n in tracker.HORIZONS.items()}}
+                                              "graded": v.get(f"n_{h}", 0),
+                                              **record.interval_pct(v.get(f"hit_rate_{h}"), v.get(f"n_{h}", 0))}
+                                     for h, n in tracker.HORIZONS.items()}}
+    log = {"rows": len(led), "head": None, "verified": None}
+    if not sample and tracker.LEDGER.exists():
+        v = calllog.verify(tracker.LEDGER.read_text(encoding="utf-8"), tracker.COLS)
+        log.update(rows=v["n"], head=v["head"], verified=v["ok"])
     return {"asof": scan["date"], "sample": sample, "banner": SAMPLE_NOTE if sample else "",
-            "status": sc.get("status", "still noise"), "trading_days": days, "min_days": tracker.MIN_DAYS,
-            "note": re.sub(r"\b1 trading days\b", "1 trading day", plain(sc.get("note", ""))), "entry_rule": "next trading day close",
+            "status": fresh["status"], "trading_days": days, "min_days": tracker.MIN_DAYS,
+            "note": re.sub(r"\b1 trading days\b", "1 trading day", plain(fresh["note"])), "entry_rule": "next trading day close",
             "windows": list(tracker.HORIZONS.values()), "by_lens": by_lens,
+            "first_logged": str(led["date"].min())[:10] if len(led) else None, "interval": "95% Wilson interval", "log": log,
             "calls_logged": len(led), "pending": pending, "graded": graded[-300:], "disclaimer": DISCLAIMER}
 
 

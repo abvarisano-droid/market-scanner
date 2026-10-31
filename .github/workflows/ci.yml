@@ -1,0 +1,25 @@
+name: CI
+on:
+  pull_request:
+  push:
+    branches: [main]
+permissions:
+  contents: read
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with: { fetch-depth: 0 }
+      - uses: actions/setup-python@v5
+        with: { python-version: "3.12", cache: pip }
+      - run: pip install -r requirements.txt pytest
+      - name: Call log is append-only (chain, snapshots, and no edits to past rows versus main)
+        run: |
+          git fetch origin main --depth=1000 || true
+          if git rev-parse --verify origin/main >/dev/null 2>&1; then
+            python scripts/check_call_log.py --base origin/main
+          else
+            python scripts/check_call_log.py
+          fi
+      - run: python -m pytest -q

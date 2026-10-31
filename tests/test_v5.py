@@ -52,7 +52,7 @@ def test_report_card_matches_tracker_grading():
     sw = rc["lenses"]["swing"]["windows"]["5"]
     assert sw["hit_rate_pct"] == 0.0 and sw["avg_excess_pct"] < 0  # Bearish on a riser loses
     assert rc["lenses"]["short_term"]["windows"]["5"]["graded"] == 0
-    assert not rc["still_noise"] and v5.report_card(ev, 20)["still_noise"]
+    assert not v5.report_card(ev, tracker.MIN_DAYS)["still_noise"] and rc["still_noise"]  # 25 days is under the 60-day threshold
 
 
 def test_stock_pages_only_for_called_tickers():
@@ -70,4 +70,4 @@ def test_committed_v5_json():
     assert "Not investment advice" in d["disclaimer"]
     txt = json.dumps(d, ensure_ascii=False)
     assert "—" not in txt and "–" not in txt and not v5.BANNED.search(txt)
-    assert d["report"]["still_noise"] == (d["report"]["trading_days"] < 21)
+    assert d["report"]["still_noise"] == (d["report"]["trading_days"] < tracker.MIN_DAYS)

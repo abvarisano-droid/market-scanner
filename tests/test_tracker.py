@@ -43,11 +43,11 @@ def test_legacy_rows_keep_same_day_entry():
 
 def test_still_noise_threshold():
     st, spy = series(0.01), series(0.0)
-    led = ledger("Bullish", st.index[-22])
+    led = ledger("Bullish", st.index[-61])
     ev = tracker.evaluate(led, {"AAA": st}, spy)
-    assert tracker.trading_days(led, spy) == 21  # bars strictly after the signal date
-    assert tracker.scorecard(ev, 20)["status"] == "still noise"
-    assert tracker.scorecard(ev, 21)["status"] == "enough days to read"
+    assert tracker.trading_days(led, spy) == 60  # bars strictly after the signal date
+    assert tracker.scorecard(ev, 59)["status"] == "still noise"
+    assert tracker.scorecard(ev, 60)["status"] == "enough days to read"
     assert "noise" in tracker.scorecard(ev, 3)["note"]
 
 

@@ -27,15 +27,20 @@ jobs:
           ANTHROPIC_API_KEY: ${{ secrets.MARKET_TEAM_ANTHROPIC_API_KEY }}
       - name: Export site data
         run: python scripts/export_site.py
+      - name: Weekly record snapshot (first run of each ISO week, never overwritten)
+        run: python scripts/snapshot_record.py
+      - name: Call log check (history must be append-only)
+        run: python scripts/check_call_log.py --base HEAD  # also compares with the last committed log
       - name: Tests
         run: python -m pytest -q
       - name: Commit reports, picks and site data
         run: |
           git config user.name "market-scanner-bot"
           git config user.email "actions@users.noreply.github.com"
-          # add only the paths that exist: data/universe is created only when the iShares Russell 2000 pull works
-          for p in reports data/picks.csv data/latest_scan.json data/charts.json data/universe site/data; do
-            if [ -e "$p" ]; then git add "$p"; else echo "::warning::$p not present, skipped (Russell 2000 pull may have failed)"; fi
+          # add only the paths that exist: data/universe is created only when the iShares Russell 2000 pull works,
+          # data/snapshots only once the first weekly snapshot is written
+          for p in reports data/picks.csv data/snapshots data/latest_scan.json data/charts.json data/universe site/data; do
+            if [ -e "$p" ]; then git add "$p"; else echo "::warning::$p not present, skipped (Russell 2000 pull may have failed, or no snapshot yet)"; fi
           done
           git commit -m "Daily scan $(date +%F)" || echo "nothing to commit"
           for attempt in 1 2 3; do
