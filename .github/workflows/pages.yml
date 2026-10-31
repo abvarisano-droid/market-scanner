@@ -5,7 +5,7 @@ on:
     branches: [main]
     paths: ["site/**"]
   workflow_run:
-    workflows: ["Daily scan"]
+    workflows: ["Daily scan", "Weekly SEC refresh"]
     types: [completed]
   workflow_dispatch:
 
