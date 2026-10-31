@@ -15,6 +15,7 @@ VALUE_METRICS = [("forwardPE", -1), ("trailingPE", -1), ("enterpriseToEbitda", -
 QUALITY_METRICS = [("returnOnEquity", +1), ("profitMargins", +1), ("revenueGrowth", +1),
                    ("debtToEquity", -1)]
 
+UPSIDE_MAX, UPSIDE_MIN, MIN_FWD_PE = 0.8, -0.6, 4
 WEIGHTS = {"value": 0.40, "quality": 0.20, "analyst": 0.25, "momentum": 0.15}
 
 
@@ -41,6 +42,11 @@ def score(table: pd.DataFrame) -> pd.DataFrame:
     df = table.copy()
     df["fcf_yield"] = pd.to_numeric(df["freeCashflow"], errors="coerce") / pd.to_numeric(df["marketCap"], errors="coerce")
     df["analyst_upside"] = pd.to_numeric(df["targetMeanPrice"], errors="coerce") / df["price"] - 1
+    # a consensus gap above +80% or below -60% is almost always a currency or unit mismatch: treat as missing
+    df["analyst_upside"] = df["analyst_upside"].where((df["analyst_upside"] <= UPSIDE_MAX) & (df["analyst_upside"] >= UPSIDE_MIN))
+    # a forward P/E under 4 with no trailing P/E is a unit or currency artifact (seen on KRW names): drop it
+    fpe = pd.to_numeric(df["forwardPE"], errors="coerce")
+    df["forwardPE"] = fpe.where(~((fpe < MIN_FWD_PE) & pd.to_numeric(df["trailingPE"], errors="coerce").isna()))
 
     def block(metrics):
         z = pd.concat([_peer_z(df, c, d).rename(c) for c, d in metrics], axis=1)
