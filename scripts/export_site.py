@@ -140,7 +140,8 @@ def build_latest(scan: dict, sample: bool) -> dict:
                 row[key] = {"score": r["score"], "label": r["label"], "reasons": [plain(x) for x in r["reasons"]]}
         lookup[t] = row
     return {"asof": scan["date"], "sample": sample, "banner": SAMPLE_NOTE if sample else "",
-            "disclaimer": DISCLAIMER, "funnel": scan["funnel"], "dropped": scan["funnel"]["dropped"],
+            "disclaimer": DISCLAIMER, "funnel": scan["funnel"],
+            "dropped_baskets": [{"name": d["name"], "date": scan["date"]} for d in scan.get("dropped_baskets") or []], "dropped": scan["funnel"]["dropped"],
             "indexes": [{"name": i["name"], "chg_1d": num(i["chg_1d"], 4), "chg_1m": num(i["chg_1m"], 4)}
                         for i in scan["indexes"]],
             "horizons": {"mispricing": _mispricing_rows(scan, table),

@@ -121,3 +121,21 @@ def test_report_handles_missing_numbers(tmp_path, monkeypatch):
                                       "swing": {"top_bull": [], "top_bear": []}}},
            "movers": [], "scorecard": {}}
     assert pipeline.write_report(res).exists()
+
+
+def test_dropped_basket_recorded_and_exported(tmp_path, monkeypatch):
+    patch_engine(monkeypatch, tmp_path)
+    monkeypatch.setattr(universe, "RUSSELL_CACHE", tmp_path / "none.csv")  # no cache, offline: basket dropped
+    res = pipeline.run(live_constituents=False)
+    assert [d["name"] for d in res["dropped_baskets"]] == ["Russell 2000"]
+    from scripts import export_site
+    lat = export_site.build_latest(json.loads(json.dumps(res, default=str)), sample=False)
+    assert lat["dropped_baskets"] == [{"name": "Russell 2000", "date": res["date"]}]
+
+
+def test_no_dropped_basket_when_cache_present(tmp_path, monkeypatch):
+    patch_engine(monkeypatch, tmp_path)
+    rows = [{"ticker": f"RUT{i:03d}", "name": "", "sector": "", "weight": ""} for i in range(5)]
+    universe.write_russell_cache("2026-10-29", rows, tmp_path / "r.csv")
+    monkeypatch.setattr(universe, "RUSSELL_CACHE", tmp_path / "r.csv")
+    assert pipeline.run(live_constituents=False)["dropped_baskets"] == []

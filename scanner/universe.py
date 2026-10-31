@@ -100,6 +100,21 @@ MIN_RUSSELL = 1000  # a real pull has ~1,900+ US equities; anything far below is
 _TICKER = re.compile(r"^[A-Z]{1,5}(\.[A-Z])?$")
 
 
+def looks_like_html(text: str, headers=None) -> bool:
+    """True when a response is a web page, not a CSV (content type says html, or the body starts like markup)."""
+    ctype = ""
+    try:
+        ctype = str((headers or {}).get("Content-Type", "")).lower()
+    except Exception:
+        pass
+    head = text.lstrip("\ufeff \t\r\n")[:200].lower()
+    return "html" in ctype or head.startswith(("<!doctype", "<html", "<head", "<body", "<?xml")) or "<html" in head
+
+
+# Baskets that could not be loaded in the current universe build: {index name: reason}. Reset by universe_tags().
+DROPPED: dict[str, str] = {}
+
+
 def parse_ishares_holdings(text: str) -> tuple[str, list[dict]]:
     """Parse an iShares holdings CSV into (as-of date ISO, equity rows).
 
@@ -165,6 +180,8 @@ def fetch_russell(path: Path | None = None) -> tuple[str, list[str]]:
     if resp.status_code != 200:
         raise ValueError(f"iShares returned HTTP {resp.status_code}, refusing to parse")
     text = resp.text
+    if looks_like_html(text, getattr(resp, "headers", None)):
+        raise ValueError("iShares returned an HTML page instead of a CSV (no holdings file), treating the pull as failed")
     asof, rows = parse_ishares_holdings(text)
     if len(rows) < MIN_RUSSELL:
         raise ValueError(f"only {len(rows)} equities parsed, refusing to overwrite the cache")
@@ -181,6 +198,7 @@ def russell_constituents(live: bool = True) -> list[str]:
     asof, tickers = read_russell_cache()
     if not tickers:
         log.warning("no cached Russell 2000 list at %s: Russell 2000 stocks are skipped this run", RUSSELL_CACHE)
+        DROPPED[RUSSELL] = "live pull failed and no cached list exists" if live else "no cached list exists"
     return tickers
 
 
@@ -201,8 +219,12 @@ DEFAULT_INDEXES = list(FALLBACK) + [RUSSELL]
 def universe_tags(indexes: list[str] | None = None, live: bool = True) -> dict[str, list[str]]:
     """Return {ticker: [index names]} in index order. A stock in two indexes keeps both tags."""
     out: dict[str, list[str]] = {}
+    DROPPED.clear()
     for name in indexes or DEFAULT_INDEXES:
-        for t in constituents(name, live=live):
+        got = constituents(name, live=live)
+        if not got:
+            DROPPED.setdefault(name, "list unavailable")
+        for t in got:
             tags = out.setdefault(t, [])
             if name not in tags:
                 tags.append(name)
