@@ -215,6 +215,7 @@ def export(scan: dict, site_dir, sample=False):
     (d / "latest.json").write_text(json.dumps(latest, separators=(",", ":"), sort_keys=True))
     (d / "track.json").write_text(json.dumps(tr, indent=1, sort_keys=True))
     (d / "method.json").write_text(json.dumps(build_method(), indent=1, sort_keys=True))
+    from scripts import export_v5; export_v5.export(scan, latest, site_dir)  # v5 data: stock pages, changes, report card
     return latest, tr
 
 

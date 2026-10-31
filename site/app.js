@@ -165,6 +165,7 @@
       '<div class="story"><p id="cap" class="cap" aria-live="polite"></p><div class="ctl"><button type="button" id="nx" class="btn">Next step</button><button type="button" id="sk" class="btn ghost">Skip animation</button></div></div></section>' + sectorHtml(L.sectors) +
       '<div class="ixs" tabindex="0" role="region" aria-label="Index moves today">' + chips + '</div><div class="tabs" role="tablist">' + tabs + "</div>" + body;
     sectorWire(L.sectors);
+    if (window.V5) V5.changes(app);
     var cv = document.getElementById("cv");
     funnel(cv, f, [].slice.call(app.querySelectorAll(".stage .n")), [].slice.call(app.querySelectorAll(".stage")));
     [].forEach.call(app.querySelectorAll(".tab"), function (b) {
@@ -202,6 +203,7 @@
       if (!r) { res.innerHTML = '<p class="note">No scored data for "' + esc(v) + '" in the latest scan. It may be outside the universe or failed a data check.</p>'; return; }
       res.innerHTML = '<div class="card fade"><span class="label">' + esc((r.i ? r.i + " | " : "") + (r.s || "")) + "</span><h2>" + esc(v) + " <span style=\"color:var(--muted);font-size:.5em\">" + esc(r.n) + '</span></h2><div class="meta"><span class="label">Last close ' + (r.c == null ? "n/a" : r.c.toFixed(2) + (r.cur ? " " + esc(r.cur) : "")) + '</span><span class="label">As of ' + esc(S.latest.asof) + "</span></div>" +
         spark(r.spark) + '<div class="hzs">' + hzCard("Mispricing", r.mp, true) + hzCard("Short-term", r.st) + hzCard("Swing", r.sw) + '</div><p class="note">Mechanical rules on past data, not a forecast. Not investment advice.</p></div>';
+      if (window.V5) V5.link(res, v);
     }
     q.addEventListener("input", function () { show(q.value); });
     document.getElementById("f").addEventListener("submit", function (e) { e.preventDefault(); show(q.value); });
@@ -323,6 +325,7 @@
       '<div class="stat"><span class="label">Rule</span><div class="v" style="font-size:18px">Nothing is hidden or removed after the fact.</div></div></div></div></section>' +
       '<section><h2>Graded calls</h2><p class="lede" style="margin-top:6px">Most recent 40 of the latest 300 graded calls shown here. <a href="https://github.com/abvarisano-droid/market-scanner/blob/main/data/picks.csv" target="_blank" rel="noopener">Full ledger</a> (every call, logged once and never replaced by a later run). Neutral names are never called. Results this early are not evidence of skill.</p>' + tbl + "</section>";
     watchScroll("graded");
+    if (window.V5) V5.report(app);
     var pr = document.getElementById("pr");
     if (reduce) pr.style.strokeDashoffset = C * (1 - p);
     else requestAnimationFrame(function () { requestAnimationFrame(function () { pr.style.strokeDashoffset = C * (1 - p); }); });
@@ -388,7 +391,8 @@
     var h = location.hash.replace(/^#\/?/, ""), parts = h.split("/"), pg = parts[0] || "home";
     [].forEach.call(document.querySelectorAll("nav a"), function (a) { a.classList.toggle("on", a.getAttribute("data-nav") === pg); });
     try {
-      if (pg === "lookup") lookup(decodeURIComponent(parts[1] || ""));
+      if (pg === "stock" && window.V5) V5.stock(app, decodeURIComponent(parts[1] || ""));
+      else if (pg === "lookup") lookup(decodeURIComponent(parts[1] || ""));
       else if (pg === "track") track();
       else if (pg === "how") { if (S.method) methodology(); else loadMethod(); }
       else if (pg === "longterm") { if (S.lt) longterm(); else loadLT(); }
