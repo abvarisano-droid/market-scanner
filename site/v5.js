@@ -117,6 +117,16 @@
     }
     return items;
   }
+  function hit(a, b) { return a.x0 < b.x1 && b.x0 < a.x1 && a.y0 < b.y1 && b.y0 < a.y1; }
+  function place(cands, boxes, xlo, xhi) { /* first candidate box that touches nothing already placed (and stays inside xlo..xhi); it joins boxes */
+    var ok = cands.filter(function (c) { return c.x0 >= xlo && c.x1 <= xhi; }), pick = null;
+    for (var i = 0; i < ok.length && !pick; i++) if (!boxes.some(function (b) { return hit(ok[i], b); })) pick = ok[i];
+    if (!pick) { /* nothing is fully clear: take the candidate with the least overlap */
+      var area = function (c) { return boxes.reduce(function (s, b) { return s + Math.max(0, Math.min(c.x1, b.x1) - Math.max(c.x0, b.x0)) * Math.max(0, Math.min(c.y1, b.y1) - Math.max(c.y0, b.y0)); }, 0); };
+      pick = (ok.length ? ok : cands).slice().sort(function (a, b) { return area(a) - area(b); })[0];
+    }
+    boxes.push(pick); return pick;
+  }
   function calc(p) {
     if (p._ind) return p._ind;
     var dc = p.dc, ix = p.ix, P = IND.pick;
@@ -177,9 +187,22 @@
       if (days > 0 && days <= 366) { var xe = xNow + (xEnd - xNow) * days / 365;
         o.push('<line x1="' + xe.toFixed(1) + '" x2="' + xe.toFixed(1) + '" y1="' + padT + '" y2="' + (padT + ph).toFixed(1) + '" class="cev"/><text x="' + (xe + 4).toFixed(1) + '" y="' + (padT + 12) + '" font-size="' + fs + '" class="ct cev-t">EARNINGS ' + MON[new Date(p.event.date + "T00:00:00Z").getUTCMonth()].toUpperCase() + " " + (+p.event.date.slice(8)) + "</text>"); }
     }
-    /* 52-week references */
-    if (st.has("hl")) [[p.hi52, wide ? "52-week high reference " : "52w high ref "], [p.lo52, wide ? "52-week low reference " : "52w low ref "]].forEach(function (r, k) {
-      var y = Y(r[0]); o.push(hline(y, "cref") + '<text x="' + (X(p.daily_from) + 2).toFixed(1) + '" y="' + (k ? y + 13 : y - 5).toFixed(1) + '" class="ct cref-t ch" font-size="' + fs + '">' + r[1] + fmt(r[0]) + "</text>");
+    /* line-end tags for the averages and the last close: placed first so every other label can keep clear of them */
+    var yNow = Y(p.last), lt = [], boxes = [];
+    if (st.has("ma50") && I.m50[n - 1] != null) lt.push({ y: Y(I.m50[n - 1]), t: "50d " + fmt(I.m50[n - 1]), c: COL.m50 });
+    if (st.has("ma200") && I.m200[n - 1] != null) lt.push({ y: Y(I.m200[n - 1]), t: "200d " + fmt(I.m200[n - 1]), c: COL.m200 });
+    lt.push({ y: yNow, t: fmt(p.last), now: 1 });
+    spread(lt, wide ? 20 : 17, padT + 10, padT + pph - 8).forEach(function (t) {
+      t.tw = t.t.length * fs * 0.62 + 10; t.xr = xNow - (wide ? 12 : 9);
+      boxes.push({ x0: t.xr - t.tw - 3, x1: xNow + 10, y0: t.y - 10, y1: t.y + 10 });
+    });
+    /* 52-week references: label above (high) or below (low) the line, slid left of the end tags if they would touch */
+    if (st.has("hl")) [[p.hi52, wide ? "52-week high reference " : "52w high "], [p.lo52, wide ? "52-week low reference " : "52w low "]].forEach(function (r, k) {
+      var y = Y(r[0]), txt = r[1] + fmt(r[0]), w = txt.length * fs * 0.62, ty = k ? y + 13 : y - 5, x0 = X(p.daily_from) + 2;
+      var xs = [x0, x0 - w * 0.5, padL + 34].concat(boxes.map(function (b) { return b.x0 - 6 - w; }), [xNow + slot + 6]), cands = [];
+      [ty, k ? y - 5 : y + 13].forEach(function (yy) { xs.forEach(function (x) { cands.push({ x0: x, x1: x + w, y0: yy - fs, y1: yy + 3 }); }); });
+      var b = place(cands, boxes, padL + 30, xEnd);
+      o.push(hline(y, "cref") + '<text x="' + b.x0.toFixed(1) + '" y="' + (b.y1 - 3).toFixed(1) + '" class="ct cref-t ch" font-size="' + fs + '">' + txt + "</text>");
     });
     /* Bollinger band */
     function line(arr, cls, attr) {
@@ -225,19 +248,19 @@
         tags.push({ y: Y(s.pts[12]), s: s });
       });
       spread(tags, wide ? 34 : 28, padT + 12, padT + pph - 16).forEach(function (t) {
-        var s = t.s, ty = t.y, xt = wide ? xEnd + 10 : xEnd - 6, anc = wide ? "" : ' text-anchor="end"';
+        var s = t.s, xt = wide ? xEnd + 10 : xEnd - 6, anc = wide ? "" : ' text-anchor="end"';
+        var w = Math.max((s.k ? s.name + " " + sp(s.pct) : s.name).length * lf * 0.64, fmt(s.lvl).length * fs * 0.62), up = lf + 2, dn = wide ? 16 : 14;
+        var cands = []; for (var dy = 0; dy <= 72; dy += 4) [dy, -dy].forEach(function (d, q) { if (q && !dy) return; var y = t.y + d; if (y - up < padT - 4 || y + dn > padT + pph + 8) return;
+          cands.push({ x0: wide ? xt : xt - w, x1: wide ? xt + w : xt, y0: y - up, y1: y + dn, ty: y }); });
+        var b = cands.length ? place(cands, boxes, -1e9, 1e9) : { ty: t.y }, ty = b.ty;
         fo.push('<text x="' + xt.toFixed(1) + '" y="' + (ty - 2).toFixed(1) + '" font-size="' + lf + '" class="cfl ch" fill="' + s.col + '"' + anc + ">" + (s.k ? s.name + " " + sp(s.pct) : wide ? s.name.toUpperCase() : s.name) + "</text>" +
           '<text x="' + xt.toFixed(1) + '" y="' + (ty + (wide ? 13 : 11)).toFixed(1) + '" font-size="' + fs + '" class="ct ch"' + anc + ">" + fmt(s.lvl) + "</text>");
       });
       o.push('<g class="cfang">' + fo.join("") + "</g>");
     }
-    /* line-end tags for the averages and the last close */
-    var yNow = Y(p.last), lt = [];
-    if (st.has("ma50") && I.m50[n - 1] != null) lt.push({ y: Y(I.m50[n - 1]), t: "50d " + fmt(I.m50[n - 1]), c: COL.m50 });
-    if (st.has("ma200") && I.m200[n - 1] != null) lt.push({ y: Y(I.m200[n - 1]), t: "200d " + fmt(I.m200[n - 1]), c: COL.m200 });
-    lt.push({ y: yNow, t: fmt(p.last), now: 1 });
-    spread(lt, wide ? 20 : 17, padT + 10, padT + pph - 8).forEach(function (t) {
-      var tw = t.t.length * fs * 0.62 + 10, xr = xNow - (wide ? 12 : 9);
+    /* draw the line-end tags (positions set above) */
+    lt.forEach(function (t) {
+      var tw = t.tw, xr = t.xr;
       o.push('<rect x="' + (xr - tw).toFixed(1) + '" y="' + (t.y - 8).toFixed(1) + '" width="' + tw.toFixed(1) + '" height="16" rx="3" fill="' + (t.now ? COL.m50 : "#0b0a08") + '"' + (t.now ? "" : ' stroke="' + t.c + '" stroke-opacity=".7"') + "/>" +
         '<text x="' + (xr - tw / 2).toFixed(1) + '" y="' + (t.y + 3.5).toFixed(1) + '" font-size="' + fs + '" text-anchor="middle" class="ctag" fill="' + (t.now ? "#050505" : t.c) + '">' + esc(t.t) + "</text>");
     });
@@ -294,10 +317,18 @@
     box.setAttribute("data-w", W);
     plot.innerHTML = '<svg viewBox="0 0 ' + W + " " + r.H + '" width="' + W + '" height="' + r.H + '" role="img" aria-label="' + esc(summary(p, st)) + '">' + r.svg + "</svg>";
   }
+  /* phones show the short part of each chip label; the .lx part is visually hidden there, so the accessible name stays the full name */
+  var SHORT = { "50-day SMA": ["50-day", " SMA"], "200-day SMA": ["200-day", " SMA"], "Bollinger Bands (20, 2)": ["Bollinger", " Bands (20, 2)"], "RSI (14)": ["RSI", " (14)"],
+    "MACD (12, 26, 9)": ["MACD", " (12, 26, 9)"], "52-week range": ["52-week", " range"], "Volatility cone (\u00b11\u03c3)": ["Volatility cone", " (\u00b11\u03c3)"], "Next earnings": ["earnings", "Next ", 1] };
+  function chipLabel(name) {
+    var s = SHORT[name], sig = function (x) { return x.replace("\u03c3", '<span style="text-transform:none">\u03c3</span>'); };
+    if (!s) return sig(name);
+    return s[2] ? '<span class="lx">' + s[1] + "</span>" + s[0] : s[0] + '<span class="lx">' + sig(s[1]) + "</span>";
+  }
   function chipRow(st) {
     var seg = [["candles", "Candlesticks"], ["line", "Line"]].map(function (m) { return '<button type="button" class="tg seg" data-mode="' + m[0] + '" aria-pressed="' + (st.mode === m[0]) + '">' + m[1] + "</button>"; }).join("");
     return '<div class="tgs" role="group" aria-label="Chart layers"><span class="tgseg" role="group" aria-label="Price style">' + seg + "</span>" +
-      LAYERS.map(function (l) { return '<button type="button" class="tg" data-k="' + l[0] + '" aria-pressed="' + st.has(l[0]) + '"><span>' + l[1].replace("\u03c3", '<span style="text-transform:none">\u03c3</span>') + "</span></button>"; }).join("") + "</div>";
+      LAYERS.map(function (l) { return '<button type="button" class="tg" data-k="' + l[0] + '" aria-pressed="' + st.has(l[0]) + '"><span>' + chipLabel(l[1]) + "</span></button>"; }).join("") + "</div>";
   }
   function chartBox(t) {
     var st = state();

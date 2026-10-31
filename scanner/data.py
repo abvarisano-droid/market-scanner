@@ -111,9 +111,32 @@ def news(ticker: str, limit: int = 8) -> list[dict]:
     return out
 
 
-def earnings_dates(ticker: str) -> list:
-    """Published upcoming earnings date(s) from the Yahoo Finance calendar (may be empty or change)."""
+def earnings_dates(ticker: str, timeout: float = 10) -> list:
+    """Published upcoming earnings date(s) from the Yahoo Finance calendar (may be empty or change).
+
+    yfinance's calendar call takes no timeout argument, so it runs in a worker thread and is
+    abandoned (as a daemon thread) after `timeout` seconds (an empty list), so one slow ticker cannot stall the export."""
+    import queue
+    import threading
+
     import yfinance as yf
 
-    cal = yf.Ticker(ticker).calendar or {}
+    q: queue.Queue = queue.Queue(maxsize=1)
+
+    def work():
+        try:
+            q.put(("ok", yf.Ticker(ticker).calendar))
+        except Exception as e:  # passed back to the caller below
+            q.put(("err", e))
+
+    # A daemon thread, so a call that truly hangs cannot hold the process open at exit.
+    threading.Thread(target=work, daemon=True).start()
+    try:
+        kind, cal = q.get(timeout=timeout)
+    except queue.Empty:
+        log.warning("earnings calendar for %s timed out after %ss", ticker, timeout)
+        return []
+    if kind == "err":
+        raise cal
+    cal = cal or {}
     return list(cal.get("Earnings Date") or []) if isinstance(cal, dict) else []

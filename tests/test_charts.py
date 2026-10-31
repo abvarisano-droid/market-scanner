@@ -139,3 +139,44 @@ def test_js_indicators_match_pandas():
         assert out["sig"][i] == pytest.approx(sig.iloc[i], rel=1e-7, abs=1e-9)
         assert out["hist"][i] == pytest.approx(line.iloc[i] - sig.iloc[i], rel=1e-6, abs=1e-9)
     assert out["macd"][32] is None and 0 <= min(v for v in out["rsi"] if v is not None)
+
+
+def test_earnings_dates_times_out(monkeypatch):
+    import time
+    import types
+    import sys
+    from scanner import data
+    slow = types.SimpleNamespace(Ticker=lambda t: types.SimpleNamespace(calendar=time.sleep(0.5) or {"Earnings Date": ["x"]}))
+    monkeypatch.setitem(sys.modules, "yfinance", slow)
+    assert data.earnings_dates("AAA", timeout=0.05) == []
+    fast = types.SimpleNamespace(Ticker=lambda t: types.SimpleNamespace(calendar={"Earnings Date": ["2026-11-12"]}))
+    monkeypatch.setitem(sys.modules, "yfinance", fast)
+    assert data.earnings_dates("AAA") == ["2026-11-12"]
+
+
+def test_earnings_dates_timeout_does_not_hold_exit():
+    import subprocess
+    import sys
+    import time
+    code = (
+        "import sys, time, types\n"
+        "sys.modules['yfinance'] = types.SimpleNamespace(Ticker=lambda t: (time.sleep(30), None)[1])\n"
+        "from scanner import data\n"
+        "assert data.earnings_dates('AAA', timeout=0.1) == []\n"
+    )
+    t0 = time.monotonic()
+    subprocess.run([sys.executable, "-c", code], check=True, cwd=str(__import__("pathlib").Path(__file__).resolve().parents[1]), timeout=20)
+    assert time.monotonic() - t0 < 10
+
+
+def test_earnings_dates_reraises_worker_error(monkeypatch):
+    import sys
+    import types
+    from scanner import data
+
+    def boom(t):
+        raise RuntimeError("calendar down")
+
+    monkeypatch.setitem(sys.modules, "yfinance", types.SimpleNamespace(Ticker=boom))
+    with pytest.raises(RuntimeError, match="calendar down"):
+        data.earnings_dates("AAA", timeout=2)
