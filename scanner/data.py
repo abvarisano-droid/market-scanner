@@ -109,3 +109,11 @@ def news(ticker: str, limit: int = 8) -> list[dict]:
             "time": c.get("pubDate") or c.get("providerPublishTime"),
         })
     return out
+
+
+def earnings_dates(ticker: str) -> list:
+    """Published upcoming earnings date(s) from the Yahoo Finance calendar (may be empty or change)."""
+    import yfinance as yf
+
+    cal = yf.Ticker(ticker).calendar or {}
+    return list(cal.get("Earnings Date") or []) if isinstance(cal, dict) else []

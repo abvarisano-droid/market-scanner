@@ -56,11 +56,19 @@ python -m pytest -q                 # offline tests, no network
 
 The committed `site/data/` comes from the latest real daily scan. Only `python scripts/export_site.py --sample` writes synthetic data, and that output carries a "Sample data" banner.
 
+### Stock page chart
+Every called ticker (the ones in `data/picks.csv`) gets a chart on its stock page (`#/stock/<TICKER>`) and in Lookup: three years of candles (weekly, then daily for the last six months), with toggles for Candles or Line, Volume, 50 and 200 day averages, Bollinger Bands (20, 2), RSI (14), MACD (12, 26, 9), 52-week high and low reference lines, the scenario fan and the next earnings date when Yahoo publishes one. Toggle state lives in the URL hash (`?on=...&view=line`), not in storage. A Fundamentals card (forward and trailing P/E, EV/EBITDA, analyst consensus gap, sector, market cap) sits under it.
+
+- Data: the nightly scan fetches 3 years of daily OHLCV for the called tickers only (one extra batched download of about 70 names plus one calendar lookup each, about 20 seconds) and writes `data/charts.json` (`scanner/charts.py`). The export writes one file per ticker to `site/data/charts/<TICKER>.json` (about 20KB, 7KB gzipped). Refresh by hand with `python scripts/build_charts.py` then `python scripts/export_site.py`.
+- Scenario fan: an illustration from the stock's own past volatility, not a forecast. Base is the median rolling one-year log move over the history; Good year and Bad year add and subtract one standard deviation of yearly moves (daily log return standard deviation times the square root of 252). Paths are drawn as close times exp(m t plus or minus sigma times the square root of t).
+- Indicators are computed in the browser from the daily closes (`site/indicators.js`), checked against a pandas reference in `tests/test_charts.py`.
+- `docs/stock-chart-hero.png` is a 1600x900 capture of a stock page for the personal site.
+
 ## Automation
-`.github/workflows/daily-scan.yml` runs every weekday after the US close: scan, export site data, run tests, then commit `reports/`, `data/picks.csv`, `data/latest_scan.json` and `site/data/` (contents: write, no force push). `.github/workflows/pages.yml` redeploys `site/` to GitHub Pages on each push that touches `site/` and after each successful Daily scan or weekly SEC refresh.
+`.github/workflows/daily-scan.yml` runs every weekday after the US close: scan, export site data, run tests, then commit `reports/`, `data/picks.csv`, `data/latest_scan.json`, `data/charts.json` and `site/data/` (contents: write, no force push). `.github/workflows/pages.yml` redeploys `site/` to GitHub Pages on each push that touches `site/` and after each successful Daily scan or weekly SEC refresh.
 
 ## Layout
-`scanner/` engine: `data.py` (yfinance), `universe.py`, `valuation.py` (mispricing), `technical.py` (short-term and swing rules), `news_ai.py`, `tracker.py` (ledger and grading), `labels.py`, `pipeline.py`. `scripts/export_site.py` feeds `site/`.
+`scanner/` engine: `data.py` (yfinance), `universe.py`, `valuation.py` (mispricing), `technical.py` (short-term and swing rules), `news_ai.py`, `tracker.py` (ledger and grading), `labels.py`, `charts.py` (stock page candles and scenario fan), `pipeline.py`. `scripts/export_site.py` feeds `site/`.
 
 ## Long-term tab (SEC 10-K)
 `site/data/longterm.json` holds, for the S&P 500, 10-year revenue CAGR, operating margin and its 5-year change, FCF margin, an ROIC proxy, 2-year share count change, debt to EBITDA, and FCF yield and EV/EBITDA from the last scan price. Every figure links to the SEC filing folder it came from. Six mechanical yes/no checks give a count; no buy or sell language, "Not investment advice" on the tab. Logic is in `scanner/longterm.py` (10-K facts only, tag fallbacks, latest filing wins per period).

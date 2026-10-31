@@ -96,4 +96,5 @@ def patch_engine(monkeypatch, tmp_path):
     monkeypatch.setattr(data, "prices", fake_prices)
     monkeypatch.setattr(data, "fundamentals", fake_fund)
     monkeypatch.setattr(data, "news", fake_news)
+    monkeypatch.setattr(data, "earnings_dates", lambda t: [])
     monkeypatch.delenv("ANTHROPIC_API_KEY", raising=False)

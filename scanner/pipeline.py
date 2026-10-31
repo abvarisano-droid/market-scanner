@@ -11,7 +11,7 @@ from pathlib import Path
 import numpy as np
 import pandas as pd
 
-from . import data, news_ai, signals, technical, tracker, universe, valuation
+from . import charts, data, news_ai, signals, technical, tracker, universe, valuation
 
 log = logging.getLogger(__name__)
 ROOT = Path(__file__).resolve().parent.parent
@@ -140,6 +140,15 @@ def run(indexes: list[str] | None = None, top_n: int = TOP_N, live_constituents:
         scorecard = {"total_picks": 0, "trading_days": 0, "status": "still noise",
                      "note": "Track record unavailable for this run."}
         ledger_rows = []
+
+    try:  # 3 year candles for every called ticker: one extra batched download of about 70 names
+        called = sorted(set(led["ticker"])) if ledger_rows else []
+        cur = {t: table.loc[t, "currency"] for t in called if t in table.index and "currency" in table}
+        if called:
+            charts.save(charts.collect(called, currencies={k: v for k, v in cur.items() if isinstance(v, str)}),
+                        ROOT / "data" / "charts.json")
+    except Exception as exc:  # charts are optional; the scan and ledger never depend on them
+        log.warning("charts step failed (%s); keeping the previous data/charts.json", exc)
 
     result = {
         "date": asof.date().isoformat(),

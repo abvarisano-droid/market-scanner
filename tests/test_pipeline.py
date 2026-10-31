@@ -1,3 +1,4 @@
+import json
 """Offline end-to-end test with fake market data. No network."""
 import pandas as pd
 
@@ -15,6 +16,8 @@ def test_run(tmp_path, monkeypatch):
     assert {p["call"] for p in res["picks"]} <= {"Bullish", "Bearish", "Neutral"}
     assert all(p["thesis"] for p in res["picks"])
     assert (tmp_path / "reports" / "latest.md").exists()
+    ch = json.loads((tmp_path / "data" / "charts.json").read_text())  # candles for every called ticker
+    assert set(ch) == {r["ticker"] for r in res["ledger"]} and all(c["fan"] for c in ch.values())
     f = res["funnel"]
     for k in ("mispricing", "short_term", "swing"):
         assert f[k]["universe"] >= f[k]["with_data"] >= f[k]["passed_checks"] >= f[k]["scored"] >= 0
