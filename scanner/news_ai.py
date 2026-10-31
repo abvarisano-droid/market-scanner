@@ -71,7 +71,7 @@ def ai_call(row: dict, headlines: list[dict]) -> dict | None:
         f"Ticker: {row.get('ticker')}\nData: {json.dumps(facts, default=str)}\n"
         f"Model notes: {row.get('valuation_reasons')}\nHeadlines:\n{news}\n\n"
         'Reply with JSON only: {"call": "Bullish|Bearish|Neutral", "confidence": 0-100, '
-        '"thesis": "2-3 sentences on why, plain words, no advice wording", "catalysts": "short", "risks": "short", "target_return_pct": number}'
+        '"thesis": "2-3 sentences on why, plain words, no advice wording", "catalysts": "short", "risks": "short"}'
     )
     try:
         msg = anthropic.Anthropic(api_key=key).messages.create(

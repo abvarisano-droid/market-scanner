@@ -23,7 +23,7 @@ from .labels import BEARISH, BULLISH, normalize, sign
 
 LEDGER = Path(__file__).resolve().parent.parent / "data" / "picks.csv"
 COLS = ["date", "ticker", "index", "call", "confidence", "entry", "bench_entry", "mispricing", "thesis",
-        "source", "lens", "score", "entry_rule"]
+        "source", "lens", "score", "entry_rule", "run_id"]
 HORIZONS = {"5d": 5, "20d": 20, "60d": 60}
 LENSES = ("mispricing", "short_term", "swing")
 MIN_DAYS = 21
@@ -43,8 +43,11 @@ def load() -> pd.DataFrame:
     return led[COLS]
 
 
-def log_picks(picks: list[dict], bench_price: float, today=None) -> pd.DataFrame:
-    """Append calls. One row per (date, ticker, lens); re-running a day replaces that day's rows."""
+def log_picks(picks: list[dict], bench_price: float, today=None, run_id: str | None = None) -> pd.DataFrame:
+    """Append calls. One row per (date, ticker, lens).
+
+    Rows are never replaced by a later run: only a rewrite inside the same run (same run_id) may replace its own rows.
+    A call that an earlier run already logged for that date is kept as it was and the new copy is dropped."""
     today = pd.Timestamp(today or date.today()).normalize()
     led = load()
     rows = []
@@ -56,12 +59,15 @@ def log_picks(picks: list[dict], bench_price: float, today=None) -> pd.DataFrame
                      "confidence": p.get("confidence"), "entry": p.get("price"), "bench_entry": bench_price,
                      "mispricing": p.get("mispricing"), "thesis": (p.get("thesis") or "")[:500],
                      "source": p.get("source"), "lens": p.get("lens", "mispricing"), "score": p.get("score"),
-                     "entry_rule": NEXT_CLOSE})
+                     "entry_rule": NEXT_CLOSE, "run_id": run_id})
     new = pd.DataFrame(rows, columns=COLS)
     if not led.empty and not new.empty:
         key = set(zip(new["ticker"], new["lens"]))
-        drop = (led["date"] == today) & pd.Series([(t, l) in key for t, l in zip(led["ticker"], led["lens"])], index=led.index)
-        led = led[~drop]
+        in_key = pd.Series([(t, l) in key for t, l in zip(led["ticker"], led["lens"])], index=led.index)
+        mine = led["run_id"].notna() & (led["run_id"] == run_id) if run_id else pd.Series(False, index=led.index)
+        led = led[~((led["date"] == today) & in_key & mine)]  # same-run rewrite only
+        kept = set(zip(led.loc[led["date"] == today, "ticker"], led.loc[led["date"] == today, "lens"]))
+        new = new[[(t, l) not in kept for t, l in zip(new["ticker"], new["lens"])]]  # earlier runs win
     led = pd.concat([led, new], ignore_index=True) if not led.empty else new
     LEDGER.parent.mkdir(parents=True, exist_ok=True)
     led.to_csv(LEDGER, index=False)
@@ -78,6 +84,12 @@ def _naive(s: pd.Series) -> pd.Series:
 
 def _after(s: pd.Series, d) -> pd.Series:
     return s[s.index > d]
+
+
+def _align(bench: pd.Series, index: pd.Index) -> pd.Series:
+    """Benchmark closes on the stock's own dates (last known close carried forward), so position n means the same
+    calendar day for both. Dates before the benchmark's first bar are dropped."""
+    return bench.reindex(bench.index.union(index)).ffill().reindex(index).dropna()
 
 
 def evaluate(led: pd.DataFrame, history: dict[str, pd.Series], bench: pd.Series) -> pd.DataFrame:
@@ -97,10 +109,12 @@ def evaluate(led: pd.DataFrame, history: dict[str, pd.Series], bench: pd.Series)
             for k in out: out[k].append(None)
             continue
         if legacy:  # old rule: same-day entry price as logged, windows counted from the signal date
-            a, b = s[s.index >= r["date"]], bench[bench.index >= r["date"]]
+            a = s[s.index >= r["date"]]
+            b = _align(bench, a.index)
             e, be, off = r["entry"], r["bench_entry"], 0
         else:
-            a, b = _after(s, r["date"]), _after(bench, r["date"])
+            a = _after(s, r["date"])
+            b = _align(bench, a.index)
             if len(a) == 0 or len(b) == 0:
                 for k in out: out[k].append(None)
                 continue
@@ -123,11 +137,11 @@ def evaluate(led: pd.DataFrame, history: dict[str, pd.Series], bench: pd.Series)
 
 
 def trading_days(led: pd.DataFrame, bench: pd.Series) -> int:
-    """Trading days of calls so far: benchmark bars on or after the first logged call."""
+    """Trading days of calls so far: benchmark bars strictly after the first signal date (the signal day itself is not a day of results)."""
     if led.empty:
         return 0
     b = _naive(bench)
-    return int((b.index >= led["date"].min()).sum())
+    return int((b.index > led["date"].min()).sum())
 
 
 def scorecard(ev: pd.DataFrame, days: int | None = None) -> dict:
@@ -135,8 +149,9 @@ def scorecard(ev: pd.DataFrame, days: int | None = None) -> dict:
     if days is not None:
         out["trading_days"] = int(days)
         out["status"] = "still noise" if days < MIN_DAYS else "enough days to read"
-        out["note"] = (f"Only {days} trading days of calls so far (need {MIN_DAYS}). Treat results as noise."
-                       if days < MIN_DAYS else f"{days} trading days of calls.")
+        unit = "trading day" if days == 1 else "trading days"
+        out["note"] = (f"Only {days} {unit} of calls so far (need {MIN_DAYS}). Treat results as noise."
+                       if days < MIN_DAYS else f"{days} {unit} of calls.")
     if ev.empty:
         return out
 

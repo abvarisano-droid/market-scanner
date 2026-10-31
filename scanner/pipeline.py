@@ -3,6 +3,9 @@ from __future__ import annotations
 
 import json
 import logging
+import os
+import uuid
+from datetime import date
 from pathlib import Path
 
 import numpy as np
@@ -15,11 +18,30 @@ ROOT = Path(__file__).resolve().parent.parent
 LATEST = ROOT / "data" / "latest_scan.json"
 
 
+_RUN_ID = os.getenv("GITHUB_RUN_ID") or uuid.uuid4().hex[:12]
+
+
+def _asof(price_map: dict[str, pd.DataFrame]) -> pd.Timestamp:
+    """Latest bar date across everything fetched. Using the max (not just SPY's last bar) means a market that
+    already has a later bar can never be graded from a day whose close was known at signal time."""
+    last = []
+    for df in price_map.values():
+        idx = df["Close"].dropna().index
+        if len(idx):
+            t = pd.Timestamp(idx[-1])
+            last.append(t.tz_localize(None) if t.tzinfo is not None else t)
+    return max(last).normalize()
+
+
 def build_table(price_map: dict[str, pd.DataFrame], fundamentals: pd.DataFrame, uni: dict[str, str]) -> pd.DataFrame:
     rows = []
     for t, df in price_map.items():
-        tech = signals.technicals(df)
-        tech["flags"] = signals.flags(tech)
+        try:
+            tech = signals.technicals(df)
+            tech["flags"] = signals.flags(tech)
+        except Exception as exc:  # one bad ticker must not kill the scan
+            log.warning("skipping %s: signals failed (%s)", t, exc)
+            continue
         rows.append({"ticker": t, "index": uni.get(t), **tech})
     table = pd.DataFrame(rows).set_index("ticker")
     table = table.join(fundamentals, how="left")
@@ -32,7 +54,11 @@ def index_snapshot(price_map: dict[str, pd.DataFrame]) -> list[dict]:
         df = price_map.get(sym)
         if df is None:
             continue
-        t = signals.technicals(df)
+        try:
+            t = signals.technicals(df)
+        except Exception as exc:
+            log.warning("index %s skipped (%s)", name, exc)
+            continue
         out.append({"name": name, "symbol": sym, "level": t["price"], "chg_1d": t["chg_1d"],
                     "chg_1m": t["chg_1m"], "chg_3m": t["chg_3m"], "rsi": t["rsi"],
                     "pct_from_high": t["pct_from_high"]})
@@ -47,14 +73,17 @@ def run(indexes: list[str] | None = None, top_n: int = 12, live_constituents: bo
 
     price_map = data.prices(tickers + list(universe.INDEXES.values()) + [universe.BENCHMARK], period="2y")
     stock_prices = {t: price_map[t] for t in tickers if t in price_map}
-    fund = data.fundamentals(list(stock_prices))
+    try:
+        fund = data.fundamentals(list(stock_prices))
+    except Exception as exc:
+        log.warning("fundamentals failed (%s); scoring on prices only", exc)
+        fund = pd.DataFrame(index=list(stock_prices), columns=data.FUNDAMENTAL_FIELDS)
     table = build_table(stock_prices, fund, uni)
 
     # technical rules (short-term and swing) on the same price data, SPY as the market reference
     bench_df = price_map[universe.BENCHMARK]
-    bench = bench_df["Close"]
-    asof = pd.Timestamp(bench.index[-1]).tz_localize(None).normalize() if getattr(bench.index, "tz", None) is not None \
-        else pd.Timestamp(bench.index[-1]).normalize()
+    bench = bench_df["Close"].dropna()
+    asof = _asof(price_map)
     tech = technical.scan_technical({t: technical.from_ohlcv(df) for t, df in stock_prices.items()},
                                     technical.from_ohlcv(bench_df))
     tech["dropped"]["no data"] += len(tickers) - len(stock_prices)
@@ -67,7 +96,11 @@ def run(indexes: list[str] | None = None, top_n: int = 12, live_constituents: bo
     picks = []
     for t, r in cands.iterrows():
         row = {"ticker": t, **r.to_dict()}
-        res = news_ai.analyze(row, data.news(t))
+        try:
+            res = news_ai.analyze(row, data.news(t))
+        except Exception as exc:
+            log.warning("news/AI step failed for %s (%s); using rules", t, exc)
+            res = {**news_ai.rule_based_call(row, 0.0), "sentiment": 0.0, "headlines": []}
         picks.append({**_clean(row), **res, "lens": "mispricing"})
 
     tech_calls = []
@@ -75,16 +108,31 @@ def run(indexes: list[str] | None = None, top_n: int = 12, live_constituents: bo
         for r in h["top_bull"] + h["top_bear"]:
             if r["label"] in ("Bullish", "Bearish"):
                 tech_calls.append({"ticker": r["ticker"], "index": uni.get(r["ticker"]), "call": r["label"],
-                                   "price": float(table.loc[r["ticker"], "price"]) if r["ticker"] in table.index else None,
+                                   "price": _finite(table.loc[r["ticker"], "price"]) if r["ticker"] in table.index else None,
                                    "score": r["score"], "thesis": "; ".join(r["reasons"]), "source": "technical",
                                    "lens": hz})
 
-    led = tracker.log_picks(picks + tech_calls, float(bench.iloc[-1]), today=asof)
-    hist = {t: df["Close"] for t, df in price_map.items()}
-    missing = [t for t in led["ticker"].unique() if t not in hist]
-    if missing:
-        hist.update({t: d["Close"] for t, d in data.prices(missing).items()})
-    ev = tracker.evaluate(led, hist, bench)
+    try:
+        bench_n = tracker._naive(bench)
+        bench_at = float(bench_n[bench_n.index <= asof].iloc[-1])  # benchmark close on or before the as-of date
+        prior = tracker.load()
+        if not prior.empty and asof in set(prior["date"]) and asof < pd.Timestamp(date.today()):
+            log.info("as-of %s is already in the ledger and is before today (holiday or stale data): not logging again", asof.date())
+            led = prior
+        else:
+            led = tracker.log_picks(picks + tech_calls, bench_at, today=asof, run_id=_RUN_ID)
+        hist = {t: df["Close"] for t, df in price_map.items()}
+        missing = [t for t in led["ticker"].unique() if t not in hist]
+        if missing:
+            hist.update({t: d["Close"] for t, d in data.prices(missing).items()})
+        ev = tracker.evaluate(led, hist, bench)
+        scorecard = tracker.scorecard(ev, tracker.trading_days(led, bench))
+        ledger_rows = _clean_records(ev)
+    except Exception as exc:  # the track record must not take the scan down; the ledger file is already safe
+        log.exception("tracker stage failed (%s); scan continues without a scorecard", exc)
+        scorecard = {"total_picks": 0, "trading_days": 0, "status": "still noise",
+                     "note": "Track record unavailable for this run."}
+        ledger_rows = []
 
     result = {
         "date": asof.date().isoformat(),
@@ -96,12 +144,15 @@ def run(indexes: list[str] | None = None, top_n: int = 12, live_constituents: bo
         "movers": _movers(table),
         "sectors": signals.sector_rotation(table).reset_index().to_dict("records"),
         "table": _clean_records(table.reset_index()),
-        "scorecard": tracker.scorecard(ev, tracker.trading_days(led, bench)),
-        "ledger": _clean_records(ev),
+        "scorecard": scorecard,
+        "ledger": ledger_rows,
     }
     LATEST.parent.mkdir(parents=True, exist_ok=True)
     LATEST.write_text(json.dumps(result, default=str))
-    write_report(result)
+    try:
+        write_report(result)
+    except Exception as exc:
+        log.exception("report failed (%s); latest_scan.json is saved", exc)
     return result
 
 
@@ -139,21 +190,33 @@ def _clean_records(df: pd.DataFrame) -> list[dict]:
     return [_clean(r) for r in df.to_dict("records")]
 
 
+def _finite(x):
+    try:
+        x = float(x)
+    except (TypeError, ValueError):
+        return None
+    return x if np.isfinite(x) else None
+
+
+def _num(x, fmt: str) -> str:
+    return "n/a" if _finite(x) is None else format(float(x), fmt)
+
+
 def _pct(x):
-    return "n/a" if x is None else f"{x:+.1%}"
+    return "n/a" if _finite(x) is None else f"{x:+.1%}"
 
 
 def write_report(res: dict) -> Path:
     L = [f"# Market Scan, {res['date']}", "", "## Global indexes", "",
          "| Index | Level | 1D | 1M | 3M | From 52w high |", "|---|---|---|---|---|---|"]
     for i in res["indexes"]:
-        L.append(f"| {i['name']} | {i['level']:,.0f} | {_pct(i['chg_1d'])} | {_pct(i['chg_1m'])} | "
+        L.append(f"| {i['name']} | {_num(i['level'], ',.0f')} | {_pct(i['chg_1d'])} | {_pct(i['chg_1m'])} | "
                  f"{_pct(i['chg_3m'])} | {_pct(i['pct_from_high'])} |")
     L += ["", "## Top calls", ""]
     for p in sorted(res["picks"], key=lambda p: -(p.get("mispricing") or 0)):
         L += [f"### {p['ticker']} ({p.get('shortName') or ''}): **{p['call']}** "
-              f"(confidence {p.get('confidence')}, mispricing {p.get('mispricing'):+.0f})",
-              f"*{p.get('index')}, {p.get('sector') or 'n/a'}, price {p.get('price'):,.2f}*", "",
+              f"(confidence {p.get('confidence')}, mispricing {_num(p.get('mispricing'), '+.0f')})",
+              f"*{p.get('index')}, {p.get('sector') or 'n/a'}, price {_num(p.get('price'), ',.2f')}*", "",
               p.get("thesis", "")]
         if p.get("catalysts"):
             L.append(f"\n**Catalysts:** {p['catalysts']}  \n**Risks:** {p.get('risks', '')}")
@@ -165,7 +228,7 @@ def write_report(res: dict) -> Path:
         L += [f"## {title} technical signals", ""]
         for side, rows in (("Bullish", h["top_bull"][:5]), ("Bearish", h["top_bear"][:5])):
             for r in rows:
-                L.append(f"- **{r['ticker']}** {side} ({r['score']:.0f}): {'; '.join(r['reasons'])}")
+                L.append(f"- **{r['ticker']}** {side} ({_num(r['score'], '.0f')}): {'; '.join(r['reasons'])}")
         L.append("")
     L += ["## Unusual movers", ""]
     for m in res["movers"][:15]:

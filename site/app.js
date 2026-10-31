@@ -2,13 +2,13 @@
   "use strict";
   var HZ = [["mispricing", "Mispricing"], ["short_term", "Short-term"], ["swing", "Swing"]];
   var HZNAME = { mispricing: "Mispricing", short_term: "Short-term", swing: "Swing" };
-  var HZHELP = { mispricing: "Valuation vs peers, quality, the Street gap and recent stretch. Score runs from -100 (looks rich) to +100 (looks cheap).", short_term: "Price vs its 20-day average, 5 and 10 day momentum, RSI and volume. Score 0 to 100.", swing: "50 and 200-day averages, their slope, 3-month strength vs the S&amp;P 500 and distance from the 52-week high. Score 0 to 100." };
+  var HZHELP = { mispricing: "Valuation vs peers, quality, the analyst consensus gap and recent stretch. Score runs from -100 (looks rich) to +100 (looks cheap).", short_term: "Price vs its 20-day average, 5 and 10 day momentum, RSI and volume. Score 0 to 100.", swing: "50 and 200-day averages, their slope, 3-month strength vs the S&amp;P 500 and distance from the 52-week high. Score 0 to 100." };
   var reduce = window.matchMedia && matchMedia("(prefers-reduced-motion: reduce)").matches;
   var app = document.getElementById("app");
   var S = { latest: null, track: null, hz: "mispricing", raf: 0 };
 
   function esc(s) { return String(s).replace(/[&<>"']/g, function (c) { return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]; }); }
-  function pct(x, d) { return (x >= 0 ? "+" : "") + (x * 100).toFixed(d == null ? 1 : d) + "%"; }
+  function pct(x, d) { if (x == null || x !== x) return "n/a"; return (x >= 0 ? "+" : "") + (x * 100).toFixed(d == null ? 1 : d) + "%"; }
   function sgn(v) { v = Math.round(v); return S.hz === "mispricing" ? (v > 0 ? "+" : "") + v : String(v); }
   function cls(l) { return l === "Bullish" ? "" : l === "Bearish" ? "bear" : "neutral"; }
   function load(u) { return fetch(u).then(function (r) { if (!r.ok) throw new Error(u); return r.json(); }); }
@@ -123,7 +123,7 @@
         '<span class="cell" style="background:' + heatColor(s.rel_1m, mx) + '"><span class="label">1 month</span><b>' + relTxt(s.rel_1m) + '</b></span>' +
         '<span class="bb"><span class="pos">' + s.bullish + ' Bullish</span><span class="neg">' + s.bearish + ' Bearish</span></span></button>';
     }).join("");
-    return '<section class="heat"><h2>Sector heat</h2><p class="lede">Each sector\'s average move minus the S&amp;P 500 (SPY) over 1 week and 1 month, with how many of its stocks the mispricing view calls Bullish or Bearish. Gold is ahead of the index, red is behind, gray is level. Tap a tile for the other views.</p>' +
+    return '<section class="heat"><h2>Sector heat</h2><p class="lede">Each sector\'s average move in local currency returns minus the S&amp;P 500 (SPY) over 1 week and 1 month, with how many of its stocks the mispricing view calls Bullish or Bearish. Gold is ahead of the index, red is behind, gray is level. Tap a tile for the other views.</p>' +
       '<div class="twrap"><span class="swipe" id="hsw" aria-hidden="true">Swipe for more &rarr;</span><div class="tw heatrow" id="hrow">' + tiles + '</div></div>' +
       '<p class="note" id="hdet" aria-live="polite">Tap a sector to see its calls in every view.</p></section>';
   }
@@ -155,7 +155,7 @@
     var body = '<p class="note">' + HZHELP[S.hz] + '</p><div class="cols fade"><div class="bull"><div class="listhead"><h3>Bullish</h3><span class="label">' + h.counts.Bullish + ' of ' + f.scored + ' scored</span></div>' + listHtml(h.top_bull, "bull") +
       '</div><div class="bear"><div class="listhead"><h3>Bearish</h3><span class="label">' + h.counts.Bearish + ' of ' + f.scored + ' scored</span></div>' + listHtml(h.top_bear, "bear") + "</div></div>";
     var nIdx = Object.keys(L.funnel.by_index).length;
-    var chips = L.indexes.map(function (i) { return '<span class="ix"><span class="label">' + esc(i.name) + '</span><b class="' + (i.chg_1d < 0 ? "neg" : "pos") + '">' + pct(i.chg_1d) + "</b></span>"; }).join("");
+    var chips = L.indexes.map(function (i) { return '<span class="ix"><span class="label">' + esc(i.name) + '</span><b class="' + (i.chg_1d == null ? "" : i.chg_1d < 0 ? "neg" : "pos") + '">' + pct(i.chg_1d) + "</b></span>"; }).join("");
     app.innerHTML =
       '<section class="hero"><span class="label">Daily scan across ' + nIdx + ' indexes &middot; as of ' + esc(L.asof) + "</span>" +
       '<h1>' + f.universe.toLocaleString() + ' stocks in.<br><em>' + f.picks + ' setups out.</em></h1>' +
@@ -200,7 +200,7 @@
       if (!v) { res.innerHTML = ""; return; }
       var r = S.latest.lookup[v];
       if (!r) { res.innerHTML = '<p class="note">No scored data for "' + esc(v) + '" in the latest scan. It may be outside the universe or failed a data check.</p>'; return; }
-      res.innerHTML = '<div class="card fade"><span class="label">' + esc((r.i ? r.i + " | " : "") + (r.s || "")) + "</span><h2>" + esc(v) + " <span style=\"color:var(--muted);font-size:.5em\">" + esc(r.n) + '</span></h2><div class="meta"><span class="label">Last close ' + r.c.toFixed(2) + '</span><span class="label">As of ' + esc(S.latest.asof) + "</span></div>" +
+      res.innerHTML = '<div class="card fade"><span class="label">' + esc((r.i ? r.i + " | " : "") + (r.s || "")) + "</span><h2>" + esc(v) + " <span style=\"color:var(--muted);font-size:.5em\">" + esc(r.n) + '</span></h2><div class="meta"><span class="label">Last close ' + (r.c == null ? "n/a" : r.c.toFixed(2) + (r.cur ? " " + esc(r.cur) : "")) + '</span><span class="label">As of ' + esc(S.latest.asof) + "</span></div>" +
         spark(r.spark) + '<div class="hzs">' + hzCard("Mispricing", r.mp, true) + hzCard("Short-term", r.st) + hzCard("Swing", r.sw) + '</div><p class="note">Mechanical rules on past data, not a forecast. Not investment advice.</p></div>';
     }
     q.addEventListener("input", function () { show(q.value); });
@@ -321,7 +321,7 @@
       '<div class="c" role="img" aria-label="' + esc(noise ? "still noise" : "readable") + ", " + T.trading_days + " of " + T.min_days + ' trading days"><b>' + T.trading_days + '</b><span class="label">of ' + T.min_days + ' trading days</span><span class="label" style="color:var(--gold);margin-top:6px">' + (noise ? "still noise" : "readable") + "</span></div></div>" +
       '<div class="stats">' + stat("mispricing") + stat("short_term") + stat("swing") + '<div class="stat"><span class="label">Calls logged</span><div class="v">' + T.calls_logged.toLocaleString() + '</div><span class="label">' + T.pending + " pending</span></div>" +
       '<div class="stat"><span class="label">Rule</span><div class="v" style="font-size:18px">Nothing is hidden or removed after the fact.</div></div></div></div></section>' +
-      '<section><h2>Graded calls</h2><p class="lede" style="margin-top:6px">Most recent 40. Neutral names are never called. Results this early are not evidence of skill.</p>' + tbl + "</section>";
+      '<section><h2>Graded calls</h2><p class="lede" style="margin-top:6px">Most recent 40 of the latest 300 graded calls shown here. <a href="https://github.com/abvarisano-droid/market-scanner/blob/main/data/picks.csv" target="_blank" rel="noopener">Full ledger</a> (every call, logged once and never replaced by a later run). Neutral names are never called. Results this early are not evidence of skill.</p>' + tbl + "</section>";
     watchScroll("graded");
     var pr = document.getElementById("pr");
     if (reduce) pr.style.strokeDashoffset = C * (1 - p);
@@ -339,10 +339,15 @@
     cancelAnimationFrame(S.raf);
     var h = location.hash.replace(/^#\/?/, ""), parts = h.split("/"), pg = parts[0] || "home";
     [].forEach.call(document.querySelectorAll("nav a"), function (a) { a.classList.toggle("on", a.getAttribute("data-nav") === pg); });
-    if (pg === "lookup") lookup(decodeURIComponent(parts[1] || ""));
-    else if (pg === "track") track();
-    else if (pg === "longterm") { if (S.lt) longterm(); else loadLT(); }
-    else home();
+    try {
+      if (pg === "lookup") lookup(decodeURIComponent(parts[1] || ""));
+      else if (pg === "track") track();
+      else if (pg === "longterm") { if (S.lt) longterm(); else loadLT(); }
+      else home();
+    } catch (e) {
+      if (window.console) console.warn("view failed", pg, e);
+      app.innerHTML = '<section class="hero"><h1>This view <em>hit a snag.</em></h1><p class="lede">Something in this page could not be drawn. Use the menu to open another view. Not investment advice.</p></section>';
+    }
     window.scrollTo(0, 0);
   }
 

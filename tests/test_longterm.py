@@ -243,3 +243,64 @@ def test_built_date_is_iso_in_build_and_committed_json(tmp_path):
 def test_long_term_tab_shows_as_of_from_built():
     js = (SITE / "app.js").read_text()
     assert 'id="lt-asof"' in js and "Long-term data as of " in js and "D.built" in js
+
+
+def _val(price, ref=None, sector=None, fx=None):
+    ex = lt.extract(fx or sample_facts(), sector)
+    ex["_cover"] = {"val": 100.0, "accn": "0000000000-24-000001"}
+    lt.add_valuation(ex, price, ref)
+    return ex
+
+
+def test_split_mismatch_withholds_yield_and_multiple():
+    ok = _val(50.0, 5000.0)
+    assert ok["fcf_yield"] and ok["ev_ebitda"]
+    bad = _val(50.0, 1000.0)  # computed market cap is 5x the scan's
+    assert bad["fcf_yield"] is None and bad["ev_ebitda"] is None
+    assert "split" in bad["nr"]["fcf_yield"] and bad["nr"]["ev_ebitda"].startswith("Share count and price disagree")
+    assert _val(50.0, 20000.0)["fcf_yield"] is None  # 0.25x the other way
+
+
+def test_financial_company_has_no_leverage_roic_or_ev():
+    ex = _val(50.0, 5000.0, "Financial Services")
+    for k in ("debt_ebitda", "ev_ebitda", "roic"):
+        assert ex[k] is None and "Financial" in ex["nr"][k]
+
+
+def test_roic_not_meaningful_for_negative_equity_or_tiny_capital():
+    fx = sample_facts()
+    g = fx["facts"]["us-gaap"]
+    g["StockholdersEquity"]["units"]["USD"] = [f(-500, "2023-12-31")]
+    ex = lt.extract(fx)
+    assert ex["roic"] is None and "negative" in ex["nr"]["roic"]
+    g["StockholdersEquity"]["units"]["USD"] = [f(150, "2023-12-31")]
+    g["LongTermDebt"]["units"]["USD"] = [f(100, "2023-12-31")]  # capital 150 vs revenue 2593
+    ex = lt.extract(fx)
+    assert ex["roic"] is None and "tiny" in ex["nr"]["roic"]
+
+
+def test_ev_ebitda_over_100x_is_withheld():
+    fx = sample_facts()
+    ex = lt.extract(fx)
+    ex["_cover"] = {"val": 1e6, "accn": "0000000000-24-000001"}
+    lt.add_valuation(ex, 50.0, 5e7)
+    assert ex["ev_ebitda"] is None and ex["nr"]["ev_ebitda"] == "EBITDA too small to be meaningful"
+
+
+def test_reguard_fixes_shipped_numbers_and_committed_file_is_clean():
+    from scripts.build_longterm import reguard
+    d = json.loads((SITE / "data/longterm.json").read_text())
+    rows = {r["t"]: r for r in d["rows"]}
+    assert "fcf_yield" not in rows["BKNG"] and "split" in rows["BKNG"]["nr"]["fcf_yield"]
+    assert "ev_ebitda" not in rows["PKG"] and "fcf_yield" not in rows["PKG"]
+    assert all(k not in rows["RF"] for k in ("debt_ebitda", "ev_ebitda", "roic"))
+    for t in ("MCK", "CAH", "DECK", "APP", "OTIS"):
+        assert "roic" not in rows[t] and rows[t]["nr"]["roic"]
+    for t in ("AXON", "TTWO"):
+        assert "ev_ebitda" not in rows[t]
+    assert max(r["ev_ebitda"]["v"] for r in d["rows"] if "ev_ebitda" in r) <= 100
+    assert reguard(json.loads(json.dumps(d)))["rows"] == d["rows"]  # idempotent
+    # negative FCF (utilities, heavy capex) is a valid negative yield, not a share count mismatch
+    for t in ("DUK", "SO", "AEE", "BA", "ORCL"):
+        assert rows[t]["fcf_yield"]["v"] < 0 and "fcf_yield" not in (rows[t].get("nr") or {})
+

@@ -31,3 +31,30 @@ def test_no_dashes_or_advice_words():
 
 def test_bearish_score_uses_bear_color():
     assert ".hz .big.neg{color:var(--bear)}" in (SITE / "style.css").read_text()
+
+
+def test_app_js_handles_null_close_and_index_change():
+    js = (SITE / "app.js").read_text()
+    assert 'r.c == null ? "n/a"' in js  # lookup with a null last close shows n/a
+    assert "i.chg_1d == null" in js and 'return "n/a"' in js  # index chip with no 1d change is neutral n/a
+    assert "view failed" in js  # one view failing must not blank the whole app
+
+
+def test_lookup_close_falls_back_to_sparkline_and_exports_currency():
+    from scripts.export_site import build_latest
+    scan = {"date": "2026-10-30", "funnel": {"dropped": {}}, "indexes": [], "picks": [], "sectors": [],
+            "table": [{"ticker": "AAA", "price": float("nan"), "currency": "INR", "shortName": "A", "sector": "X",
+                       "index": "i", "mispricing": 5}],
+            "technical": {"spark": {"AAA": [1.0, 2.0, 3.5]}, "scores": {"short_term": {}, "swing": {}},
+                          "horizons": {k: {"counts": {}, "top_bull": [], "top_bear": []} for k in ("short_term", "swing")}}}
+    row = build_latest(scan, False)["lookup"]["AAA"]
+    assert row["c"] == 3.5 and row["cur"] == "INR"
+
+
+def test_wording_extras():
+    js = (SITE / "app.js").read_text()
+    assert "local currency returns" in js and "Street" not in js
+    assert "Graded results are illustrative only" in __import__("scripts.export_site", fromlist=["x"]).SAMPLE_NOTE
+    root = SITE.parent
+    assert "target_return" not in (root / "scanner/news_ai.py").read_text()
+    assert "4:30pm ET" in (root / ".github/workflows/daily-scan.yml").read_text()

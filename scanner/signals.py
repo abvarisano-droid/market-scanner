@@ -6,7 +6,9 @@ import pandas as pd
 
 
 def technicals(df: pd.DataFrame) -> dict:
-    c, v = df["Close"], df["Volume"]
+    c = df["Close"].dropna()  # a trailing NaN close (partial or missing bar) must not become the "last close"
+    v = df["Volume"].reindex(c.index)
+    o = df["Open"].reindex(c.index)
     last = float(c.iloc[-1])
     hi52, lo52 = float(c.tail(252).max()), float(c.tail(252).min())
     ret = lambda n: float(c.iloc[-1] / c.iloc[-1 - n] - 1) if len(c) > n else np.nan
@@ -19,7 +21,7 @@ def technicals(df: pd.DataFrame) -> dict:
     return {
         "price": last,
         "chg_1d": ret(1), "chg_5d": ret(5), "chg_1m": ret(21), "chg_3m": ret(63), "chg_6m": ret(126),
-        "gap": float(df["Open"].iloc[-1] / prev_close - 1),
+        "gap": float(o.iloc[-1] / prev_close - 1),
         "vol_ratio": float(v.iloc[-1] / avg_vol) if avg_vol else np.nan,
         "rsi": rsi,
         "pct_from_high": last / hi52 - 1,

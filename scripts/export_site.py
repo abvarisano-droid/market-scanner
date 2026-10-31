@@ -24,7 +24,7 @@ from scanner import tracker  # noqa: E402
 from scanner.labels import BEARISH, BULLISH, NEUTRAL, normalize  # noqa: E402
 
 BULL_AT = 35  # mispricing score that counts as Bullish / Bearish (before news adjustment)
-SAMPLE_NOTE = "Sample data. Synthetic prices, replaced by the first real daily scan."
+SAMPLE_NOTE = "Sample data. Synthetic prices, replaced by the first real daily scan. Graded results are illustrative only."
 DISCLAIMER = "Not investment advice."
 BANNED = re.compile(r"\b(buy|buys|buying|sell|sells|selling|price targets?)\b", re.I)
 TOP_REASONS = 3
@@ -121,8 +121,13 @@ def build_latest(scan: dict, sample: bool) -> dict:
         m = table.get(t)
         if not m:
             continue
+        c = num(m.get("price"))
+        if c is None and spark:  # no usable last close: fall back to the last point of the sparkline
+            c = num(spark[-1])
         row = {"n": _name(t, m), "s": plain(m.get("sector") or ""), "i": m.get("index"),
-               "c": num(m.get("price")), "spark": spark}
+               "c": c, "cur": m.get("currency") or None, "spark": spark}
+        if num(m.get("marketCap"), 0):
+            row["mc"] = num(m["marketCap"], 0)
         if m.get("mispricing") is not None:
             row["mp"] = {"score": m["mispricing"], "label": mp_label(m["mispricing"]),
                          "reasons": [plain(x) for x in (m.get("valuation_reasons") or [])[:TOP_REASONS]]}
@@ -165,7 +170,7 @@ def build_track(scan: dict, sample: bool) -> dict:
                                               "graded": v.get(f"n_{h}", 0)} for h, n in tracker.HORIZONS.items()}}
     return {"asof": scan["date"], "sample": sample, "banner": SAMPLE_NOTE if sample else "",
             "status": sc.get("status", "still noise"), "trading_days": days, "min_days": tracker.MIN_DAYS,
-            "note": plain(sc.get("note", "")), "entry_rule": "next trading day close",
+            "note": re.sub(r"\b1 trading days\b", "1 trading day", plain(sc.get("note", ""))), "entry_rule": "next trading day close",
             "windows": list(tracker.HORIZONS.values()), "by_lens": by_lens,
             "calls_logged": len(led), "pending": pending, "graded": graded[-300:], "disclaimer": DISCLAIMER}
 
