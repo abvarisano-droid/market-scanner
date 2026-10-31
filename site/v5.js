@@ -433,7 +433,7 @@
         s.graded.map(function (g) { return "<tr><td>" + esc(g.date) + "</td><td>" + esc(NAMES[g.lens]) + "</td><td>" + esc(g.call) + '</td><td class="num">' + g.window + 'd</td><td class="num">' + pctTxt(g.stock_return) + '</td><td class="num">' + pctTxt(g.excess) + "</td></tr>"; }).join("") +
         "</tbody></table></div></div>" : '<p class="note">Not graded yet. A call is graded from the next trading day\'s close, over 5, 20 and 60 trading days.</p>';
       var n = Object.keys(dates).length;
-      root.innerHTML = '<section class="hero"><span class="label">' + esc((s.index ? s.index + " | " : "") + (s.sector || "")) + "</span><h1>" + esc(t) + ' <em style="font-size:.5em">' + esc(s.name) + "</em></h1>" +
+      root.innerHTML = '<section class="hero"><span class="label">' + esc("Stock | " + (s.index ? s.index + " | " : "") + (s.sector || "")) + "</span><h1>" + esc(t) + ' <em style="font-size:.5em">' + esc(s.name) + "</em></h1>" +
         '<p class="lede">What the scanner currently says in each view, how its calls on this name have changed, and how they graded.</p>' +
         '<p class="v5link"><a class="btn ghost" href="#/lookup/' + encodeURIComponent(t) + '">Open in lookup</a></p></section>' +
         (s.chart ? '<section class="csec" aria-label="Price chart"><h2>Three years of price</h2>' + chartBox(t) + "</section>" : "") + fundCard(s.fund) +

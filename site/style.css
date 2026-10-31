@@ -373,3 +373,72 @@ input[type=search],.lt input,.lt select{background:rgba(255,244,214,.04);border-
 @media(max-width:759px){.top{position:relative;top:auto}}
 /* the footer stays below the first screen while a view's data loads, so short views never shift it into view (CLS 0) */
 main{min-height:100vh}
+
+/* ===== Apple design pass (2026-10-31). Audit and ranking: docs/apple-design-audit.md. Visual and feel only; delete this block to roll back.
+   Motion stays transform/opacity only. Press feedback lands on pointer-down (:active), 100ms in, 160ms out on the glass curve. ===== */
+/* 1. press feedback: every control answers the moment it is pressed */
+.btn,.tab,.sugg button,.more-btn,nav a,.info,.sec{transition:transform .16s var(--ease-glass)}
+.tg{transition:color .2s,border-color .2s,transform .16s var(--ease-glass)}
+button.stage{transition:opacity .4s,transform .16s var(--ease-glass)}
+.btn:active,.tab:active,.sugg button:active,.more-btn:active,nav a:active,.info:active,.tg:active{transform:scale(.97);transition-duration:.1s;transition-timing-function:ease-out}
+.sec:active{transform:scale(.98);transition-duration:.1s;transition-timing-function:ease-out}
+button.stage:active{background:rgba(212,175,55,.08)}
+.tg:disabled:active{transform:none}
+.btn,.tab,.sugg button,.more-btn,nav a,.tg,.sec,.stage,.info{-webkit-tap-highlight-color:transparent;touch-action:manipulation}
+
+/* 4. touch targets on phones: 44px for nav, tabs and buttons; chips and the info dot get an invisible hit area */
+@media(max-width:759px){
+  nav a{display:inline-flex;align-items:center;min-height:44px}
+  .tab,.btn{min-height:44px}
+  .tg{min-height:36px}
+  .tg::after{content:"";position:absolute;left:-3px;right:-3px;top:-3px;bottom:-3px}
+}
+.info{position:relative}
+.info::after{content:"";position:absolute;inset:-10px}
+
+/* 5. tooltips grow out of the label row they explain and leave the same way (visibility waits for the fade out) */
+.tip{transform-origin:12px 0;transform:translateY(-4px) scale(.96);
+  transition:opacity .2s var(--ease-glass),transform .2s var(--ease-glass),visibility 0s linear .2s}
+.fc .label:hover .tip,.info:focus-visible+.tip,.info:focus+.tip{transform:none;transition-delay:0s}
+.fc:nth-child(2n) .tip{transform-origin:calc(100% - 12px) 0}
+@media(min-width:760px){.fc:nth-child(2n) .tip{transform-origin:12px 0}.fc:nth-child(3n) .tip{transform-origin:calc(100% - 12px) 0}}
+
+/* 8. type: tracking and leading set per size (tighter as type grows, body left at 0) */
+h1{letter-spacing:-.018em}
+@media(min-width:760px){h1{letter-spacing:-.022em}}
+h2{letter-spacing:-.012em;line-height:1.1}
+.card h2{letter-spacing:-.016em;line-height:1.05}
+h3{letter-spacing:-.006em;line-height:1.2}
+.ring .c b,.hz .big,.stage .n{letter-spacing:-.02em}
+.stat .v,.cs b,.fc b{letter-spacing:-.01em}
+
+/* 10. scroll edge: the index chip row fades out at the right edge instead of slicing a chip in half */
+.ixs{padding-right:40px;-webkit-mask-image:linear-gradient(90deg,#000 calc(100% - 44px),transparent);mask-image:linear-gradient(90deg,#000 calc(100% - 44px),transparent)}
+
+/* 7. reduced transparency: every glass surface goes solid, the light fields go away */
+@media(prefers-reduced-transparency:reduce){
+  :root{--glass:#0f0e0b;--glass-flat:#13110d}
+  body::before,.hero:has(#cv)::before{display:none}
+  .top{-webkit-backdrop-filter:none;backdrop-filter:none}
+  .chartbox{background:#0c0b09}
+  .tabs,.tgseg{background:#0f0e0b}
+  .tip{background:#15130f}
+}
+/* 6. increased contrast: near-solid surfaces, defined edges, brighter secondary text */
+@media(prefers-contrast:more){
+  :root{--muted:#c4bdaa;--edge:rgba(236,224,186,.5);--glass:#0f0e0b;--glass-flat:#13110d}
+  body::before,.hero:has(#cv)::before{display:none}
+  .top{background:#0a0907;-webkit-backdrop-filter:none;backdrop-filter:none}
+  .hero:has(#cv){background:#0e0c09}
+  .row,th,td,.listhead{border-bottom-color:rgba(236,224,186,.3)}
+  .stage{opacity:.8}
+  .tg{color:#ddd6c3}
+  .why,.mx ul,.disc{color:#d6d0be}
+  input::placeholder{color:#a19b8a}
+  .ixs{-webkit-mask-image:none;mask-image:none}
+}
+/* reduced motion: presses still answer, with a dim instead of a scale */
+@media(prefers-reduced-motion:reduce){
+  .btn:active,.tab:active,.sugg button:active,.more-btn:active,nav a:active,.info:active,.tg:active,.sec:active{transform:none;opacity:.75}
+  .tip{transform:none}
+}
