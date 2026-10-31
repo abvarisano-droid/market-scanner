@@ -90,15 +90,48 @@ def test_backdated_row_caught_against_base(tmp_path, monkeypatch):
 def test_snapshot_anchor_detects_rewrite(tmp_path, monkeypatch):
     p = build(tmp_path, monkeypatch)
     text = p.read_text()
-    v = calllog.verify(text, COLS)
     snaps = tmp_path / "snaps"
     snaps.mkdir()
-    (snaps / "2026-W44.json").write_text(json.dumps({"rows": v["n"], "head": v["head"]}))
+    n = calllog.settled_count(calllog.read_raw(text, COLS))
+    (snaps / "2026-W44.json").write_text(json.dumps({"rows": n, "head": calllog.read_chain(text)[n - 1]}))
     assert check_call_log.run(text, snap_dir=snaps) == []
     rows = calllog.read_raw(text, COLS)
     rows[2][1] = "XXX"
     forged = calllog.render(rows, COLS)  # internally valid chain, but the snapshot head no longer matches
     assert any("snapshot" in x for x in check_call_log.run(forged, snap_dir=snaps))
+
+
+def test_same_day_rerun_after_snapshot_still_passes(tmp_path, monkeypatch):
+    from datetime import date
+    from scripts import snapshot_record
+    build(tmp_path, monkeypatch)
+    snaps = tmp_path / "snaps"
+    track = {"asof": "2026-10-28", "record": {}}
+    p = snapshot_record.snapshot(track, tracker.LEDGER.read_text(), date(2026, 10, 28), snaps)
+    assert json.loads(p.read_text())["rows"] == 4  # only the two earlier days
+    assert check_call_log.run(tracker.LEDGER.read_text(), snap_dir=snaps) == []
+    tracker.log_picks(picks("AAA", "CCC"), 400.0, today="2026-10-28")  # same-day rerun replaces the newest rows
+    assert check_call_log.run(tracker.LEDGER.read_text(), snap_dir=snaps) == []
+
+
+def test_snapshot_skipped_when_only_one_day_logged(tmp_path, monkeypatch):
+    from datetime import date
+    from scripts import snapshot_record
+    build(tmp_path, monkeypatch, days=("2026-10-28",))
+    assert snapshot_record.snapshot({"record": {}}, tracker.LEDGER.read_text(), date(2026, 10, 28), tmp_path / "s") is None
+
+
+def test_snapshot_then_new_day_then_old_row_edit_detected(tmp_path, monkeypatch):
+    from datetime import date
+    from scripts import snapshot_record
+    build(tmp_path, monkeypatch)
+    snaps = tmp_path / "snaps"
+    snapshot_record.snapshot({"record": {}}, tracker.LEDGER.read_text(), date(2026, 10, 28), snaps)
+    tracker.log_picks(picks("AAA", "BBB"), 400.0, today="2026-10-29")
+    assert check_call_log.run(tracker.LEDGER.read_text(), snap_dir=snaps) == []
+    rows = calllog.read_raw(tracker.LEDGER.read_text(), COLS)
+    rows[1][1] = "XXX"
+    assert any("snapshot" in x for x in check_call_log.run(calllog.render(rows, COLS), snap_dir=snaps))
 
 
 def test_committed_log_is_valid_and_script_exits_clean():

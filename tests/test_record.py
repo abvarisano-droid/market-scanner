@@ -71,11 +71,15 @@ def test_committed_track_json_has_record_and_log():
 
 
 def test_snapshot_written_once_per_week(tmp_path):
-    text = (export_site.ROOT / "data/picks.csv").read_text()
+    base = (export_site.ROOT / "data/picks.csv").read_text()
+    rows = calllog.read_raw(base, tracker.COLS)
+    earlier = [["2026-10-29"] + r[1:] for r in rows[:3]]
+    text = calllog.render(earlier + rows, tracker.COLS)  # an earlier day exists, so some rows are settled
     track = {"asof": "2026-10-30", "trading_days": 1, "status": "still noise", "record": {"first_logged": "2026-10-30", "windows": []}}
     p = snapshot_record.snapshot(track, text, date(2026, 10, 30), tmp_path)
     assert p.name == "2026-W44.json"
     body = json.loads(p.read_text())
-    assert body["rows"] == calllog.verify(text, tracker.COLS)["n"] and body["head"] == calllog.verify(text, tracker.COLS)["head"]
+    n = calllog.settled_count(calllog.read_raw(text, tracker.COLS))
+    assert body["rows"] == n and body["head"] == calllog.read_chain(text)[n - 1]
     assert snapshot_record.snapshot(track, text, date(2026, 11, 2), tmp_path) is not None  # new ISO week
     assert snapshot_record.snapshot(track, text, date(2026, 10, 31), tmp_path) is None     # same week, not overwritten

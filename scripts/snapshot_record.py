@@ -28,9 +28,16 @@ def snapshot(track: dict, ledger_text: str, today: date, snap_dir: Path = SNAP_D
     v = calllog.verify(ledger_text, tracker.COLS)
     if not v["ok"]:
         raise SystemExit("refusing to snapshot a log that fails its chain check: " + v["error"])
+    # Anchor only on rows dated before the newest scan date: that day's rows may still be replaced
+    # by a same-day re-run, which would otherwise break this snapshot. With none settled yet, wait
+    # for the next day's scan rather than writing (and freezing) an empty week.
+    n = calllog.settled_count(calllog.read_raw(ledger_text, tracker.COLS))
+    if n == 0:
+        return None
+    head = calllog.read_chain(ledger_text)[n - 1]
     rec = track.get("record", {})
     body = {"week": f"{iso[0]}-W{iso[1]:02d}", "taken": today.isoformat(), "scan_asof": track.get("asof"),
-            "rows": v["n"], "head": v["head"], "first_logged": rec.get("first_logged"),
+            "rows": n, "head": head, "first_logged": rec.get("first_logged"),
             "trading_days": track.get("trading_days"), "status": track.get("status"),
             "windows": rec.get("windows", []),
             "note": "Not investment advice. Calls are mechanical and graded versus SPY; nothing here is edited after the fact."}
@@ -41,4 +48,4 @@ def snapshot(track: dict, ledger_text: str, today: date, snap_dir: Path = SNAP_D
 
 if __name__ == "__main__":
     p = snapshot(json.loads(TRACK.read_text()), tracker.LEDGER.read_text(encoding="utf-8"), date.today())
-    print("snapshot written:" if p else "snapshot for this week already exists", p or "")
+    print("snapshot written:" if p else "no snapshot written (already taken this week, or no settled rows yet)", p or "")

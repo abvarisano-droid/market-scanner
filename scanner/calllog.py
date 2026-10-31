@@ -40,6 +40,15 @@ def read_chain(text: str) -> list[str]:
     return [r.get(CHAIN) or "" for r in csv.DictReader(io.StringIO(text))]
 
 
+def settled_count(rows: list[list[str]]) -> int:
+    """Rows dated before the newest logged date. The newest date's rows can still be replaced by a
+    same-day re-run, so only these earlier rows are final and safe to anchor a snapshot on."""
+    if not rows:
+        return 0
+    newest = max(r[0] for r in rows)
+    return sum(1 for r in rows if r[0] < newest)
+
+
 def chain_values(rows: list[list[str]]) -> list[str]:
     out, prev = [], GENESIS
     for fields in rows:

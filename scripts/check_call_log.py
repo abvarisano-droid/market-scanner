@@ -23,12 +23,17 @@ SNAP_DIR = ROOT / "data" / "snapshots"
 
 
 def check_snapshots(text: str, snap_dir: Path = SNAP_DIR) -> list[str]:
-    """Every weekly snapshot's head hash must still sit at its row count in the chain."""
+    """Every weekly snapshot's head hash must still sit at its row count in the chain (see below for the newest-date exception)."""
     chain = calllog.read_chain(text)
+    settled = calllog.settled_count(calllog.read_raw(text, tracker.COLS))
     problems = []
     for f in sorted(snap_dir.glob("*.json")) if snap_dir.exists() else []:
         s = json.loads(f.read_text())
         n, head = s.get("rows"), s.get("head")
+        # Rows of the newest date can be replaced by a same-day re-run, so a snapshot reaching into
+        # them is not checkable yet. It is checked normally once a later-dated row exists.
+        if isinstance(n, int) and n > settled:
+            continue
         if not isinstance(n, int) or n < 0 or n > len(chain) or (n and chain[n - 1] != head) or (n == 0 and head != calllog.GENESIS):
             problems.append(f"snapshot {f.name} no longer matches the log (rows {n})")
     return problems
