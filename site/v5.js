@@ -89,7 +89,7 @@
       s.history.forEach(function (h) { dates[h.date] = 1; (byLens[h.lens] = byLens[h.lens] || []).push(h); });
       var hist = ORDER.filter(function (k) { return byLens[k]; }).map(function (k) {
         return "<tr><td><b>" + NAMES[k] + '</b></td><td>' + byLens[k].map(function (h) {
-          return esc(h.date) + " " + chip(h.call) + (h.score == null ? "" : ' <span class="label">score ' + Math.round(h.score) + "</span>");
+          return esc(h.date) + " " + chip(h.call) + (h.score == null ? "" : ' <span class="label" style="white-space:nowrap">score ' + Math.round(h.score) + "</span>");
         }).join("<br>") + "</td></tr>";
       }).join("");
       var gr = s.graded.length ? '<div class="twrap"><div class="tw" tabindex="0" role="region" aria-label="Graded calls"><table><thead><tr><th>Called</th><th>View</th><th>Call</th><th>Window</th><th>Stock</th><th>Vs S&amp;P</th></tr></thead><tbody>' +
