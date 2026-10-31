@@ -169,7 +169,9 @@ td.stk{white-space:normal;min-width:150px;position:sticky;left:0;background:var(
 .mx li{margin:6px 0}
 .mx .lede{max-width:70ch;overflow-wrap:anywhere}
 .mx b{color:var(--text);font-weight:600}
-nav{flex-wrap:wrap}
+nav{flex-wrap:nowrap}nav a{white-space:nowrap}
+@media(max-width:480px){nav{gap:10px}nav a,.top nav a{font-size:10px;letter-spacing:.06em}}
+@media(max-width:360px){nav{gap:7px}nav a{font-size:9px;letter-spacing:.04em}}
 /* v5: what changed, stock pages, report card */
 .v5strip{margin-top:32px;padding:18px;border:1px solid var(--line);border-radius:6px;background:var(--panel)}
 .v5strip h2{font-size:clamp(22px,4vw,28px)}
