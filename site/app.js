@@ -85,9 +85,12 @@
     if (sk) sk.addEventListener("click", function () { stop(); go(3, true); });
     caption();
     if (!reduce && desktop) timer = setTimeout(tick, 1200);
+    var seen = true, last = 0;
+    if (window.IntersectionObserver) new IntersectionObserver(function (e) { seen = e[0].isIntersecting; }).observe(canvas);
     (function loop(now) {
       var p = Math.min(1, (now - ts) / 1100); p = 1 - Math.pow(1 - p, 3);
-      setStage(cur, p); draw(now, cur, p);
+      /* idle drift is drawn at about 24 fps and only while the field is on screen */
+      if (p < 1 || (seen && !document.hidden && now - last > 40)) { setStage(cur, p); draw(now, cur, p); last = now; }
       if (!reduce || p < 1) S.raf = requestAnimationFrame(loop);
     })(performance.now());
     S.stop = stop;
@@ -175,6 +178,7 @@
       '<div class="story"><p id="cap" class="cap" aria-live="polite"></p><div class="ctl"><button type="button" id="nx" class="btn">Next step</button><button type="button" id="sk" class="btn ghost">Skip animation</button></div></div>' + byIndexHtml(L.funnel) + '</section>' + sectorHtml(L.sectors) +
       '<div class="ixs" tabindex="0" role="region" aria-label="Index moves today">' + chips + '</div><div class="tabs" role="tablist">' + tabs + "</div>" + body;
     sectorWire(L.sectors);
+    requestAnimationFrame(function () { app.classList.remove("boot"); app.removeAttribute("aria-busy"); });
     if (window.V5) V5.changes(app);
     var cv = document.getElementById("cv");
     funnel(cv, f, [].slice.call(app.querySelectorAll(".stage .n")), [].slice.call(app.querySelectorAll(".stage")));
@@ -198,7 +202,14 @@
   }
 
   function lookup(sym) {
-    var keys = Object.keys(S.latest.lookup).sort();
+    if (!S.lk) {
+      app.classList.remove("boot");
+      app.innerHTML = '<section class="hero"><span class="label">Ticker lookup</span><h1>Look up <em>any</em> name.</h1><p class="lede" role="status">Loading every scored ticker...</p></section>';
+      load("data/latest.json").then(function (d) { S.lk = d.lookup; if (/^#\/lookup/.test(location.hash)) lookup(sym); })
+        .catch(function () { if (!/^#\/lookup/.test(location.hash)) return; app.innerHTML = '<section class="hero"><h1>Lookup <em>unavailable.</em></h1><p class="lede">The ticker file could not be loaded. Try again later. Not investment advice.</p></section>'; });
+      return;
+    }
+    var LK = S.lk, keys = Object.keys(LK).sort();
     var picks = S.latest.horizons.mispricing.top_bull.slice(0, 4).concat(S.latest.horizons.mispricing.top_bear.slice(0, 3)).map(function (r) { return r.ticker; });
     app.innerHTML = '<section class="hero"><span class="label">Ticker lookup</span><h1>Look up <em>any</em> name.</h1>' +
       '<p class="lede">Type a ticker to see the mispricing score, both technical horizons, the reasons behind each score, and its last 60 closes.</p>' +
@@ -207,9 +218,9 @@
     var q = document.getElementById("q"), res = document.getElementById("res");
     function show(v) {
       v = (v || "").trim().toUpperCase();
-      if (!S.latest.lookup[v] && S.latest.lookup[v.replace(".", "-")]) v = v.replace(".", "-");
+      if (!LK[v] && LK[v.replace(".", "-")]) v = v.replace(".", "-");
       if (!v) { res.innerHTML = ""; return; }
-      var r = S.latest.lookup[v];
+      var r = LK[v];
       if (!r) { res.innerHTML = '<p class="note">No scored data for "' + esc(v) + '" in the latest scan. It may be outside the universe or failed a data check.</p>'; return; }
       res.innerHTML = '<div class="card fade"><span class="label">' + esc((r.ix && r.ix.length > 1 ? r.ix.join(", ") + " | " : r.i ? r.i + " | " : "") + (r.s || "")) + "</span><h2>" + esc(v) + " <span style=\"color:var(--muted);font-size:.5em\">" + esc(r.n) + '</span></h2><div class="meta"><span class="label">Last close ' + (r.c == null ? "n/a" : r.c.toFixed(2) + (r.cur ? " " + esc(r.cur) : "")) + '</span><span class="label">As of ' + esc(S.latest.asof) + "</span></div>" +
         spark(r.spark) + '<div class="hzs">' + hzCard("Mispricing", r.mp, true) + hzCard("Short-term", r.st) + hzCard("Swing", r.sw) + '</div><p class="note">Mechanical rules on past data, not a forecast. Not investment advice.</p></div>';
@@ -399,6 +410,7 @@
   function route() {
     cancelAnimationFrame(S.raf);
     var h = location.hash.replace(/^#\/?/, ""), parts = h.split("/"), pg = parts[0] || "home";
+    if (pg !== "home") { app.classList.remove("boot"); app.removeAttribute("aria-busy"); }
     [].forEach.call(document.querySelectorAll("nav a"), function (a) { a.classList.toggle("on", a.getAttribute("data-nav") === pg); });
     try {
       if (pg === "stock" && window.V5) V5.stock(app, decodeURIComponent(parts[1] || ""));
@@ -408,13 +420,14 @@
       else if (pg === "longterm") { if (S.lt) longterm(); else loadLT(); }
       else home();
     } catch (e) {
+      app.classList.remove("boot"); app.removeAttribute("aria-busy");
       if (window.console) console.warn("view failed", pg, e);
       app.innerHTML = '<section class="hero"><h1>This view <em>hit a snag.</em></h1><p class="lede">Something in this page could not be drawn. Use the menu to open another view. Not investment advice.</p></section>';
     }
     window.scrollTo(0, 0);
   }
 
-  Promise.all([load("data/latest.json"), load("data/track.json")]).then(function (r) {
+  Promise.all([load("data/summary.json"), load("data/track.json")]).then(function (r) {
     S.latest = r[0]; S.track = r[1];
     document.getElementById("asof").textContent = "(latest scan " + S.latest.asof + ")";
     if (S.latest.banner) { var b = document.getElementById("banner"); b.textContent = S.latest.banner; b.hidden = false; }
@@ -422,6 +435,7 @@
     var rt; window.addEventListener("resize", function () { clearTimeout(rt); rt = setTimeout(function () { if (!location.hash || location.hash === "#/") home(); }, 250); });
     route();
   }).catch(function () {
+    app.classList.remove("boot"); app.removeAttribute("aria-busy");
     app.innerHTML = '<section class="hero"><h1>Scan data <em>unavailable.</em></h1><p class="lede">The data files could not be loaded. Try again later. Not investment advice.</p></section>';
   });
 })();
