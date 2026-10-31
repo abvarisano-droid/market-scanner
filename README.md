@@ -24,6 +24,11 @@ A daily scan of global stock indexes that finds stocks that look mispriced, rank
 - **Hit rate:** the Track record page shows, per window, n graded, hit rate versus SPY and a 95 percent Wilson interval, labeled "still noise" until 21 trading days, with a link to the raw log (`site/data/picks.csv`).
 - Rows logged before this rule (blank `entry_rule` in `data/picks.csv`) keep their original same-day entry, so history is not rewritten.
 
+## What it looks like
+![Market Scanner hero at 390px wide](docs/hero-390.png)
+
+Live site: https://abvarisano-droid.github.io/market-scanner/ (after Pages is enabled)
+
 ## Run it
 ```bash
 pip install -r requirements.txt pytest

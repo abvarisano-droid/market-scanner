@@ -20,7 +20,7 @@ def test_committed_site_data_keys_and_label():
 
 
 def test_no_dashes_or_advice_words():
-    for f in SITE.rglob("*.*"):
+    for f in (p for p in SITE.rglob("*.*") if p.suffix != ".png"):
         txt = f.read_text()
         assert not any(c in txt for c in BAD), f
         if f.suffix in (".html", ".js", ".css"):
