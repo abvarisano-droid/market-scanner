@@ -137,11 +137,11 @@ def evaluate(led: pd.DataFrame, history: dict[str, pd.Series], bench: pd.Series)
 
 
 def trading_days(led: pd.DataFrame, bench: pd.Series) -> int:
-    """Trading days of calls so far: benchmark bars on or after the first logged call."""
+    """Trading days of calls so far: benchmark bars strictly after the first signal date (the signal day itself is not a day of results)."""
     if led.empty:
         return 0
     b = _naive(bench)
-    return int((b.index >= led["date"].min()).sum())
+    return int((b.index > led["date"].min()).sum())
 
 
 def scorecard(ev: pd.DataFrame, days: int | None = None) -> dict:
@@ -149,8 +149,9 @@ def scorecard(ev: pd.DataFrame, days: int | None = None) -> dict:
     if days is not None:
         out["trading_days"] = int(days)
         out["status"] = "still noise" if days < MIN_DAYS else "enough days to read"
-        out["note"] = (f"Only {days} trading days of calls so far (need {MIN_DAYS}). Treat results as noise."
-                       if days < MIN_DAYS else f"{days} trading days of calls.")
+        unit = "trading day" if days == 1 else "trading days"
+        out["note"] = (f"Only {days} {unit} of calls so far (need {MIN_DAYS}). Treat results as noise."
+                       if days < MIN_DAYS else f"{days} {unit} of calls.")
     if ev.empty:
         return out
 

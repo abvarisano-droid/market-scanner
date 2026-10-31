@@ -43,9 +43,9 @@ def test_legacy_rows_keep_same_day_entry():
 
 def test_still_noise_threshold():
     st, spy = series(0.01), series(0.0)
-    led = ledger("Bullish", st.index[-21])
+    led = ledger("Bullish", st.index[-22])
     ev = tracker.evaluate(led, {"AAA": st}, spy)
-    assert tracker.trading_days(led, spy) == 21
+    assert tracker.trading_days(led, spy) == 21  # bars strictly after the signal date
     assert tracker.scorecard(ev, 20)["status"] == "still noise"
     assert tracker.scorecard(ev, 21)["status"] == "enough days to read"
     assert "noise" in tracker.scorecard(ev, 3)["note"]
@@ -94,3 +94,17 @@ def test_later_run_cannot_replace_earlier_rows(tmp_path, monkeypatch):
 def test_site_points_to_full_ledger_and_says_300_shown():
     js = (Path(__file__).resolve().parent.parent / "site" / "app.js").read_text()
     assert "github.com/abvarisano-droid/market-scanner/blob/main/data/picks.csv" in js and "latest 300 graded" in js
+
+
+def test_trading_days_strictly_after_first_signal_and_singular():
+    spy = series(0.0)
+    assert tracker.trading_days(ledger("Bullish", spy.index[-1]), spy) == 0
+    led = ledger("Bullish", spy.index[-2])
+    assert tracker.trading_days(led, spy) == 1
+    note = tracker.scorecard(tracker.evaluate(led, {"AAA": series(0.01)}, spy), 1)["note"]
+    assert "1 trading day " in note and "1 trading days" not in note
+
+
+def test_readme_does_not_call_committed_data_sample():
+    txt = (Path(__file__).resolve().parent.parent / "README.md").read_text()
+    assert "is **Sample data**" not in txt and "Street target" not in txt
