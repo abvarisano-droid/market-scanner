@@ -287,6 +287,18 @@ def test_ev_ebitda_over_100x_is_withheld():
     assert ex["ev_ebitda"] is None and ex["nr"]["ev_ebitda"] == "EBITDA too small to be meaningful"
 
 
+def test_reguard_keeps_high_roic_only_when_capital_is_real():
+    from scripts.build_longterm import reguard
+    base = {"t": "X", "s": "Technology", "fy": "2025-12-31", "a": "0000000000-25-000001"}
+    real = dict(base, roic={"v": 1.14, "rate": 0.131}, op_margin={"v": 0.7575, "d": 0.8})  # capital 58% of revenue
+    tiny = dict(base, t="Y", roic={"v": 1.5, "rate": 0.25}, op_margin={"v": 0.1, "d": 0.0})  # capital 5% of revenue
+    bare = dict(base, t="Z", roic={"v": 1.5, "rate": 0.25})  # no op margin: cannot tell, withheld
+    out = {r["t"]: r for r in reguard({"rows": [real, tiny, bare]}, latest={"lookup": {}})["rows"]}
+    assert out["X"]["roic"]["v"] == 1.14 and "roic" not in (out["X"].get("nr") or {})
+    assert "roic" not in out["Y"] and out["Y"]["nr"]["roic"]
+    assert "roic" not in out["Z"] and out["Z"]["nr"]["roic"]
+
+
 def test_reguard_fixes_shipped_numbers_and_committed_file_is_clean():
     from scripts.build_longterm import reguard
     d = json.loads((SITE / "data/longterm.json").read_text())
@@ -294,8 +306,12 @@ def test_reguard_fixes_shipped_numbers_and_committed_file_is_clean():
     assert "fcf_yield" not in rows["BKNG"] and "split" in rows["BKNG"]["nr"]["fcf_yield"]
     assert "ev_ebitda" not in rows["PKG"] and "fcf_yield" not in rows["PKG"]
     assert all(k not in rows["RF"] for k in ("debt_ebitda", "ev_ebitda", "roic"))
-    for t in ("MCK", "CAH", "DECK", "APP", "OTIS"):
+    for t in ("MCK", "CAH", "OTIS"):  # negative equity: withheld by the exact build and by the offline guard
         assert "roic" not in rows[t] and rows[t]["nr"]["roic"]
+    # any ROIC over 100% that ships must rest on invested capital of at least 10% of revenue (op margin x (1 - rate) / ROIC)
+    for r in d["rows"]:
+        if r.get("roic") and r["roic"]["v"] > 1:
+            assert r["op_margin"]["v"] * (1 - r["roic"]["rate"]) / r["roic"]["v"] >= lt.MIN_CAP_VS_REV * 0.98, r["t"]
     for t in ("AXON", "TTWO"):
         assert "ev_ebitda" not in rows[t]
     assert max(r["ev_ebitda"]["v"] for r in d["rows"] if "ev_ebitda" in r) <= 100

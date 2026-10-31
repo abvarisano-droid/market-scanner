@@ -62,12 +62,25 @@ def _coverage(rows: list[dict]) -> dict:
     return {k: sum(1 for r in rows if k in r) for k in KEYS}
 
 
+def _capital_ok(roic: dict, om: dict | None) -> bool:
+    """True when the shipped numbers show invested capital of at least 10% of revenue (the exact build rule).
+
+    ROIC = op income x (1 - rate) / capital and op margin = op income / revenue for the same 10-K, so
+    capital / revenue = op margin x (1 - rate) / ROIC. Without an op margin the offline guard cannot tell,
+    so it falls back to treating ROIC over 100% as not meaningful. A small tolerance absorbs the 4-decimal rounding.
+    """
+    if not om or om.get("v") is None or om["v"] <= 0 or roic["v"] <= 0:
+        return False
+    return om["v"] * (1 - roic.get("rate", 0.21)) / roic["v"] >= lt.MIN_CAP_VS_REV * 0.98
+
+
 def reguard(data: dict, latest: dict | None = None) -> dict:
     """Apply the same guards as scanner/longterm.py to an already built longterm.json, without the raw SEC cache.
 
     Used when the cache is not available (offline). It works from the numbers shipped in each row, so two rules are
     approximations of the exact build-time ones: a market cap check from FCF / FCF yield (or EV less debt), and
-    "ROIC over 100%" standing in for negative equity or invested capital under 10% of revenue. The weekly SEC refresh
+    ROIC over 100% is kept only when the shipped op margin, tax rate and ROIC imply invested capital of at least 10% of
+    revenue (the exact rule); otherwise it stands in for negative equity or tiny invested capital. The weekly SEC refresh
     recomputes everything exactly and replaces this output.
     """
     latest = latest or json.loads((ROOT / "site" / "data" / "latest.json").read_text())
@@ -93,7 +106,8 @@ def reguard(data: dict, latest: dict | None = None) -> dict:
         if ev and ev["v"] > lt.MAX_EV_EBITDA:
             r.pop("ev_ebitda")
             nr["ev_ebitda"] = lt.SMALL_EBITDA_NR
-        if r.get("roic") and r["roic"]["v"] > 1:
+        roic = r.get("roic")
+        if roic and roic["v"] > 1 and not _capital_ok(roic, r.get("op_margin")):
             r.pop("roic")
             nr["roic"] = "Invested capital is tiny or equity is negative, so return on invested capital is not meaningful"
         if nr:

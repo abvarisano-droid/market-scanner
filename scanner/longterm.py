@@ -242,16 +242,16 @@ def extract(facts: dict, sector: str | None = None) -> dict | None:
     eq = _at(series(facts, TAGS["equity"], "instant"), anchor)
     cash = _at(series(facts, TAGS["cash"], "instant"), anchor)
     roic = None
-    if o0 and eq:
+    if financial:  # banks and insurers often report no operating income line: say why ROIC is missing either way
+        out["nr"]["roic"] = FIN_NR
+    elif o0 and eq:
         tax = _at(series(facts, TAGS["tax"], "duration"), anchor)
         pre = _at(series(facts, TAGS["pretax"], "duration"), anchor)
         rate = 0.21
         if tax and pre and pre["val"] > 0:
             rate = min(max(tax["val"] / pre["val"], 0.0), 0.35)
         cap = (debt["val"] if debt else 0) + eq["val"] - (cash["val"] if cash else 0)
-        if financial:
-            out["nr"]["roic"] = FIN_NR
-        elif eq["val"] <= 0:
+        if eq["val"] <= 0:
             out["nr"]["roic"] = "Equity is zero or negative, so return on invested capital is not meaningful"
         elif r0 and r0["val"] > 0 and cap < MIN_CAP_VS_REV * r0["val"]:
             out["nr"]["roic"] = "Invested capital is tiny next to revenue, so the ratio is not meaningful"
