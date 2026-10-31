@@ -68,11 +68,11 @@
  "entry_rule": "next trading day close",
  "graded": [],
  "min_days": 21,
- "note": "Only 1 trading day of calls so far (need 21). Treat results as noise.",
+ "note": "Only 0 trading days of calls so far (need 21). Treat results as noise.",
  "pending": 78,
  "sample": false,
  "status": "still noise",
- "trading_days": 1,
+ "trading_days": 0,
  "windows": [
   5,
   20,
