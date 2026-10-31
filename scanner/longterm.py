@@ -46,6 +46,14 @@ RULES = [
 ]
 
 
+FIN_NR = "Financial company: debt and EBITDA are not meaningful for banks, insurers and lenders"
+SPLIT_NR = "Share count and price disagree (possible split since the last 10-K)"
+SMALL_EBITDA_NR = "EBITDA too small to be meaningful"
+MIN_CAP_VS_REV = 0.10  # invested capital under 10% of revenue: ROIC proxy is not meaningful
+MAX_EV_EBITDA = 100
+MCAP_RATIO = (0.5, 2.0)  # computed market cap vs the scan's own market cap
+
+
 def _d(s: str) -> date:
     return date.fromisoformat(s)
 
@@ -241,7 +249,13 @@ def extract(facts: dict, sector: str | None = None) -> dict | None:
         if tax and pre and pre["val"] > 0:
             rate = min(max(tax["val"] / pre["val"], 0.0), 0.35)
         cap = (debt["val"] if debt else 0) + eq["val"] - (cash["val"] if cash else 0)
-        if cap > 0:
+        if financial:
+            out["nr"]["roic"] = FIN_NR
+        elif eq["val"] <= 0:
+            out["nr"]["roic"] = "Equity is zero or negative, so return on invested capital is not meaningful"
+        elif r0 and r0["val"] > 0 and cap < MIN_CAP_VS_REV * r0["val"]:
+            out["nr"]["roic"] = "Invested capital is tiny next to revenue, so the ratio is not meaningful"
+        elif cap > 0:
             roic = _m(o0["val"] * (1 - rate) / cap, o0["accn"], aa, rate=round(rate, 3))
     out["roic"] = roic
 
@@ -255,7 +269,9 @@ def extract(facts: dict, sector: str | None = None) -> dict | None:
     # debt to EBITDA (operating income plus D&A); not meaningful when EBITDA is not positive
     de = None
     d0 = _at(da, anchor)
-    if debt and o0 and d0:
+    if financial:
+        out["nr"]["debt_ebitda"] = out["nr"]["ev_ebitda"] = FIN_NR
+    elif debt and o0 and d0:
         ebitda = o0["val"] + abs(d0["val"])
         if ebitda > 0:
             de = _m(debt["val"] / ebitda, debt["accn"], aa, debt=round(debt["val"]), ebitda=round(ebitda))
@@ -265,13 +281,20 @@ def extract(facts: dict, sector: str | None = None) -> dict | None:
     return out
 
 
-def add_valuation(row: dict, price: float | None) -> None:
-    """FCF yield and EV/EBITDA from the latest price and the 10-K cover share count. Needs a price."""
+def add_valuation(row: dict, price: float | None, mcap_ref: float | None = None) -> None:
+    """FCF yield and EV/EBITDA from the latest price and the 10-K cover share count. Needs a price.
+
+    mcap_ref is the scan's own market cap (Yahoo). If price x cover shares is off from it by more than 2x
+    either way, the cover share count is stale (a split since the 10-K), so both figures are withheld.
+    """
     cover = row.get("_cover")
     row["fcf_yield"] = row["ev_ebitda"] = None
     if not price or not cover or cover["val"] <= 0:
         return
     mcap = price * cover["val"]
+    if mcap_ref and mcap_ref > 0 and not MCAP_RATIO[0] <= mcap / mcap_ref <= MCAP_RATIO[1]:
+        row.setdefault("nr", {}).update(fcf_yield=SPLIT_NR, ev_ebitda=SPLIT_NR)
+        return
     a = row["a"]
     fcf = row.get("_fcf")
     if fcf and mcap > 0:
@@ -279,7 +302,11 @@ def add_valuation(row: dict, price: float | None) -> None:
     de = row.get("debt_ebitda")
     if de and de.get("ebitda", 0) > 0:
         ev = mcap + de["debt"] - (row.get("_cash") or 0)
-        row["ev_ebitda"] = {"v": round(ev / de["ebitda"], 2), **({"a": cover["accn"]} if cover["accn"] != a else {})}
+        mult = ev / de["ebitda"]
+        if mult > MAX_EV_EBITDA:
+            row.setdefault("nr", {})["ev_ebitda"] = SMALL_EBITDA_NR
+        else:
+            row["ev_ebitda"] = {"v": round(mult, 2), **({"a": cover["accn"]} if cover["accn"] != a else {})}
 
 
 def rule_checks(row: dict) -> dict:

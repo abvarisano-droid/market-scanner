@@ -126,6 +126,8 @@ def build_latest(scan: dict, sample: bool) -> dict:
             c = num(spark[-1])
         row = {"n": _name(t, m), "s": plain(m.get("sector") or ""), "i": m.get("index"),
                "c": c, "cur": m.get("currency") or None, "spark": spark}
+        if num(m.get("marketCap"), 0):
+            row["mc"] = num(m["marketCap"], 0)
         if m.get("mispricing") is not None:
             row["mp"] = {"score": m["mispricing"], "label": mp_label(m["mispricing"]),
                          "reasons": [plain(x) for x in (m.get("valuation_reasons") or [])[:TOP_REASONS]]}
