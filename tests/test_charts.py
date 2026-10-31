@@ -167,3 +167,16 @@ def test_earnings_dates_timeout_does_not_hold_exit():
     t0 = time.monotonic()
     subprocess.run([sys.executable, "-c", code], check=True, cwd=str(__import__("pathlib").Path(__file__).resolve().parents[1]), timeout=20)
     assert time.monotonic() - t0 < 10
+
+
+def test_earnings_dates_reraises_worker_error(monkeypatch):
+    import sys
+    import types
+    from scanner import data
+
+    def boom(t):
+        raise RuntimeError("calendar down")
+
+    monkeypatch.setitem(sys.modules, "yfinance", types.SimpleNamespace(Ticker=boom))
+    with pytest.raises(RuntimeError, match="calendar down"):
+        data.earnings_dates("AAA", timeout=2)

@@ -36,7 +36,7 @@ TYPE (unchanged from the live site, pinned here)
 PALETTE (dark only)
   bg #050505 / text #ebe6d8 / muted #8d8777 (raised to #9a9483 on glass) / gold #d4af37 / bear #cb5d46
   glass fill: linear rgba(255,244,214,.065) to rgba(255,244,214,.025) over the bg (reads about #0f0e0b)
-  glass strong (slab, popovers): rgba(18,16,12,.72)
+  glass strong (slab, popovers): rgba(16,14,11,.72)
   edge: 1px rgba(236,224,186,.13), top highlight inset 0 1px 0 rgba(255,248,228,.10)
   gold light fields (background only, never under small text without glass): rgba(212,175,55,.10-.22)
   contrast on the brightest glass (#1a1710 measured): text 13.9:1, muted 5.6:1, gold 8.4:1, bear 4.9:1
@@ -49,7 +49,7 @@ RADII / BORDERS / SHADOWS
 MOTION
   easing: cubic-bezier(.2,.8,.2,1) (the site's existing curve); light field ease-in-out
   durations: chip and hover 200ms, reveal 700ms (unchanged), light drift 26s alternate loop
-  distances: drift up to 6% translate, 6deg rotate; no hover lifts on data panels
+  distances: drift up to 5% translate, 6deg rotate; no hover lifts on data panels
   properties: transform + opacity only
   reduced-motion fallback: light field static (global rule already stops every animation)
 SCROLL SYSTEM
