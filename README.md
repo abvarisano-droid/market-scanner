@@ -67,6 +67,10 @@ Every called ticker (the ones in `data/picks.csv`) gets a chart on its stock pag
 ## Automation
 `.github/workflows/daily-scan.yml` runs every weekday after the US close: scan, export site data, run tests, then commit `reports/`, `data/picks.csv`, `data/latest_scan.json`, `data/charts.json` and `site/data/` (contents: write, no force push). `.github/workflows/pages.yml` redeploys `site/` to GitHub Pages on each push that touches `site/` and after each successful Daily scan or weekly SEC refresh.
 
+## Scan watchdog
+`.github/workflows/scan-watchdog.yml` runs at 13:07 UTC on weekdays (and on demand). `scanner/watchdog.py` reads the repo's own git log for "Daily scan YYYY-MM-DD" commits and flags any US trading weekday in the last 10 days with no scan by 12:00 UTC the next calendar day (weekends and US market holidays are skipped; days before the first scan are ignored). It writes `site/data/watchdog.json` as `{checked_at, missed:[...]}`, the site footer shows "Scan missed on DATE" when the list is not empty, and the job fails so GitHub emails the owner. It needs no secret and no network beyond the checkout.
+Follow-up (outside this repo): the Brain reads `site/data/watchdog.json` and raises the flag on its status board.
+
 ## Layout
 `scanner/` engine: `data.py` (yfinance), `universe.py`, `valuation.py` (mispricing), `technical.py` (short-term and swing rules), `news_ai.py`, `tracker.py` (ledger and grading), `labels.py`, `charts.py` (stock page candles and volatility cone), `pipeline.py`. `scripts/export_site.py` feeds `site/`.
 

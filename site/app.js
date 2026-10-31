@@ -432,6 +432,12 @@
     S.latest = r[0]; S.track = r[1];
     document.getElementById("asof").textContent = "(latest scan " + S.latest.asof + ")";
     if (S.latest.banner) { var b = document.getElementById("banner"); b.textContent = S.latest.banner; b.hidden = false; }
+    fetch("data/watchdog.json").then(function (r) { return r.ok ? r.json() : null; }).then(function (w) {
+      if (!w || !w.missed || !w.missed.length) return;
+      var el = document.getElementById("wd");
+      el.textContent = "Scan missed on " + w.missed.join(", ") + ". Results below may be a day behind.";
+      el.hidden = false;
+    }).catch(function () {});
     window.addEventListener("hashchange", route);
     var rt; window.addEventListener("resize", function () { clearTimeout(rt); rt = setTimeout(function () { if (!location.hash || location.hash === "#/") home(); }, 250); });
     route();
