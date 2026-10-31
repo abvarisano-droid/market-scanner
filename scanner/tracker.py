@@ -19,6 +19,7 @@ from pathlib import Path
 
 import pandas as pd
 
+from . import calllog
 from .labels import BEARISH, BULLISH, normalize, sign
 
 LEDGER = Path(__file__).resolve().parent.parent / "data" / "picks.csv"
@@ -58,14 +59,17 @@ def log_picks(picks: list[dict], bench_price: float, today=None) -> pd.DataFrame
                      "source": p.get("source"), "lens": p.get("lens", "mispricing"), "score": p.get("score"),
                      "entry_rule": NEXT_CLOSE})
     new = pd.DataFrame(rows, columns=COLS)
-    if not led.empty and not new.empty:
-        key = set(zip(new["ticker"], new["lens"]))
-        drop = (led["date"] == today) & pd.Series([(t, l) in key for t, l in zip(led["ticker"], led["lens"])], index=led.index)
-        led = led[~drop]
-    led = pd.concat([led, new], ignore_index=True) if not led.empty else new
-    LEDGER.parent.mkdir(parents=True, exist_ok=True)
-    led.to_csv(LEDGER, index=False)
-    return led
+    # Append-only: old rows are kept as raw text so their hashes never change. Only today's own rows
+    # (a same-day re-run) can be replaced, and nothing dated earlier than the newest logged date.
+    old_rows = calllog.read_raw(LEDGER, COLS) if LEDGER.exists() else []
+    day = today.strftime("%Y-%m-%d")
+    if old_rows and day < max(r[0] for r in old_rows):
+        raise ValueError(f"cannot log calls for {day}: the log already holds later dates (it is append-only)")
+    new_rows = calllog.read_raw(new.to_csv(index=False), COLS) if not new.empty else []
+    key = {(r[1], r[10]) for r in new_rows}
+    kept = [r for r in old_rows if not (r[0] == day and (r[1], r[10] or "mispricing") in key)]
+    calllog.write_sealed(LEDGER, kept + new_rows, COLS)
+    return load()
 
 
 def _naive(s: pd.Series) -> pd.Series:
