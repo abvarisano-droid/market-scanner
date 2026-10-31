@@ -160,8 +160,11 @@ def fetch_russell(path: Path | None = None) -> tuple[str, list[str]]:
     """Download IWM holdings and refresh the cache. Raises on any problem; the old cache stays untouched."""
     import requests
 
-    ua = {"User-Agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0 Safari/537.36"}
-    text = requests.get(IWM_URL, headers=ua, timeout=FETCH_TIMEOUT).text
+    ua = {"User-Agent": "market-scanner/1.0 (+https://github.com/abvarisano-droid/market-scanner)"}
+    resp = requests.get(IWM_URL, headers=ua, timeout=FETCH_TIMEOUT)
+    if resp.status_code != 200:
+        raise ValueError(f"iShares returned HTTP {resp.status_code}, refusing to parse")
+    text = resp.text
     asof, rows = parse_ishares_holdings(text)
     if len(rows) < MIN_RUSSELL:
         raise ValueError(f"only {len(rows)} equities parsed, refusing to overwrite the cache")
