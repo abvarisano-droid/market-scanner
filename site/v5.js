@@ -444,5 +444,22 @@
     }).catch(function () { root.classList.remove("boot"); root.innerHTML = '<section class="hero"><h1>Stock data <em>unavailable.</em></h1><p class="lede">Not investment advice.</p></section>'; });
   }
 
+  /* tooltips close on Escape and on a tap outside. Escape keeps focus on the info button (the tip hides, nothing moves);
+     the tip comes back on the next focus change or once the pointer leaves the label */
+  var root = document.documentElement;
+  function tipsOff() { root.classList.add("tipx"); }
+  document.addEventListener("keydown", function (e) { if (e.key === "Escape" || e.key === "Esc") tipsOff(); });
+  document.addEventListener("pointerdown", function (e) {
+    var lb = e.target.closest && e.target.closest(".fc .label");
+    if (lb) { root.classList.remove("tipx"); return; }
+    tipsOff();
+    var a = document.activeElement; if (a && a.classList && a.classList.contains("info")) a.blur();
+  });
+  document.addEventListener("focusin", function () { root.classList.remove("tipx"); });
+  document.addEventListener("mouseout", function (e) {
+    var lb = e.target.closest && e.target.closest(".fc .label");
+    if (lb && !(e.relatedTarget && lb.contains(e.relatedTarget))) root.classList.remove("tipx");
+  });
+
   window.V5 = { changes: changes, report: report, link: link, stock: stock, chartBox: chartBox, chart: chart };
 })();

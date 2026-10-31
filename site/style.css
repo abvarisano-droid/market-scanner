@@ -401,6 +401,8 @@ button.stage:active{background:rgba(212,175,55,.08)}
   transition:opacity .2s var(--ease-glass),transform .2s var(--ease-glass),visibility 0s linear .2s}
 .fc .label:hover .tip,.info:focus-visible+.tip,.info:focus+.tip{transform:none;transition-delay:0s}
 .fc:nth-child(2n) .tip{transform-origin:calc(100% - 12px) 0}
+/* Escape or a tap outside closes any open tip (class set in v5.js); same exit path as a normal close */
+.tipx .fc .label .tip{opacity:0;visibility:hidden;transform:translateY(-4px) scale(.96);transition:opacity .2s var(--ease-glass),transform .2s var(--ease-glass),visibility 0s linear .2s}
 @media(min-width:760px){.fc:nth-child(2n) .tip{transform-origin:12px 0}.fc:nth-child(3n) .tip{transform-origin:calc(100% - 12px) 0}}
 
 /* 8. type: tracking and leading set per size (tighter as type grows, body left at 0) */
