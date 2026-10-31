@@ -1,0 +1,97 @@
+{
+ "funnel": {
+  "min_bars": 252,
+  "min_coverage_pct": 40,
+  "min_dollar_vol": 1000000,
+  "mp_low": 6,
+  "mp_top": 12,
+  "stale_days": 5,
+  "top_n": 15
+ },
+ "grading": {
+  "min_days": 21,
+  "windows": [
+   5,
+   20,
+   60
+  ]
+ },
+ "longterm": {
+  "rules": [
+   "Revenue growth of 5% a year or more",
+   "Operating margin not shrinking over 5 years",
+   "Free cash flow margin of 10% or more",
+   "Return on invested capital (proxy) of 10% or more",
+   "Share count not higher than 2 years ago",
+   "Debt to EBITDA of 3 times or less"
+  ]
+ },
+ "mispricing": {
+  "call_at": 35,
+  "quality": [
+   "returnOnEquity",
+   "profitMargins",
+   "revenueGrowth",
+   "debtToEquity"
+  ],
+  "value": [
+   "forwardPE",
+   "trailingPE",
+   "enterpriseToEbitda",
+   "priceToBook",
+   "fcf_yield"
+  ],
+  "weights_pct": {
+   "analyst": 25,
+   "momentum": 15,
+   "quality": 20,
+   "value": 40
+  }
+ },
+ "technical": {
+  "bear_at": 35,
+  "bull_at": 65,
+  "min_short": 30,
+  "min_swing": 252,
+  "short_weights_pct": {
+   "ma20": 30,
+   "momentum": 30,
+   "rsi": 20,
+   "volume": 20
+  },
+  "swing_weights_pct": {
+   "high52": 15,
+   "ma200": 20,
+   "ma50": 20,
+   "rs": 25,
+   "slope": 20
+  }
+ },
+ "universe": {
+  "baskets": {
+   "ASX 200 (Australia)": 12,
+   "Bovespa (Brazil)": 8,
+   "CAC 40 (France)": 14,
+   "DAX (Germany)": 14,
+   "Euro Stoxx 50": 10,
+   "FTSE 100 (UK)": 15,
+   "Hang Seng (HK)": 12,
+   "KOSPI (Korea)": 8,
+   "Nikkei 225 (Japan)": 14,
+   "Sensex (India)": 10,
+   "Shanghai Composite": 8,
+   "TSX (Canada)": 12
+  },
+  "benchmark": "SPY",
+  "index_levels": 16,
+  "live": [
+   "S&P 500",
+   "Nasdaq 100",
+   "Dow Jones"
+  ],
+  "russell": {
+   "min_equities": 1000,
+   "source": "iShares IWM holdings"
+  }
+ }
+}

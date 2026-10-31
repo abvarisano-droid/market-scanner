@@ -163,3 +163,24 @@ td.stk{white-space:normal;min-width:150px;position:sticky;left:0;background:var(
 .how summary{cursor:pointer;color:var(--gold);font:11px var(--mono);letter-spacing:.14em;text-transform:uppercase;padding:10px 0}
 .how li{margin:8px 0}
 .lede.sample strong{color:var(--gold);font-weight:600}
+
+.mx h3{font-size:22px;margin:22px 0 6px;color:var(--gold)}
+.mx ul{color:#b9b3a2;font-size:15px;max-width:70ch;padding-left:20px}
+.mx li{margin:6px 0}
+.mx .lede{max-width:70ch;overflow-wrap:anywhere}
+.mx b{color:var(--text);font-weight:600}
+nav{flex-wrap:nowrap}nav a{white-space:nowrap}
+@media(max-width:480px){nav{gap:10px}nav a,.top nav a{font-size:10px;letter-spacing:.06em}}
+@media(max-width:360px){nav{gap:7px}nav a{font-size:9px;letter-spacing:.04em}}
+/* v5: what changed, stock pages, report card */
+.v5strip{margin-top:32px;padding:18px;border:1px solid var(--line);border-radius:6px;background:var(--panel)}
+.v5strip h2{font-size:clamp(22px,4vw,28px)}
+.v5cols{display:grid;gap:18px;margin-top:12px}
+@media(min-width:700px){.v5cols{grid-template-columns:1fr 1fr}}
+.v5strip h3{font-size:16px;margin:0 0 6px}
+.v5list{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:6px;max-height:220px;overflow:auto}
+.chip.bear{color:var(--bear)}
+.v5link{margin:14px 0 0}
+#v5-report table td,.v5link+.twrap td{vertical-align:top}
+.byix{margin-top:14px}.byix summary{cursor:pointer;padding:6px 0}.byix table{min-width:0}
+.hist table{min-width:0}.hist td{white-space:normal}.hist .label{white-space:nowrap;display:inline-block}

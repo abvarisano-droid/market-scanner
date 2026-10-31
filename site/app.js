@@ -145,6 +145,16 @@
   }
   function tw_more(tw) { tw.parentNode.classList.toggle("more", tw.scrollWidth - tw.clientWidth - tw.scrollLeft > 4); }
 
+  function byIndexHtml(f) {
+    var st = f.by_index_stages;
+    if (!st) return "";
+    var names = Object.keys(st.universe).sort(function (a, b) { return st.universe[b] - st.universe[a]; });
+    var rows = names.map(function (n) {
+      return "<tr><td>" + esc(n) + "</td><td>" + st.universe[n].toLocaleString() + "</td><td>" + (st.with_data[n] || 0).toLocaleString() + "</td><td>" + (st.passed_checks[n] || 0).toLocaleString() + "</td></tr>";
+    }).join("");
+    return '<details class="byix"><summary class="label">Funnel by index (a stock in two indexes counts in both)</summary><div class="tw" tabindex="0" role="region" aria-label="Funnel by index"><table><thead><tr><th>Index</th><th>In</th><th>With data</th><th>Passed checks</th></tr></thead><tbody>' + rows + "</tbody></table></div></details>";
+  }
+
   function home() {
     var L = S.latest;
     var f = L.funnel[S.hz];
@@ -162,9 +172,10 @@
       '<p class="lede">Every weekday after the close we run each stock from the major indexes through data checks, a valuation model and a handful of plain price rules, then rank the strongest bullish and bearish setups. Every call is logged and graded against the S&amp;P 500, in public.</p>' +
       '<div class="field"><canvas id="cv" aria-label="Animated field of dots. Each dot is a stock, narrowing from the full universe to the final picks." role="img"></canvas>' +
       '<div class="stages">' + ["Universe", "Passed checks", "Scored", "Picks"].map(function (n) { return '<button type="button" class="stage"><span class="k">' + n + '</span><span class="n">0</span></button>'; }).join("") + "</div></div>" +
-      '<div class="story"><p id="cap" class="cap" aria-live="polite"></p><div class="ctl"><button type="button" id="nx" class="btn">Next step</button><button type="button" id="sk" class="btn ghost">Skip animation</button></div></div></section>' + sectorHtml(L.sectors) +
+      '<div class="story"><p id="cap" class="cap" aria-live="polite"></p><div class="ctl"><button type="button" id="nx" class="btn">Next step</button><button type="button" id="sk" class="btn ghost">Skip animation</button></div></div>' + byIndexHtml(L.funnel) + '</section>' + sectorHtml(L.sectors) +
       '<div class="ixs" tabindex="0" role="region" aria-label="Index moves today">' + chips + '</div><div class="tabs" role="tablist">' + tabs + "</div>" + body;
     sectorWire(L.sectors);
+    if (window.V5) V5.changes(app);
     var cv = document.getElementById("cv");
     funnel(cv, f, [].slice.call(app.querySelectorAll(".stage .n")), [].slice.call(app.querySelectorAll(".stage")));
     [].forEach.call(app.querySelectorAll(".tab"), function (b) {
@@ -200,8 +211,9 @@
       if (!v) { res.innerHTML = ""; return; }
       var r = S.latest.lookup[v];
       if (!r) { res.innerHTML = '<p class="note">No scored data for "' + esc(v) + '" in the latest scan. It may be outside the universe or failed a data check.</p>'; return; }
-      res.innerHTML = '<div class="card fade"><span class="label">' + esc((r.i ? r.i + " | " : "") + (r.s || "")) + "</span><h2>" + esc(v) + " <span style=\"color:var(--muted);font-size:.5em\">" + esc(r.n) + '</span></h2><div class="meta"><span class="label">Last close ' + (r.c == null ? "n/a" : r.c.toFixed(2) + (r.cur ? " " + esc(r.cur) : "")) + '</span><span class="label">As of ' + esc(S.latest.asof) + "</span></div>" +
+      res.innerHTML = '<div class="card fade"><span class="label">' + esc((r.ix && r.ix.length > 1 ? r.ix.join(", ") + " | " : r.i ? r.i + " | " : "") + (r.s || "")) + "</span><h2>" + esc(v) + " <span style=\"color:var(--muted);font-size:.5em\">" + esc(r.n) + '</span></h2><div class="meta"><span class="label">Last close ' + (r.c == null ? "n/a" : r.c.toFixed(2) + (r.cur ? " " + esc(r.cur) : "")) + '</span><span class="label">As of ' + esc(S.latest.asof) + "</span></div>" +
         spark(r.spark) + '<div class="hzs">' + hzCard("Mispricing", r.mp, true) + hzCard("Short-term", r.st) + hzCard("Swing", r.sw) + '</div><p class="note">Mechanical rules on past data, not a forecast. Not investment advice.</p></div>';
+      if (window.V5) V5.link(res, v);
     }
     q.addEventListener("input", function () { show(q.value); });
     document.getElementById("f").addEventListener("submit", function (e) { e.preventDefault(); show(q.value); });
@@ -323,6 +335,7 @@
       '<div class="stat"><span class="label">Rule</span><div class="v" style="font-size:18px">Nothing is hidden or removed after the fact.</div></div></div></div></section>' +
       '<section><h2>Graded calls</h2><p class="lede" style="margin-top:6px">Most recent 40 of the latest 300 graded calls shown here. <a href="https://github.com/abvarisano-droid/market-scanner/blob/main/data/picks.csv" target="_blank" rel="noopener">Full ledger</a> (every call, logged once and never replaced by a later run). Neutral names are never called. Results this early are not evidence of skill.</p>' + tbl + "</section>";
     watchScroll("graded");
+    if (window.V5) V5.report(app);
     var pr = document.getElementById("pr");
     if (reduce) pr.style.strokeDashoffset = C * (1 - p);
     else requestAnimationFrame(function () { requestAnimationFrame(function () { pr.style.strokeDashoffset = C * (1 - p); }); });
@@ -334,14 +347,64 @@
       .catch(function () { app.innerHTML = '<section class="hero"><h1>Long-term data <em>unavailable.</em></h1><p class="lede">The SEC data file could not be loaded. Not investment advice.</p></section>'; });
   }
 
+  /* ---------- how it works (every number comes from data/method.json, built from the code constants) ---------- */
+  var MNAME = { forwardPE: "forward P/E", trailingPE: "trailing P/E", enterpriseToEbitda: "EV/EBITDA", priceToBook: "price to book", fcf_yield: "free cash flow yield", returnOnEquity: "return on equity", profitMargins: "profit margin", revenueGrowth: "revenue growth", debtToEquity: "debt to equity" };
+  var RNAME = { ma20: "Price vs its 20-day average", momentum: "5 and 10 day momentum", rsi: "RSI(14)", volume: "Volume vs its 20-day average", ma50: "Price vs its 50-day average", ma200: "Price vs its 200-day average", slope: "Slope of the 50 and 200-day averages", rs: "3-month return vs the S&amp;P 500", high52: "Distance from the 52-week high" };
+  function mlist(a) { return a.map(function (k) { return MNAME[k] || k; }).join(", "); }
+  function wtable(w) { return "<ul>" + Object.keys(w).sort(function (a, b) { return w[b] - w[a]; }).map(function (k) { return "<li><b>" + w[k] + "%</b> " + RNAME[k] + "</li>"; }).join("") + "</ul>"; }
+  function methodology() {
+    var M = S.method, U = M.universe, F = M.funnel, P = M.mispricing, T = M.technical, G = M.grading, w = G.windows;
+    var live = U.live.join(", "), bk = Object.keys(U.baskets), bn = bk.reduce(function (s, k) { return s + U.baskets[k]; }, 0);
+    var wv = P.weights_pct;
+    app.innerHTML = '<section class="hero"><span class="label">How it works</span><h1>Rules you can <em>read.</em></h1>' +
+      '<p class="lede">Everything below is taken from the scanner\'s own code, and the numbers on this page are read from the same constants the scan uses. Mechanical rules on public price and valuation data: not forecasts, and nothing here is a recommendation. <strong>Not investment advice.</strong></p></section>' +
+      '<section class="mx"><h2>1. The universe</h2><p class="lede">Stocks come from the index lists. ' + esc(live) + ' are pulled live from Wikipedia when it is reachable. The other ' + bk.length + ' indexes use a fixed basket of large names (' + bn + ' tickers in total), so global coverage is thin. ' + U.index_levels + ' index levels and ' + esc(U.benchmark) + ' (the S&amp;P 500 fund used as the yardstick) are tracked for context and are not scored as stocks. The Russell 2000 uses its real constituents from the ' + esc(U.russell.source) + ' file (a pull under ' + U.russell.min_equities.toLocaleString() + ' equities is rejected as a bad file). Prices and fundamentals come from Yahoo Finance, which is free and can be delayed or wrong.</p></section>' +
+      '<section class="mx"><h2>2. The funnel</h2><p class="lede">Each stock must clear these data checks before any lens scores it. A stock that fails is dropped, and the site counts why.</p><ul class="mlist">' +
+      "<li><b>History:</b> at least " + F.min_bars + " daily bars (about a year).</li>" +
+      "<li><b>Fresh:</b> the latest bar is no more than " + F.stale_days + " calendar days older than the newest bar in the scan.</li>" +
+      "<li><b>Clean:</b> no zero or negative closes, no missing close or volume.</li>" +
+      "<li><b>Liquid:</b> average daily dollar volume (close times volume) over the last 20 days of at least $" + F.min_dollar_vol.toLocaleString() + ".</li>" +
+      "<li><b>Mispricing only:</b> at least " + F.min_coverage_pct + "% of its value and quality metrics must exist, or it is not ranked.</li>" +
+      "<li><b>Picks:</b> each technical lens lists up to " + F.top_n + " names per side. Mispricing lists the top " + F.mp_top + " and the bottom " + F.mp_low + ".</li></ul></section>" +
+      '<section class="mx"><h2>3. The three lenses</h2>' +
+      '<h3>Mispricing, -100 to +100</h3><p class="lede">Each metric is compared with sector peers (market-wide if a sector has fewer than 3 usable names), trimmed at the 5th and 95th percentile, and turned into a score. Negative multiples are ignored. The blocks are weighted: <b>' + wv.value + '% value</b> (' + esc(mlist(P.value)) + '), <b>' + wv.quality + '% quality</b> (' + esc(mlist(P.quality)) + '), <b>' + wv.analyst + '% analyst gap</b> (the average analyst target vs the last close, scaled by how many analysts cover it, full weight at 10 or more), and <b>' + wv.momentum + '% recent stretch</b> (a deep 3-month drop scores as cheap, a big run-up as stretched, relative to the stock\'s own volatility). A score of ' + P.call_at + ' or more is Bullish and ' + (-P.call_at) + ' or less is Bearish, after a small nudge from headline wording. With an AI key set, a language model can write the thesis and call from the same numbers; otherwise the rules decide.</p>' +
+      '<h3>Short-term, 0 to 100</h3><p class="lede">Needs at least ' + T.min_short + ' bars. Weighted rules:</p>' + wtable(T.short_weights_pct) +
+      '<h3>Swing, 0 to 100</h3><p class="lede">Needs at least ' + T.min_swing + ' bars plus the S&amp;P 500 on matching dates. Weighted rules:</p>' + wtable(T.swing_weights_pct) +
+      '<p class="lede">Each rule scores from 0 (bearish) to 1 (bullish), and the lens score is 100 times the weighted average. The three strongest pulls become the reasons shown.</p></section>' +
+      '<section class="mx"><h2>4. How calls are labeled</h2><p class="lede">Short-term and Swing: <b>Bullish</b> at ' + T.bull_at + ' or more, <b>Bearish</b> at ' + T.bear_at + ' or less, <b>Neutral</b> in between. Mispricing uses the +/-' + P.call_at + ' cut above. Only Bullish and Bearish calls are logged; Neutral is never graded. Older logs used other names, which still load and map to these three.</p></section>' +
+      '<section class="mx"><h2>5. How calls are graded</h2><ul class="mlist">' +
+      "<li><b>Entry</b> is the close of the next trading day after the signal date, never the signal\'s own close. The S&amp;P 500 uses the same entry day.</li>" +
+      "<li><b>Windows</b> are " + w.join(", ") + " trading days counted from that entry close.</li>" +
+      "<li><b>A win</b> for a Bullish call is beating the S&amp;P 500 over the window. For a Bearish call it is lagging it.</li>" +
+      "<li><b>Still noise:</b> until the log covers " + G.min_days + " trading days, the whole record is labeled still noise. Even after that, a few weeks of calls is a small sample.</li>" +
+      "<li>Rows logged under an older same-day entry rule keep it, so history is not rewritten.</li></ul></section>" +
+      '<section class="mx"><h2>6. The Long-term tab</h2><p class="lede">It uses only annual SEC 10-K filings, not Yahoo data, for S&amp;P 500 names, and links each figure to its filing. Six yes or no checks are counted: ' + M.longterm.rules.map(esc).join("; ") + '. They describe past reported numbers.</p></section>' +
+      '<section class="mx"><h2>7. Honest limits</h2><ul class="mlist">' +
+      "<li>Free data: Yahoo Finance fundamentals can be stale, missing or restated, and prices are adjusted for splits and dividends by the provider.</li>" +
+      "<li>There are no earnings estimate revisions, no insider or options data, and no sector-specific models. The analyst gap uses one average analyst target only.</li>" +
+      "<li>Banks, insurers and other unusual reporters often lack clean multiples and show gaps.</li>" +
+      "<li>Technical rules look only at price and volume, so they say nothing about why a stock moved.</li>" +
+      "<li>The track record is short and each lens has few calls, so hit rates swing widely. Calls ignore trading costs and taxes.</li>" +
+      "<li>The global baskets are fixed lists, not full index membership.</li></ul>" +
+      '<p class="disc" style="margin-top:20px"><strong>Not investment advice.</strong> Read the <a href="#/track">track record</a> before trusting any lens.</p></section>';
+    window.scrollTo(0, 0);
+  }
+  function loadMethod() {
+    app.innerHTML = '<section class="hero"><span class="label">How it works</span><p class="lede">Loading...</p></section>';
+    load("data/method.json").then(function (d) { S.method = d; if (location.hash.indexOf("#/how") === 0) methodology(); })
+      .catch(function () { app.innerHTML = '<section class="hero"><h1>Method <em>unavailable.</em></h1><p class="lede">The method file could not be loaded. Not investment advice.</p></section>'; });
+  }
+
   /* ---------- router ---------- */
   function route() {
     cancelAnimationFrame(S.raf);
     var h = location.hash.replace(/^#\/?/, ""), parts = h.split("/"), pg = parts[0] || "home";
     [].forEach.call(document.querySelectorAll("nav a"), function (a) { a.classList.toggle("on", a.getAttribute("data-nav") === pg); });
     try {
-      if (pg === "lookup") lookup(decodeURIComponent(parts[1] || ""));
+      if (pg === "stock" && window.V5) V5.stock(app, decodeURIComponent(parts[1] || ""));
+      else if (pg === "lookup") lookup(decodeURIComponent(parts[1] || ""));
       else if (pg === "track") track();
+      else if (pg === "how") { if (S.method) methodology(); else loadMethod(); }
       else if (pg === "longterm") { if (S.lt) longterm(); else loadLT(); }
       else home();
     } catch (e) {

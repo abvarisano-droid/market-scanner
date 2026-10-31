@@ -20,7 +20,8 @@ sys.path.insert(0, str(ROOT))
 
 import pandas as pd  # noqa: E402
 
-from scanner import tracker  # noqa: E402
+from scanner import longterm, pipeline, tracker, universe, valuation  # noqa: E402
+from scanner import technical as tech_rules  # noqa: E402
 from scanner.labels import BEARISH, BULLISH, NEUTRAL, normalize  # noqa: E402
 
 BULL_AT = 35  # mispricing score that counts as Bullish / Bearish (before news adjustment)
@@ -128,6 +129,8 @@ def build_latest(scan: dict, sample: bool) -> dict:
                "c": c, "cur": m.get("currency") or None, "spark": spark}
         if num(m.get("marketCap"), 0):
             row["mc"] = num(m["marketCap"], 0)
+        if len(m.get("indexes") or []) > 1:
+            row["ix"] = m["indexes"]
         if m.get("mispricing") is not None:
             row["mp"] = {"score": m["mispricing"], "label": mp_label(m["mispricing"]),
                          "reasons": [plain(x) for x in (m.get("valuation_reasons") or [])[:TOP_REASONS]]}
@@ -175,12 +178,47 @@ def build_track(scan: dict, sample: bool) -> dict:
             "calls_logged": len(led), "pending": pending, "graded": graded[-300:], "disclaimer": DISCLAIMER}
 
 
+def build_method() -> dict:
+    """Every threshold the How it works page shows, read from the code constants (no network)."""
+    import numpy as np
+    n = 300
+    close = pd.Series(np.linspace(50, 100, n))
+    df = pd.DataFrame({"date": pd.date_range("2024-01-01", periods=n).strftime("%Y-%m-%d"), "close": close,
+                       "volume": 1e6})
+    def w(rules):
+        return [[r.__name__.replace("rule_", ""), x.weight] for r, x in rules]
+    short = [(tech_rules.rule_ma20, tech_rules.rule_ma20(close)), (tech_rules.rule_momentum, tech_rules.rule_momentum(close)),
+             (tech_rules.rule_rsi, tech_rules.rule_rsi(close)), (tech_rules.rule_volume, tech_rules.rule_volume(df))]
+    swing = [(tech_rules.rule_ma50, tech_rules.rule_ma50(close)), (tech_rules.rule_ma200, tech_rules.rule_ma200(close)),
+             (tech_rules.rule_slope, tech_rules.rule_slope(close)), (tech_rules.rule_rs, tech_rules.rule_rs(close, close)),
+             (tech_rules.rule_high52, tech_rules.rule_high52(close))]
+    return {
+        "universe": {"live": list(universe.WIKI), "baskets": {k: len(v) for k, v in universe.FALLBACK.items() if k not in universe.WIKI},
+                     "benchmark": universe.BENCHMARK, "index_levels": len(universe.INDEXES),
+                     "russell": {"source": "iShares IWM holdings", "min_equities": universe.MIN_RUSSELL}},
+        "funnel": {"min_bars": tech_rules.MIN_BARS, "stale_days": tech_rules.STALE_DAYS,
+                   "min_dollar_vol": tech_rules.MIN_DOLLAR_VOL, "top_n": tech_rules.TOP_N,
+                   "min_coverage_pct": round(pipeline.MIN_COVERAGE * 100), "mp_top": pipeline.TOP_N, "mp_low": pipeline.TOP_N // 2},
+        "mispricing": {"weights_pct": {k: round(v * 100) for k, v in valuation.WEIGHTS.items()},
+                       "value": [m for m, _ in valuation.VALUE_METRICS], "quality": [m for m, _ in valuation.QUALITY_METRICS],
+                       "call_at": BULL_AT},
+        "technical": {"bull_at": tech_rules.BULL, "bear_at": tech_rules.BEAR, "min_short": tech_rules.MIN_SHORT,
+                      "min_swing": tech_rules.MIN_SWING,
+                      "short_weights_pct": {n_: round(x * 100) for n_, x in w(short)},
+                      "swing_weights_pct": {n_: round(x * 100) for n_, x in w(swing)}},
+        "grading": {"windows": list(tracker.HORIZONS.values()), "min_days": tracker.MIN_DAYS},
+        "longterm": {"rules": [lab for _, lab, _ in longterm.RULES]},
+    }
+
+
 def export(scan: dict, site_dir, sample=False):
     latest, tr = build_latest(scan, sample), build_track(scan, sample)
     d = Path(site_dir) / "data"
     d.mkdir(parents=True, exist_ok=True)
     (d / "latest.json").write_text(json.dumps(latest, separators=(",", ":"), sort_keys=True))
     (d / "track.json").write_text(json.dumps(tr, indent=1, sort_keys=True))
+    (d / "method.json").write_text(json.dumps(build_method(), indent=1, sort_keys=True))
+    from scripts import export_v5; export_v5.export(scan, latest, site_dir)  # v5 data: stock pages, changes, report card
     return latest, tr
 
 
@@ -188,12 +226,13 @@ def make_sample(tmp: Path) -> dict:
     """Run the real engine on synthetic data, then back-date the calls so the track record has rows."""
     from unittest import mock
 
-    from scanner import data, pipeline
+    from scanner import data, pipeline, universe
     from tests.fixtures import synthetic as syn
 
     with mock.patch.object(tracker, "LEDGER", tmp / "picks.csv"), mock.patch.object(pipeline, "LATEST", tmp / "latest_scan.json"), \
             mock.patch.object(pipeline, "ROOT", tmp), mock.patch.object(data, "prices", syn.fake_prices), \
             mock.patch.object(data, "fundamentals", syn.fake_fund), mock.patch.object(data, "news", syn.fake_news), \
+            mock.patch.object(universe, "russell_constituents", lambda live=True: ["AAPL", "MSFT"] + [f"RUT{i:03d}" for i in range(400)]), \
             mock.patch.dict("os.environ", {"ANTHROPIC_API_KEY": ""}):
         res = pipeline.run(live_constituents=False)
         led = tracker.load()
