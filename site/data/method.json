@@ -88,6 +88,10 @@
    "S&P 500",
    "Nasdaq 100",
    "Dow Jones"
-  ]
+  ],
+  "russell": {
+   "min_equities": 1000,
+   "source": "iShares IWM holdings"
+  }
  }
 }

@@ -194,7 +194,8 @@ def build_method() -> dict:
              (tech_rules.rule_high52, tech_rules.rule_high52(close))]
     return {
         "universe": {"live": list(universe.WIKI), "baskets": {k: len(v) for k, v in universe.FALLBACK.items() if k not in universe.WIKI},
-                     "benchmark": universe.BENCHMARK, "index_levels": len(universe.INDEXES)},
+                     "benchmark": universe.BENCHMARK, "index_levels": len(universe.INDEXES),
+                     "russell": {"source": "iShares IWM holdings", "min_equities": universe.MIN_RUSSELL}},
         "funnel": {"min_bars": tech_rules.MIN_BARS, "stale_days": tech_rules.STALE_DAYS,
                    "min_dollar_vol": tech_rules.MIN_DOLLAR_VOL, "top_n": tech_rules.TOP_N,
                    "min_coverage_pct": round(pipeline.MIN_COVERAGE * 100), "mp_top": pipeline.TOP_N, "mp_low": pipeline.TOP_N // 2},
