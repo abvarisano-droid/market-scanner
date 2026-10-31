@@ -21,6 +21,11 @@ A daily scan of global stock indexes that finds stocks that look mispriced, rank
 - **Still noise:** until the log covers 21 trading days the whole record is labeled "still noise".
 - Rows logged before this rule (blank `entry_rule` in `data/picks.csv`) keep their original same-day entry, so history is not rewritten.
 
+## What it looks like
+![Market Scanner hero at 390px wide](docs/hero-390.png)
+
+Live site: https://abvarisano-droid.github.io/market-scanner/ (after Pages is enabled)
+
 ## Run it
 ```bash
 pip install -r requirements.txt pytest
