@@ -82,7 +82,7 @@ def reguard(data: dict, latest: dict | None = None) -> dict:
         fcf, fy, de, ev = (r.get("fcf_margin") or {}).get("f"), r.get("fcf_yield"), r.get("debt_ebitda"), r.get("ev_ebitda")
         calc = None
         if fcf and fy:
-            calc = fcf / fy["v"] if fy["v"] > 0 else float("inf")
+            calc = fcf / fy["v"] if fy["v"] != 0 else float("inf")  # negative FCF gives a negative yield: same sign, valid cap
         elif ev and de:
             calc = ev["v"] * de["ebitda"] - de["debt"]
         if ref and calc is not None and not lt.MCAP_RATIO[0] <= calc / ref <= lt.MCAP_RATIO[1]:

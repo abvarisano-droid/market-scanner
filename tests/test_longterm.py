@@ -300,3 +300,7 @@ def test_reguard_fixes_shipped_numbers_and_committed_file_is_clean():
         assert "ev_ebitda" not in rows[t]
     assert max(r["ev_ebitda"]["v"] for r in d["rows"] if "ev_ebitda" in r) <= 100
     assert reguard(json.loads(json.dumps(d)))["rows"] == d["rows"]  # idempotent
+    # negative FCF (utilities, heavy capex) is a valid negative yield, not a share count mismatch
+    for t in ("DUK", "SO", "AEE", "BA", "ORCL"):
+        assert rows[t]["fcf_yield"]["v"] < 0 and "fcf_yield" not in (rows[t].get("nr") or {})
+
