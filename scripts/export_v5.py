@@ -12,6 +12,7 @@ from pathlib import Path
 
 import pandas as pd
 
+from scanner import charts as charts_mod
 from scanner import tracker
 from scanner.labels import BEARISH, BULLISH, normalize
 
@@ -86,7 +87,27 @@ def report_card(led: pd.DataFrame, trading_days: int) -> dict:
             "still_noise": trading_days < tracker.MIN_DAYS, "lenses": lenses}
 
 
-def stock_pages(led: pd.DataFrame, lookup: dict) -> dict:
+def _f(v, d=2):
+    try:
+        v = float(v)
+    except (TypeError, ValueError):
+        return None
+    return round(v, d) if v == v and abs(v) != float("inf") else None
+
+
+def fundamentals(row: dict | None) -> dict:
+    """Valuation figures the scan already holds (Yahoo Finance fields). Missing stays None."""
+    r = row or {}
+    px, avg, n = _f(r.get("price")), _f(r.get("targetMeanPrice")), r.get("numberOfAnalystOpinions")
+    gap = round(avg / px - 1, 4) if px and avg and (n or 0) > 0 else None
+    pe = lambda v: v if v is not None and 0 < v < 2000 else None  # negative or absurd P/E is not meaningful
+    return {"fwd_pe": pe(_f(r.get("forwardPE"), 1)), "ttm_pe": pe(_f(r.get("trailingPE"), 1)),
+            "ev_ebitda": _f(r.get("enterpriseToEbitda"), 1), "consensus_gap": gap,
+            "analysts": int(n) if n is not None and n == n else None, "sector": _plain(r.get("sector")),
+            "mcap": _f(r.get("marketCap"), 0), "cur": r.get("currency")}
+
+
+def stock_pages(led: pd.DataFrame, lookup: dict, table: dict | None = None) -> dict:
     pages = {}
     if led.empty:
         return pages
@@ -107,7 +128,8 @@ def stock_pages(led: pd.DataFrame, lookup: dict) -> dict:
                                    "stock_return": round(float(r[f"ret_{h}"]), 4),
                                    "excess": round(float(r[f"alpha_{h}"]), 4)})
         pages[t] = {"name": _plain(rec.get("n") or t), "index": rec.get("i") or _clean(g["index"].iloc[0]),
-                    "sector": rec.get("s"), "current": cur, "history": hist, "graded": graded}
+                    "sector": rec.get("s"), "current": cur, "history": hist, "graded": graded,
+                    "fund": fundamentals((table or {}).get(t))}
     return pages
 
 
@@ -115,11 +137,33 @@ def build_v5(scan: dict, lookup: dict) -> dict:
     led = _ledger(scan)
     days = (scan.get("scorecard") or {}).get("trading_days", 0)
     return {"asof": scan.get("date"), "disclaimer": DISCLAIMER, "changes": diff_calls(led),
-            "report": report_card(led, days), "stocks": stock_pages(led, lookup)}
+            "report": report_card(led, days),
+            "stocks": stock_pages(led, lookup, {r["ticker"]: r for r in scan.get("table") or []})}
 
 
-def export(scan: dict, latest: dict, site_dir) -> dict:
+def write_charts(stocks: dict, store: dict, site_dir) -> list[str]:
+    """One small file per called ticker: site/data/charts/<TICKER>.json. Stale files are removed."""
+    d = Path(site_dir) / "data" / "charts"
+    d.mkdir(parents=True, exist_ok=True)
+    done = []
+    for t in sorted(stocks):
+        p = store.get(t)
+        if not p:
+            continue
+        (d / f"{t}.json").write_text(json.dumps(p, separators=(",", ":"), sort_keys=True))
+        done.append(t)
+    for f in d.glob("*.json"):
+        if f.stem not in done:
+            f.unlink()
+    return done
+
+
+def export(scan: dict, latest: dict, site_dir, store: dict | None = None) -> dict:
     v5 = build_v5(scan, latest.get("lookup", {}))
+    if store is None:
+        store = {} if latest.get("sample") else charts_mod.load()
+    for t in write_charts(v5["stocks"], store, site_dir):
+        v5["stocks"][t]["chart"] = True
     d = Path(site_dir) / "data"
     d.mkdir(parents=True, exist_ok=True)
     (d / "v5.json").write_text(json.dumps(v5, separators=(",", ":"), sort_keys=True))

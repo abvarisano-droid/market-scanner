@@ -220,13 +220,19 @@ def build_summary(latest: dict) -> dict:
 
 def export(scan: dict, site_dir, sample=False):
     latest, tr = build_latest(scan, sample), build_track(scan, sample)
+    from scanner import charts as charts_mod
+    store = {} if sample else charts_mod.load()  # 3 year candles for called tickers, written by the scan
+    called = {r["ticker"] for r in scan.get("ledger") or []}
+    for t, row in latest["lookup"].items():
+        if t in store and t in called:
+            row["ch"] = 1  # lookup reserves the chart box up front (no layout shift)
     d = Path(site_dir) / "data"
     d.mkdir(parents=True, exist_ok=True)
     (d / "latest.json").write_text(json.dumps(latest, separators=(",", ":"), sort_keys=True))
     (d / "summary.json").write_text(json.dumps(build_summary(latest), separators=(",", ":"), sort_keys=True))
     (d / "track.json").write_text(json.dumps(tr, indent=1, sort_keys=True))
     (d / "method.json").write_text(json.dumps(build_method(), indent=1, sort_keys=True))
-    from scripts import export_v5; export_v5.export(scan, latest, site_dir)  # v5 data: stock pages, changes, report card
+    from scripts import export_v5; export_v5.export(scan, latest, site_dir, store)  # v5 data: stock pages, changes, report card
     return latest, tr
 
 
@@ -240,6 +246,7 @@ def make_sample(tmp: Path) -> dict:
     with mock.patch.object(tracker, "LEDGER", tmp / "picks.csv"), mock.patch.object(pipeline, "LATEST", tmp / "latest_scan.json"), \
             mock.patch.object(pipeline, "ROOT", tmp), mock.patch.object(data, "prices", syn.fake_prices), \
             mock.patch.object(data, "fundamentals", syn.fake_fund), mock.patch.object(data, "news", syn.fake_news), \
+            mock.patch.object(data, "earnings_dates", lambda t: []), \
             mock.patch.object(universe, "russell_constituents", lambda live=True: ["AAPL", "MSFT"] + [f"RUT{i:03d}" for i in range(400)]), \
             mock.patch.dict("os.environ", {"ANTHROPIC_API_KEY": ""}):
         res = pipeline.run(live_constituents=False)

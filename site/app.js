@@ -203,10 +203,10 @@
 
   function lookup(sym) {
     if (!S.lk) {
-      app.classList.remove("boot");
+      app.classList.add("boot"); /* footer stays below the fold while the ticker file loads */
       app.innerHTML = '<section class="hero"><span class="label">Ticker lookup</span><h1>Look up <em>any</em> name.</h1><p class="lede" role="status">Loading every scored ticker...</p></section>';
-      load("data/latest.json").then(function (d) { S.lk = d.lookup; if (/^#\/lookup/.test(location.hash)) lookup(sym); })
-        .catch(function () { if (!/^#\/lookup/.test(location.hash)) return; app.innerHTML = '<section class="hero"><h1>Lookup <em>unavailable.</em></h1><p class="lede">The ticker file could not be loaded. Try again later. Not investment advice.</p></section>'; });
+      load("data/latest.json").then(function (d) { S.lk = d.lookup; app.classList.remove("boot"); if (/^#\/lookup/.test(location.hash)) lookup(sym); })
+        .catch(function () { app.classList.remove("boot"); if (!/^#\/lookup/.test(location.hash)) return; app.innerHTML = '<section class="hero"><h1>Lookup <em>unavailable.</em></h1><p class="lede">The ticker file could not be loaded. Try again later. Not investment advice.</p></section>'; });
       return;
     }
     var LK = S.lk, keys = Object.keys(LK).sort();
@@ -223,7 +223,8 @@
       var r = LK[v];
       if (!r) { res.innerHTML = '<p class="note">No scored data for "' + esc(v) + '" in the latest scan. It may be outside the universe or failed a data check.</p>'; return; }
       res.innerHTML = '<div class="card fade"><span class="label">' + esc((r.ix && r.ix.length > 1 ? r.ix.join(", ") + " | " : r.i ? r.i + " | " : "") + (r.s || "")) + "</span><h2>" + esc(v) + " <span style=\"color:var(--muted);font-size:.5em\">" + esc(r.n) + '</span></h2><div class="meta"><span class="label">Last close ' + (r.c == null ? "n/a" : r.c.toFixed(2) + (r.cur ? " " + esc(r.cur) : "")) + '</span><span class="label">As of ' + esc(S.latest.asof) + "</span></div>" +
-        spark(r.spark) + '<div class="hzs">' + hzCard("Mispricing", r.mp, true) + hzCard("Short-term", r.st) + hzCard("Swing", r.sw) + '</div><p class="note">Mechanical rules on past data, not a forecast. Not investment advice.</p></div>';
+        (r.ch && window.V5 ? V5.chartBox(v) : spark(r.spark)) + '<div class="hzs">' + hzCard("Mispricing", r.mp, true) + hzCard("Short-term", r.st) + hzCard("Swing", r.sw) + '</div><p class="note">Mechanical rules on past data, not a forecast. Not investment advice.</p></div>';
+      var cb = res.querySelector(".chartbox"); if (cb) V5.chart(cb);
       if (window.V5) V5.link(res, v);
     }
     q.addEventListener("input", function () { show(q.value); });
@@ -392,7 +393,7 @@
       '<section class="mx"><h2>6. The Long-term tab</h2><p class="lede">It uses only annual SEC 10-K filings, not Yahoo data, for S&amp;P 500 names, and links each figure to its filing. Six yes or no checks are counted: ' + M.longterm.rules.map(esc).join("; ") + '. They describe past reported numbers.</p></section>' +
       '<section class="mx"><h2>7. Honest limits</h2><ul class="mlist">' +
       "<li>Free data: Yahoo Finance fundamentals can be stale, missing or restated, and prices are adjusted for splits and dividends by the provider.</li>" +
-      "<li>There are no earnings estimate revisions, no insider or options data, and no sector-specific models. The analyst gap uses one average analyst target only.</li>" +
+      "<li>There are no earnings estimate revisions, no insider or options data, and no sector-specific models. The analyst gap uses one average analyst estimate only.</li>" +
       "<li>Banks, insurers and other unusual reporters often lack clean multiples and show gaps.</li>" +
       "<li>Technical rules look only at price and volume, so they say nothing about why a stock moved.</li>" +
       "<li>The track record is short and each lens has few calls, so hit rates swing widely. Calls ignore trading costs and taxes.</li>" +
@@ -409,7 +410,7 @@
   /* ---------- router ---------- */
   function route() {
     cancelAnimationFrame(S.raf);
-    var h = location.hash.replace(/^#\/?/, ""), parts = h.split("/"), pg = parts[0] || "home";
+    var h = location.hash.replace(/^#\/?/, "").split("?")[0], parts = h.split("/"), pg = parts[0] || "home";
     if (pg !== "home") { app.classList.remove("boot"); app.removeAttribute("aria-busy"); }
     [].forEach.call(document.querySelectorAll("nav a"), function (a) { a.classList.toggle("on", a.getAttribute("data-nav") === pg); });
     try {
