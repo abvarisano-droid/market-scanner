@@ -5,9 +5,10 @@ A daily scan of global stock indexes that finds stocks that look mispriced, rank
 **Not investment advice.** Scores are mechanical rules on valuation, price and volume. They are not forecasts, and nothing here is a recommendation to trade. Data comes from Yahoo Finance and can be delayed or wrong.
 
 ## What it does
-- **Universe:** S&P 500, Nasdaq 100, Dow, Russell 2000 and the major UK, European, Asian, Canadian, Brazilian and Indian indexes (see `scanner/universe.py`).
+- **Universe:** the S&P 500 plus 8 to 15 of the largest names from each of 12 other indexes; Russell 2000, Dow and Nasdaq 100 levels shown (see `scanner/universe.py`; this line is the one to update when the universe changes).
+- **Daily pass:** every weekday after the close each stock in the universe goes through data checks, a valuation model and a handful of plain price rules, then the strongest bullish and bearish setups are ranked. Every call is logged and graded against the S&P 500, in public (same wording as the site's opening line).
 - **Three views of every stock:**
-  - **Mispricing** (-100 to +100): valuation vs sector peers (P/E, EV/EBITDA, P/B, FCF yield), quality, the Street target gap and stretch vs the recent move, with a plain "why". With an Anthropic key, Claude writes a thesis with catalysts and risks from the numbers and headlines.
+  - **Mispricing** (-100 to +100): valuation vs sector peers (P/E, EV/EBITDA, P/B, FCF yield), quality, the analyst consensus gap and stretch vs the recent move, with a plain "why". With an Anthropic key, Claude writes a thesis with catalysts and risks from the numbers and headlines.
   - **Short-term** (0 to 100): 20-day average, 5 and 10 day momentum, RSI, volume. Three plain reasons per name.
   - **Swing** (0 to 100): 50 and 200-day averages, their slope, 3-month strength vs the S&P 500, distance from the 52-week high.
 - **Labels:** every call is **Bullish**, **Bearish** or **Neutral**. (Older logs used BUY/SELL/WATCH; those still load and map to the new names.)
@@ -45,10 +46,10 @@ python -m pytest -q                 # offline tests, no network
 - **GitHub Pages:** publish the `site/` folder (Pages action, or a `gh-pages` branch from it).
 - Preview locally: `python -m http.server -d site 8000`.
 
-The committed `site/data/` is **Sample data** (synthetic prices, labeled with a banner) until the first real daily run overwrites it.
+The committed `site/data/` comes from the latest real daily scan. Only `python scripts/export_site.py --sample` writes synthetic data, and that output carries a "Sample data" banner.
 
 ## Automation
-`.github/workflows/daily-scan.yml` runs every weekday after the US close: scan, export site data, run tests, then commit `reports/`, `data/picks.csv`, `data/latest_scan.json` and `site/data/` (contents: write, no force push). Your host redeploys `site/` on each commit.
+`.github/workflows/daily-scan.yml` runs every weekday after the US close: scan, export site data, run tests, then commit `reports/`, `data/picks.csv`, `data/latest_scan.json` and `site/data/` (contents: write, no force push). `.github/workflows/pages.yml` redeploys `site/` to GitHub Pages on each push that touches `site/` and after each successful Daily scan or weekly SEC refresh.
 
 ## Layout
 `scanner/` engine: `data.py` (yfinance), `universe.py`, `valuation.py` (mispricing), `technical.py` (short-term and swing rules), `news_ai.py`, `tracker.py` (ledger and grading), `labels.py`, `pipeline.py`. `scripts/export_site.py` feeds `site/`.
