@@ -201,3 +201,45 @@ def test_fcf_needs_capex_in_same_period():
     fx["facts"]["us-gaap"]["PaymentsToAcquirePropertyPlantAndEquipment"]["units"]["USD"] = years(2013, 10, lambda i: 100)  # none for 2023
     ex = lt.extract(fx)
     assert ex["fcf_margin"] is None and "same fiscal year" in ex["nr"]["fcf_margin"]
+
+
+def test_max_age_refetches_only_stale(tmp_path):
+    import os
+    routes = {fetch_sec.TICKERS_URL: FakeResp(200, {"0": {"cik_str": 1, "ticker": "AAA", "title": "A"}}),
+              fetch_sec.FACTS_URL.format(cik=1): FakeResp(200, {"facts": {"new": 1}})}
+    s = FakeSession(routes)
+    lim = fetch_sec.Limiter(8, clock=lambda: 0.0, sleep=lambda s_: None)
+    fetch_sec.fetch_all(["AAA"], s, tmp_path, lim)
+    n = len(s.calls)
+    fetch_sec.fetch_all(["AAA"], s, tmp_path, lim, max_age_days=25)
+    assert len(s.calls) == n  # fresh, no refetch
+    old = 1_000_000_000
+    for f in tmp_path.iterdir():
+        os.utime(f, (old, old))
+    fetch_sec.fetch_all(["AAA"], s, tmp_path, lim, max_age_days=25)
+    assert len(s.calls) == n + 2  # tickers list and company facts fetched again
+
+
+def test_stale_copy_kept_when_refetch_404s(tmp_path):
+    import os
+    (tmp_path / "company_tickers.json").write_text(json.dumps({"0": {"cik_str": 1, "ticker": "AAA", "title": "A"}}))
+    f = tmp_path / "CIK0000000001.json"
+    f.write_text("{}")
+    os.utime(f, (1_000_000_000, 1_000_000_000))
+    s = FakeSession({fetch_sec.FACTS_URL.format(cik=1): FakeResp(404)})
+    lim = fetch_sec.Limiter(8, clock=lambda: 0.0, sleep=lambda s_: None)
+    res = fetch_sec.fetch_all(["AAA"], s, tmp_path, lim, max_age_days=25)
+    assert res["missing"] == [] and f.exists()
+
+
+def test_built_date_is_iso_in_build_and_committed_json(tmp_path):
+    from datetime import date
+    out = build(tmp_path, {"asof": "2026-10-30", "lookup": {}}, {})
+    assert date.fromisoformat(out["built"]) == date.today()
+    d = json.loads((SITE / "data/longterm.json").read_text())
+    assert date.fromisoformat(d["built"])
+
+
+def test_long_term_tab_shows_as_of_from_built():
+    js = (SITE / "app.js").read_text()
+    assert 'id="lt-asof"' in js and "Long-term data as of " in js and "D.built" in js

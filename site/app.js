@@ -163,7 +163,7 @@
       '<div class="field"><canvas id="cv" aria-label="Animated field of dots. Each dot is a stock, narrowing from the full universe to the final picks." role="img"></canvas>' +
       '<div class="stages">' + ["Universe", "Passed checks", "Scored", "Picks"].map(function (n) { return '<button type="button" class="stage"><span class="k">' + n + '</span><span class="n">0</span></button>'; }).join("") + "</div></div>" +
       '<div class="story"><p id="cap" class="cap" aria-live="polite"></p><div class="ctl"><button type="button" id="nx" class="btn">Next step</button><button type="button" id="sk" class="btn ghost">Skip animation</button></div></div></section>' + sectorHtml(L.sectors) +
-      '<div class="ixs">' + chips + '</div><div class="tabs" role="tablist">' + tabs + "</div>" + body;
+      '<div class="ixs" tabindex="0" role="region" aria-label="Index moves today">' + chips + '</div><div class="tabs" role="tablist">' + tabs + "</div>" + body;
     sectorWire(L.sectors);
     var cv = document.getElementById("cv");
     funnel(cv, f, [].slice.call(app.querySelectorAll(".stage .n")), [].slice.call(app.querySelectorAll(".stage")));
@@ -270,6 +270,7 @@
     function head(k, label, sortable) { return "<th" + (k && LT.sort === k ? ' aria-sort="descending"' : "") + ">" + label + "</th>"; }
     var tbl = '<table id="lttable"><thead><tr><th>Name</th>' + head("ck", "Checks") + head("rev_cagr", "Revenue CAGR") + head(0, "Op margin, 5y change") + head("fcf_margin", "FCF margin") + head("roic", "ROIC proxy") + head(0, "Shares, 2y") + head("debt_ebitda", "Debt / EBITDA") + head(0, "FCF yield") + head(0, "EV / EBITDA") + "</tr></thead><tbody id=\"ltbody\"></tbody></table>";
     app.innerHTML = '<section class="hero"><span class="label">Long-term</span><h1>Ten years of <em>10-K numbers.</em></h1>' +
+      '<p class="label" id="lt-asof">Long-term data as of ' + esc(D.built || "unknown") + "</p>" +
       '<p class="lede">Quality and valuation for ' + D.count + " of " + D.universe + " S&amp;P 500 names, built only from annual SEC filings. Every figure links to the filing it came from. Mechanical rules on reported numbers: not forecasts, and nothing here is a recommendation. <strong>Not investment advice.</strong></p></section>" +
       '<section class="lt"><div class="ltbar"><label class="label" for="ltq">Find a name</label><input id="ltq" type="search" placeholder="Ticker or company" autocomplete="off" value="' + esc(LT.q) + '">' +
       '<label class="label" for="lts">Sort by</label><select id="lts"><option value="ck">Checks passed</option><option value="rev_cagr">Revenue CAGR</option><option value="fcf_margin">FCF margin</option><option value="roic">ROIC proxy</option><option value="debt_ebitda">Lowest debt / EBITDA</option><option value="t">Ticker A to Z</option></select></div>' +
