@@ -80,6 +80,12 @@ def _after(s: pd.Series, d) -> pd.Series:
     return s[s.index > d]
 
 
+def _align(bench: pd.Series, index: pd.Index) -> pd.Series:
+    """Benchmark closes on the stock's own dates (last known close carried forward), so position n means the same
+    calendar day for both. Dates before the benchmark's first bar are dropped."""
+    return bench.reindex(bench.index.union(index)).ffill().reindex(index).dropna()
+
+
 def evaluate(led: pd.DataFrame, history: dict[str, pd.Series], bench: pd.Series) -> pd.DataFrame:
     """history: {ticker: close series indexed by date}. Returns ledger with outcome columns."""
     if led.empty:
@@ -97,10 +103,12 @@ def evaluate(led: pd.DataFrame, history: dict[str, pd.Series], bench: pd.Series)
             for k in out: out[k].append(None)
             continue
         if legacy:  # old rule: same-day entry price as logged, windows counted from the signal date
-            a, b = s[s.index >= r["date"]], bench[bench.index >= r["date"]]
+            a = s[s.index >= r["date"]]
+            b = _align(bench, a.index)
             e, be, off = r["entry"], r["bench_entry"], 0
         else:
-            a, b = _after(s, r["date"]), _after(bench, r["date"])
+            a = _after(s, r["date"])
+            b = _align(bench, a.index)
             if len(a) == 0 or len(b) == 0:
                 for k in out: out[k].append(None)
                 continue

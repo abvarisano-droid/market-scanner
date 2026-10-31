@@ -3,6 +3,9 @@ from __future__ import annotations
 
 import json
 import logging
+import os
+import uuid
+from datetime import date
 from pathlib import Path
 
 import numpy as np
@@ -13,6 +16,21 @@ from . import data, news_ai, signals, technical, tracker, universe, valuation
 log = logging.getLogger(__name__)
 ROOT = Path(__file__).resolve().parent.parent
 LATEST = ROOT / "data" / "latest_scan.json"
+
+
+_RUN_ID = os.getenv("GITHUB_RUN_ID") or uuid.uuid4().hex[:12]
+
+
+def _asof(price_map: dict[str, pd.DataFrame]) -> pd.Timestamp:
+    """Latest bar date across everything fetched. Using the max (not just SPY's last bar) means a market that
+    already has a later bar can never be graded from a day whose close was known at signal time."""
+    last = []
+    for df in price_map.values():
+        idx = df["Close"].dropna().index
+        if len(idx):
+            t = pd.Timestamp(idx[-1])
+            last.append(t.tz_localize(None) if t.tzinfo is not None else t)
+    return max(last).normalize()
 
 
 def build_table(price_map: dict[str, pd.DataFrame], fundamentals: pd.DataFrame, uni: dict[str, str]) -> pd.DataFrame:
@@ -53,8 +71,7 @@ def run(indexes: list[str] | None = None, top_n: int = 12, live_constituents: bo
     # technical rules (short-term and swing) on the same price data, SPY as the market reference
     bench_df = price_map[universe.BENCHMARK]
     bench = bench_df["Close"]
-    asof = pd.Timestamp(bench.index[-1]).tz_localize(None).normalize() if getattr(bench.index, "tz", None) is not None \
-        else pd.Timestamp(bench.index[-1]).normalize()
+    asof = _asof(price_map)
     tech = technical.scan_technical({t: technical.from_ohlcv(df) for t, df in stock_prices.items()},
                                     technical.from_ohlcv(bench_df))
     tech["dropped"]["no data"] += len(tickers) - len(stock_prices)
@@ -79,7 +96,14 @@ def run(indexes: list[str] | None = None, top_n: int = 12, live_constituents: bo
                                    "score": r["score"], "thesis": "; ".join(r["reasons"]), "source": "technical",
                                    "lens": hz})
 
-    led = tracker.log_picks(picks + tech_calls, float(bench.iloc[-1]), today=asof)
+    bench_n = tracker._naive(bench)
+    bench_at = float(bench_n[bench_n.index <= asof].iloc[-1])  # benchmark close on or before the as-of date
+    prior = tracker.load()
+    if not prior.empty and asof in set(prior["date"]) and asof < pd.Timestamp(date.today()):
+        log.info("as-of %s is already in the ledger and is before today (holiday or stale data): not logging again", asof.date())
+        led = prior
+    else:
+        led = tracker.log_picks(picks + tech_calls, bench_at, today=asof)
     hist = {t: df["Close"] for t, df in price_map.items()}
     missing = [t for t in led["ticker"].unique() if t not in hist]
     if missing:
