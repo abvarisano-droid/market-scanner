@@ -67,9 +67,58 @@
  "disclaimer": "Not investment advice.",
  "entry_rule": "next trading day close",
  "graded": [],
+ "log": {
+  "first_logged": "2026-10-30",
+  "head": "3a0beb235fec1ed28cd5a0fd604acf8ef3105fb78bac1d09745d741656878b58",
+  "raw_url": "data/picks.csv",
+  "rows": 78,
+  "verified": true
+ },
  "min_days": 21,
  "note": "Only 1 trading days of calls so far (need 21). Treat results as noise.",
  "pending": 78,
+ "record": {
+  "caveat": "Calls logged on the same day share market conditions, so the true uncertainty is wider than the interval.",
+  "days_to_target": 59,
+  "first_logged": "2026-10-30",
+  "interval": "95% Wilson interval",
+  "target_days": 60,
+  "windows": [
+   {
+    "avg_excess_pct": null,
+    "ci_high_pct": null,
+    "ci_low_pct": null,
+    "hit_rate_pct": null,
+    "hits": 0,
+    "label": "still noise",
+    "n": 0,
+    "small_sample": true,
+    "window": 5
+   },
+   {
+    "avg_excess_pct": null,
+    "ci_high_pct": null,
+    "ci_low_pct": null,
+    "hit_rate_pct": null,
+    "hits": 0,
+    "label": "still noise",
+    "n": 0,
+    "small_sample": true,
+    "window": 20
+   },
+   {
+    "avg_excess_pct": null,
+    "ci_high_pct": null,
+    "ci_low_pct": null,
+    "hit_rate_pct": null,
+    "hits": 0,
+    "label": "still noise",
+    "n": 0,
+    "small_sample": true,
+    "window": 60
+   }
+  ]
+ },
  "sample": false,
  "status": "still noise",
  "trading_days": 1,

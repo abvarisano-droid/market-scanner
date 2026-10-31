@@ -20,7 +20,7 @@ sys.path.insert(0, str(ROOT))
 
 import pandas as pd  # noqa: E402
 
-from scanner import tracker  # noqa: E402
+from scanner import calllog, record, tracker  # noqa: E402
 from scanner.labels import BEARISH, BULLISH, NEUTRAL, normalize  # noqa: E402
 
 BULL_AT = 35  # mispricing score that counts as Bullish / Bearish (before news adjustment)
@@ -163,7 +163,17 @@ def build_track(scan: dict, sample: bool) -> dict:
                          "windows": {str(n): {"hit_rate_pct": None if f"hit_rate_{h}" not in v else round(100 * v[f"hit_rate_{h}"], 1),
                                               "avg_excess_pct": None if f"avg_alpha_{h}" not in v else round(100 * v[f"avg_alpha_{h}"], 2),
                                               "graded": v.get(f"n_{h}", 0)} for h, n in tracker.HORIZONS.items()}}
+    log = {"raw_url": None, "rows": len(led), "head": None, "first_logged": None}
+    if not sample:
+        v = calllog.verify(tracker.LEDGER.read_text(encoding="utf-8"), tracker.COLS)
+        log.update(raw_url="data/picks.csv", rows=v["n"], head=v["head"], verified=v["ok"])
+    first = str(led["date"].min())[:10] if len(led) else None
+    log["first_logged"] = first
+    rec = {"first_logged": first, "target_days": 60, "days_to_target": max(0, 60 - days),
+           "windows": record.window_stats(led, days), "interval": "95% Wilson interval",
+           "caveat": "Calls logged on the same day share market conditions, so the true uncertainty is wider than the interval."}
     return {"asof": scan["date"], "sample": sample, "banner": SAMPLE_NOTE if sample else "",
+            "record": rec, "log": log,
             "status": sc.get("status", "still noise"), "trading_days": days, "min_days": tracker.MIN_DAYS,
             "note": plain(sc.get("note", "")), "entry_rule": "next trading day close",
             "windows": list(tracker.HORIZONS.values()), "by_lens": by_lens,
@@ -176,6 +186,8 @@ def export(scan: dict, site_dir, sample=False):
     d.mkdir(parents=True, exist_ok=True)
     (d / "latest.json").write_text(json.dumps(latest, separators=(",", ":"), sort_keys=True))
     (d / "track.json").write_text(json.dumps(tr, indent=1, sort_keys=True))
+    if not sample:  # the raw, hash-chained call log, so the page can link to the real thing
+        (d / "picks.csv").write_text(tracker.LEDGER.read_text(encoding="utf-8"), encoding="utf-8", newline="")
     return latest, tr
 
 
