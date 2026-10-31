@@ -31,3 +31,8 @@ def test_no_dashes_or_advice_words():
 
 def test_bearish_score_uses_bear_color():
     assert ".hz .big.neg{color:var(--bear)}" in (SITE / "style.css").read_text()
+
+
+def test_track_page_shows_record_and_raw_log_link():
+    js = (SITE / "app.js").read_text()
+    assert "recordSection" in js and "Graded (n)" in js and "raw call log" in js and "still noise" in js
