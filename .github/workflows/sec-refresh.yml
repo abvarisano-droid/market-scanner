@@ -11,6 +11,9 @@ concurrency:
 jobs:
   refresh:
     runs-on: ubuntu-latest
+    concurrency:
+      group: repo-push
+      cancel-in-progress: false
     env:
       # Repo Variable (Settings, Secrets and variables, Actions, Variables). Never hardcode a contact.
       SEC_USER_AGENT: ${{ vars.SEC_USER_AGENT }}
@@ -60,5 +63,13 @@ jobs:
           git config user.email "actions@users.noreply.github.com"
           git add site/data/longterm.json
           git commit -m "Weekly SEC refresh $(date +%F)" || echo "nothing to commit"
-          git pull --rebase
-          git push
+          for attempt in 1 2 3; do
+            if git pull --rebase && git push; then
+              exit 0
+            fi
+            echo "push attempt $attempt failed, retrying"
+            git rebase --abort 2>/dev/null || true
+            sleep $((attempt * 5))
+          done
+          echo "push failed after 3 attempts"
+          exit 1
