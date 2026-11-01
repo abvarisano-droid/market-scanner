@@ -94,3 +94,18 @@ def test_range_copy_is_honest():
     assert "Replay on past data. A range of typical moves, not a forecast. Not investment advice." in js
     for f in ("range.js", "v5.js", "style.css"):
         assert "—" not in (SITE / f).read_text() and "–" not in (SITE / f).read_text()
+
+
+def test_router_closes_replays_safely():
+    """The landing replay has its own handle (the old funnel owns S.hero), and route() closes every replay inside a try."""
+    app, v5 = (SITE / "app.js").read_text(), (SITE / "v5.js").read_text()
+    land = app[app.index("function landing()"):app.index("function spark(")]
+    assert "S.hero" not in land and "S.rg = V5.hero(" in land
+    route = app[app.index("function route()"):app.index("var h = location.hash", app.index("function route()"))]
+    assert "try { if (window.V5) V5.closeAll(); }" in route
+    assert "if (!R || !R.st) return;" in v5 and "function rgCloseAll()" in v5
+
+
+def test_honesty_lines_present():
+    app, v5 = (SITE / "app.js").read_text(), (SITE / "v5.js").read_text()
+    assert "Not a pick." in app and "A 10th to 90th band catches about 8 in 10 by chance." in v5

@@ -394,7 +394,7 @@
     var seg = ""; for (var i = 0; i < 20; i++) seg += "<i></i>";
     return '<div class="rgp"><div class="rgc rgpx"><span class="label">Price</span><b class="rgn">&nbsp;</b><span class="rgd label">&nbsp;</span></div>' +
       '<div class="rgc"><span class="label">Paths ending up vs down</span><div class="rgseg" aria-hidden="true">' + seg + '</div><div class="rgsn"><span><b class="rgu">0</b> up</span><span><b class="rgdn">0</b> down</span></div></div>' +
-      '<div class="rgc rghr"><span class="label">Inside the 10th to 90th band</span><div><b class="rgh">n/a</b><span class="rgfr">0/0</span></div></div>' +
+      '<div class="rgc rghr"><span class="label">Inside the 10th to 90th band</span><div><b class="rgh">n/a</b><span class="rgfr">0/0</span></div><small class="rgbase">A 10th to 90th band catches about 8 in 10 by chance.</small></div>' +
       '<div class="rgc rgrc"><span class="label">Regime</span><div class="rgrg"><span class="rgchip">&nbsp;</span><small class="rgrs">&nbsp;</small></div></div>' +
       '<ol class="rglog" aria-label="Replay log"></ol><p class="rgnote">' + NOTE + ' <span class="rgmeth">Each round draws 1,000 paths from the stock\u2019s own past daily moves (centered on no change), then checks the 10th to 90th band against the real close 20 trading days later.</span></p></div>';
   }
@@ -411,7 +411,7 @@
     var panel = document.createElement("div"); panel.innerHTML = rgPanel(); panel = panel.firstChild;
     o.host.appendChild(st);
     if (o.side) { st.appendChild(panel); st.classList.add("rg-side"); } else o.after.parentNode.insertBefore(panel, o.after.nextSibling);
-    var R = { p: o.p, st: st, panel: panel, side: o.side, mainH: o.mainH, single: o.single, j: -1, hits: 0, done: 0, paused: false, raf: 0, t: 0, t0: 0, seen: true, rm: reduced(), live: true };
+    var R = { box: o.box, p: o.p, st: st, panel: panel, side: o.side, mainH: o.mainH, single: o.single, j: -1, hits: 0, done: 0, paused: false, raf: 0, t: 0, t0: 0, seen: true, rm: reduced(), live: true };
     if (o.closable) st.querySelector(".rgclose").addEventListener("click", function () { o.onClose(); });
     st.querySelector(".rgnext").addEventListener("click", function () { rgNext(R); });
     var pz = st.querySelector(".rgpause");
@@ -419,6 +419,7 @@
     R.onVis = function () { if (document.hidden) rgHalt(R); else rgResume(R); };
     document.addEventListener("visibilitychange", R.onVis);
     if (window.IntersectionObserver) { R.io = new IntersectionObserver(function (e) { R.seen = e[0].isIntersecting; if (R.seen) rgResume(R); else rgHalt(R); }); R.io.observe(st); }
+    OPEN.push(R);
     R.ready = Promise.all([getRange(), Promise.resolve(o.p)]).then(function (r) {
       if (!R.live) return;
       var p = R.p = r[1]; R.days = RANGE.roundDays(p.dc);
@@ -428,16 +429,22 @@
     }).catch(function () { rgLog(R, "The range math could not be loaded. Try again later."); });
     return R;
   }
+  var OPEN = [];
   function rgUnmount(R) {
+    if (!R || !R.st) return;
+    var i = OPEN.indexOf(R); if (i >= 0) OPEN.splice(i, 1);
     R.live = false; rgHalt(R);
     document.removeEventListener("visibilitychange", R.onVis); if (R.io) R.io.disconnect();
-    R.st.remove(); R.panel.remove();
+    R.st.remove(); R.panel.remove(); R.sim = null; R.st = null;
+    if (R.box && R.box._rg === R) { R.box._rg = null; var btn = R.box.querySelector(".tgplay"); if (btn) { btn.setAttribute("aria-pressed", "false"); btn.querySelector("span").textContent = "Play the range"; } }
   }
+  /* the router calls this on every view change, so no replay keeps listeners, observers or buffers alive */
+  function rgCloseAll() { OPEN.slice().forEach(function (R) { try { rgUnmount(R); } catch (e) { /* keep going */ } }); }
   function rgOpen(box) {
     var p = box._p, plot = box.querySelector(".cplot"); if (!p || box._rg) return;
     var btn = box.querySelector(".tgplay");
     btn.setAttribute("aria-pressed", "true"); btn.querySelector("span").textContent = "Hide the range";
-    box._rg = rgMount({ host: plot, p: p, side: plot.clientWidth >= 900, after: plot, mainH: dims(state()).main, closable: true, onClose: function () { rgClose(box, true); } });
+    box._rg = rgMount({ box: box, host: plot, p: p, side: plot.clientWidth >= 900, after: plot, mainH: dims(state()).main, closable: true, onClose: function () { rgClose(box, true); } });
   }
   function rgClose(box, focus) {
     var R = box._rg; if (!R) return;
@@ -727,5 +734,5 @@
     dP.then(function (d) { var t = featured(d); if (o.onTicker) o.onTicker(t, d); }).catch(function () {});
     return R;
   }
-  window.V5 = { hero: hero, unmount: rgUnmount, data: get, featured: featured, changes: changes, report: report, link: link, stock: stock, chartBox: chartBox, chart: chart };
+  window.V5 = { hero: hero, unmount: rgUnmount, closeAll: rgCloseAll, data: get, featured: featured, changes: changes, report: report, link: link, stock: stock, chartBox: chartBox, chart: chart };
 })();

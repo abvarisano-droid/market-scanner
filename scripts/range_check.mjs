@@ -87,6 +87,32 @@ for (const [w, h, th] of [[390, 844, 4], [1280, 900, 0]]) {
     results.push({ view: "reduced", w, anims, after_next: f2, idle_ms_per_s: +it.toFixed(1) });
     await ctx.close(); }
 }
+/* navigation: landing to scan and back must not break the router (regression for the S.hero clash), and
+   leaving a page with an open replay must leave no listeners or observers behind (10 cycles) */
+{ const { ctx, pg, errs } = await page(br, 1280, 900);
+  await pg.addInitScript(() => {
+    window.__vis = 0; window.__io = 0;
+    const add = Document.prototype.addEventListener, rem = Document.prototype.removeEventListener;
+    Document.prototype.addEventListener = function (t, f, o) { if (t === "visibilitychange") window.__vis++; return add.call(this, t, f, o); };
+    Document.prototype.removeEventListener = function (t, f, o) { if (t === "visibilitychange") window.__vis--; return rem.call(this, t, f, o); };
+    const IO = window.IntersectionObserver;
+    window.IntersectionObserver = class extends IO { constructor(cb, o) { super(cb, o); window.__io++; this.__on = true; } disconnect() { if (this.__on) { window.__io--; this.__on = false; } return super.disconnect(); } };
+  });
+  const h1 = () => pg.waitForFunction(() => { const a = document.getElementById("app"); return a && !a.classList.contains("boot") && a.querySelector("h1"); }, null, { timeout: 15000 });
+  await pg.goto(BASE + "/#/"); await pg.waitForSelector(".rg .rgpill", { state: "attached" }); await pg.waitForTimeout(800);
+  for (const hsh of ["#/scan", "#/", "#/track", "#/scan", "#/lookup", "#/"]) { await pg.evaluate(x => { location.hash = x; }, hsh); await h1(); await pg.waitForTimeout(400); }
+  ok(await pg.isVisible(".lcards"), "nav: landing did not render after scan round trips");
+  await pg.click('nav a[href="#/track"]'); await h1(); ok(/track/.test(await pg.evaluate(() => location.hash)) && await pg.evaluate(() => !document.querySelector(".lcards")), "nav: clicks dead after leaving scan");
+  const base = await pg.evaluate(() => [window.__vis, window.__io]);
+  for (let k = 0; k < 10; k++) {
+    await pg.evaluate(() => { location.hash = "#/stock/ABBV"; }); await pg.waitForSelector(".cplot svg"); await pg.click(".tgplay"); await pg.waitForSelector(".rg .rgpill", { state: "attached" }); await pg.waitForTimeout(300);
+    await pg.evaluate(() => { location.hash = "#/track"; }); await h1(); await pg.waitForTimeout(200);
+  }
+  const after = await pg.evaluate(() => [window.__vis, window.__io, document.querySelectorAll(".rg").length]);
+  ok(after[0] === base[0] && after[1] === base[1] && after[2] === 0, `leak: visibilitychange/IO/stages ${base} -> ${after}`);
+  ok(errs.length === 0, `nav errors ${errs}`);
+  results.push({ view: "nav+leak", listeners_before: base, after_10_cycles: after, errors: errs.length });
+  await ctx.close(); }
 await br.close();
 console.log(JSON.stringify(results, null, 1));
 console.log(fail.length ? "FAIL\n" + fail.join("\n") : "ALL CHECKS PASS");

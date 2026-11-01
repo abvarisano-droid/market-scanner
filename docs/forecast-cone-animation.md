@@ -23,7 +23,9 @@ On a stock page, "Play the range" runs five rounds back to back, then one "Today
 - The returns are demeaned, so the fan has no built-in up or down tilt. The up versus down split shows the shape of the stock's past moves (skew), not a direction call.
 - The hit rate is the real count across the five rounds, misses included. The landing shows the latest round, whatever its result (on the 2026-10-30 data the featured stock, GOOGL, is a MISS: the real close, 279.84, fell under the 10th percentile, 306.52).
 - No buy, sell, target or predict language anywhere in the feature (a test checks the strings).
-- Featured stock on the landing: the stock page with the largest market cap among USD listings. A size rule, not a pick.
+- Featured stock on the landing: the stock page with the largest market cap among USD listings. A size rule, not a pick, and the hero says so: "Featured: GOOGL, the largest company by US-dollar market cap with a stock page. Not a pick."
+- The hit-rate tile always carries its baseline: "A 10th to 90th band catches about 8 in 10 by chance."
+- When the panel stacks under the stage (phones, and the landing), the "Replay on past data" note comes first, directly under the stage.
 - Ten rounds would say more than five; five rounds of 20 days on one stock is a demonstration of how a range behaves, not evidence that it works. The doc says so here; the UI says "replay" and shows the fraction, never a claim.
 
 ## 3. Data model
@@ -120,6 +122,7 @@ On phones all three collapse to the same stack. A wins on desktop because the lo
 - The canvases and decorative beam, orb and ring are `aria-hidden`; every number is in the panel as text.
 - Reduced motion: no Web Animations, no frame loop, no Pause button. Each round renders its final frame (fan, median, tags, real candles, ring) and Next steps through.
 - The landing autoplays one round only, and only while the stage is on screen and the tab is visible.
+- Every view change closes any open replay (landing or stock page) inside a try, so a replay can never break navigation, and no listener, observer or path buffer survives a page change (`range_check.mjs` runs 10 leave-and-return cycles and a landing, scan, landing round trip).
 
 ## 7. Done when (all checked on this branch)
 
