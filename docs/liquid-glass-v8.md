@@ -42,7 +42,7 @@ PERF TARGETS
 |---|---|---|---|
 | Replay size at 1920 | wide, side panel inside | widest, but pushed down by the nav | wide, side panel inside |
 | KPI tiles | below the fold | below the fold | in view, floating beside the replay |
-| At 1280 | replay keeps its 900px side panel | same | replay drops to the stacked panel (host under 900px) |
+| At 1280 | replay keeps its side panel (host about 950px with the 200px rail and 24px padding used from 900 to 1365px) | same | replay drops to the stacked panel (host under 900px) |
 | Matches the reference | close | weakest (no rail) | closest |
 
 Picked: A below 1600px and C from 1600px. The rail tested better than the pill (B): it frees vertical space so the replay and its panel sit fully above the fold, and it is the reference's main move. C only kicks in where the replay still gets its 900px side panel, so the replay never changes behaviour.

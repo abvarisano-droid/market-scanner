@@ -641,7 +641,7 @@ h1{font-size:clamp(32px,4.4vw,54px);line-height:1.06}
 
 /* KPI tiles: label, serif number, quiet line; fixed heights so nothing shifts */
 .v8kpis{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:16px}
-.v8kpi{display:flex;flex-direction:column;gap:6px;min-height:112px;padding:16px 18px;
+.v8kpis .v8kpi{display:flex;flex-direction:column;gap:6px;min-height:112px;padding:16px 18px;
   background:linear-gradient(180deg,rgba(255,255,255,.10),rgba(255,255,255,.035)),var(--v8-tint-solid)!important;border-color:rgba(255,255,255,.13)!important}
 .v8kpi .lg-label{font-family:var(--v8-sans);color:rgba(255,255,255,.72)}
 .v8kpi .lg-num{font-family:var(--serif);font-size:34px;color:#fff}
@@ -712,3 +712,12 @@ th,td{padding:12px 14px}
   #app:has(.lhero)>.v8kpis{grid-column:2;grid-row:1;grid-template-columns:1fr;align-self:start;margin:24px -24px 0 0;position:relative;z-index:2}
   #app:has(.lhero) .v8kpi{box-shadow:var(--lg-hi),var(--lg-shadow-card)}
 }
+/* fix round (QA): from 900 to 1365px a narrower rail and canvas padding keep the replay host at 900px or more, so the live
+   side panel stays beside the chart on the landing and stock pages */
+@media(min-width:900px) and (max-width:1365px){
+  :root{--v8-rail:200px}
+  .v8canvas>main,.v8canvas>footer{padding-left:24px;padding-right:24px}
+  .lhero{padding-left:18px;padding-right:18px}
+}
+/* phones: the brand is the way back to the replay, so it gets a full 44px target */
+.top .brand{min-height:44px;display:inline-flex;align-items:center}
