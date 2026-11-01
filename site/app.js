@@ -70,8 +70,8 @@
         else { var prev = d.lvl >= stage - 1; a = d.lvl >= stage ? 0.85 : (d.lvl === stage - 1 ? 0.85 - 0.77 * p : 0.08); if (!prev) a = 0.08; }
         var picked = d.lvl === 3 && stage === 3;
         var r = d.r * (picked ? 1 + 1.2 * p : 1) + pull;
-        if (picked) { ctx.shadowColor = "#d4af37"; ctx.shadowBlur = 14 * p; } else ctx.shadowBlur = 0;
-        ctx.fillStyle = picked ? "rgba(236,200,80," + a + ")" : surv ? "rgba(212,175,55," + a * 0.75 + ")" : "rgba(150,142,120," + a + ")";
+        if (picked) { ctx.shadowColor = "#34e0d6"; ctx.shadowBlur = 14 * p; } else ctx.shadowBlur = 0;
+        ctx.fillStyle = picked ? "rgba(120,245,236," + a + ")" : surv ? "rgba(52,224,214," + a * 0.75 + ")" : "rgba(150,142,120," + a + ")";
         ctx.beginPath(); ctx.arc(x, y, r, 0, 6.2832); ctx.fill();
       }
       ctx.shadowBlur = 0;
@@ -148,7 +148,7 @@
   function heatColor(v, max) {
     if (v == null) return "rgba(141,135,119,.14)";
     var t = Math.max(-1, Math.min(1, v / max)), a = (0.14 + 0.5 * Math.abs(t)).toFixed(2);
-    return t >= 0 ? "rgba(212,175,55," + a + ")" : "rgba(194,85,63," + a + ")";
+    return t >= 0 ? "rgba(52,224,214," + (a * 0.6).toFixed(2) + ")" : "rgba(255,122,69," + (a * 0.6).toFixed(2) + ")";
   }
   function relTxt(v) { return v == null ? "n/a" : (v >= 0 ? "+" : "") + (v * 100).toFixed(1) + "%"; }
   function sectorHtml(secs) {
@@ -163,7 +163,7 @@
         '<span class="cell" style="background:' + heatColor(s.rel_1m, mx) + '"><span class="label">1 month</span><b>' + relTxt(s.rel_1m) + '</b></span>' +
         '<span class="bb"><span class="pos">' + s.bullish + ' Bullish</span><span class="neg">' + s.bearish + ' Bearish</span></span></button>';
     }).join("");
-    return '<section class="heat"><h2>Sector heat</h2><p class="lede">Each sector\'s average move in local currency returns minus the S&amp;P 500 (SPY) over 1 week and 1 month, with how many of its stocks the mispricing view calls Bullish or Bearish. Gold is ahead of the index, red is behind, gray is level. Tap a tile for the other views.</p>' +
+    return '<section class="heat"><h2>Sector heat</h2><p class="lede">Each sector\'s average move in local currency returns minus the S&amp;P 500 (SPY) over 1 week and 1 month, with how many of its stocks the mispricing view calls Bullish or Bearish. Cyan is ahead of the index, orange is behind, gray is level. Tap a tile for the other views.</p>' +
       '<div class="twrap"><span class="swipe" id="hsw" aria-hidden="true">Swipe for more &rarr;</span><div class="tw heatrow" id="hrow">' + tiles + '</div></div>' +
       '<p class="note" id="hdet" aria-live="polite">Tap a sector to see its calls in every view.</p></section>';
   }
@@ -249,7 +249,7 @@
     var L = S.latest, f = L.funnel.mispricing, nIdx = Object.keys(L.funnel.by_index).length;
     if (S.rg) { V5.unmount(S.rg); S.rg = null; }
     app.innerHTML =
-      '<section class="lhero"><div class="lhtext"><span class="label">Replay on past data &middot; not a forecast</span>' +
+      '<div class="tmhost" id="tmhost">' + (window.TERM ? TERM.shell() : "") + '</div><section class="lhero"><div class="lhtext"><span class="label">Replay on past data &middot; not a forecast</span>' +
       '<h1>How far does a stock <em>really</em> move?</h1></div>' +
       '<p class="lfeat label" id="lfeat">&nbsp;</p><div class="lstage" id="lstage"></div>' +
       '<div class="lflow"><p class="lede lone">Market Scanner runs ' + f.universe.toLocaleString() + " stocks from " + nIdx + ' major indexes through plain rules every weekday and grades every call against the S&amp;P 500, in public. Find a stock below.</p>' +
@@ -268,6 +268,8 @@
       var cs = document.getElementById("lcs"); if (cs) { cs.href = "#/stock/" + encodeURIComponent(t); cs.querySelector(".lgo").innerHTML = "Open " + esc(t) + " &rarr;"; }
       var dl = document.getElementById("ltl"); if (dl) dl.innerHTML = Object.keys(d.stocks).sort().map(function (k) { return '<option value="' + esc(k) + '">'; }).join("");
     } });
+    /* the terminal on top: same featured stock, real scan numbers (terminal.js) */
+    if (window.TERM && V5.data) V5.data().then(function (d) { var t = V5.featured(d); return load("data/charts/" + encodeURIComponent(t) + ".json").then(function (c) { var th = document.getElementById("tmhost"); if (th && th.isConnected) TERM.mount(th, L, t, c); }); }).catch(function () {});
     document.getElementById("lf").addEventListener("submit", function (e) {
       e.preventDefault();
       var q = document.getElementById("lq").value.trim().toUpperCase(); if (!q) { document.getElementById("lmsg").textContent = "Type a ticker first."; return; }
@@ -502,6 +504,7 @@
     /* close any replay (landing or stock page) first; a failure here must never stop the next view from drawing */
     try { if (window.V5) V5.closeAll(); } catch (e) { if (window.console) console.warn("replay close failed", e); }
     S.rg = null;
+    try { if (window.TERM) TERM.stop(); } catch (e) {}
     var h = location.hash.replace(/^#\/?/, "").split("?")[0], parts = h.split("/"), pg = parts[0] || "home";
     if (pg !== "home") { app.classList.remove("boot"); app.removeAttribute("aria-busy"); }
     [].forEach.call(document.querySelectorAll("nav a"), function (a) { var on = a.getAttribute("data-nav") === pg; a.classList.toggle("on", on); if (on) a.setAttribute("aria-current", "page"); else a.removeAttribute("aria-current"); });
