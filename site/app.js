@@ -234,6 +234,38 @@
     });
   }
 
+  /* ---------- landing: the replay is the hero, then one line, the ticker search and three ways in ----------
+     Spec: docs/forecast-cone-animation.md (landing section). The scan itself moved one click deeper, to #/scan. */
+  function landing() {
+    var L = S.latest, f = L.funnel.mispricing, nIdx = Object.keys(L.funnel.by_index).length;
+    if (S.rg) { V5.unmount(S.rg); S.rg = null; }
+    app.innerHTML =
+      '<section class="lhero"><div class="lhtext"><span class="label">Replay on past data &middot; not a forecast</span>' +
+      '<h1>How far does a stock <em>really</em> move?</h1></div>' +
+      '<p class="lfeat label" id="lfeat">&nbsp;</p><div class="lstage" id="lstage"></div>' +
+      '<div class="lflow"><p class="lede lone">Market Scanner runs ' + f.universe.toLocaleString() + " stocks from " + nIdx + ' major indexes through plain rules every weekday and grades every call against the S&amp;P 500, in public. Find a stock below.</p>' +
+      '<form class="search lsearch" id="lf" autocomplete="off" role="search"><label class="sr" for="lq">Ticker</label><input type="search" id="lq" list="ltl" placeholder="Search a ticker, like GOOGL" enterkeyhint="go"><datalist id="ltl"></datalist><button type="submit" class="btn">Open</button></form>' +
+      '<p class="note lnote" id="lmsg" role="status"></p></div></section>' + dropNote() +
+      '<section class="lcards" aria-label="Where to go next">' +
+      '<a class="lcard" href="#/scan"><span class="label">Today\u2019s scan</span><b>' + f.universe.toLocaleString() + " in, " + f.picks + ' setups out</b><span class="lsub">The full funnel, sectors and the ranked bullish and bearish lists, as of ' + esc(L.asof) + '.</span><span class="lgo">Open the scan &rarr;</span></a>' +
+      '<a class="lcard" id="lcs" href="#/lookup"><span class="label">Stock pages</span><b>Three years of price</b><span class="lsub">Candles, indicator layers, the volatility cone and the full five-round replay.</span><span class="lgo">Open a stock &rarr;</span></a>' +
+      '<a class="lcard" href="#/track"><span class="label">Track record</span><b>Every call, graded</b><span class="lsub">Each call is scored against the S&amp;P 500 over 5, 20 and 60 trading days, misses included.</span><span class="lgo">See the record &rarr;</span></a></section>';
+    requestAnimationFrame(function () { app.classList.remove("boot"); app.removeAttribute("aria-busy"); });
+    var host = document.getElementById("lstage"), stocks = {};
+    S.rgW = window.innerWidth;
+    S.rg = V5.hero({ host: host, after: host, side: host.clientWidth >= 900, onTicker: function (t, d) {
+      stocks = d.stocks;
+      var fe = document.getElementById("lfeat"); if (fe) fe.textContent = "Featured: " + t + ", the largest company by US-dollar market cap with a stock page. Not a pick.";
+      var cs = document.getElementById("lcs"); if (cs) { cs.href = "#/stock/" + encodeURIComponent(t); cs.querySelector(".lgo").innerHTML = "Open " + esc(t) + " &rarr;"; }
+      var dl = document.getElementById("ltl"); if (dl) dl.innerHTML = Object.keys(d.stocks).sort().map(function (k) { return '<option value="' + esc(k) + '">'; }).join("");
+    } });
+    document.getElementById("lf").addEventListener("submit", function (e) {
+      e.preventDefault();
+      var q = document.getElementById("lq").value.trim().toUpperCase(); if (!q) { document.getElementById("lmsg").textContent = "Type a ticker first."; return; }
+      location.hash = stocks[q] ? "#/stock/" + encodeURIComponent(q) : "#/lookup/" + encodeURIComponent(q);
+    });
+  }
+
   function spark(vals) {
     var w = 600, h = 110, mn = Math.min.apply(null, vals), mx = Math.max.apply(null, vals), sp = mx - mn || 1;
     var pts = vals.map(function (v, i) { return (i / (vals.length - 1) * w).toFixed(1) + "," + (h - 8 - (v - mn) / sp * (h - 16)).toFixed(1); });
@@ -458,6 +490,9 @@
   /* ---------- router ---------- */
   function route() {
     cancelAnimationFrame(S.raf);
+    /* close any replay (landing or stock page) first; a failure here must never stop the next view from drawing */
+    try { if (window.V5) V5.closeAll(); } catch (e) { if (window.console) console.warn("replay close failed", e); }
+    S.rg = null;
     var h = location.hash.replace(/^#\/?/, "").split("?")[0], parts = h.split("/"), pg = parts[0] || "home";
     if (pg !== "home") { app.classList.remove("boot"); app.removeAttribute("aria-busy"); }
     [].forEach.call(document.querySelectorAll("nav a"), function (a) { var on = a.getAttribute("data-nav") === pg; a.classList.toggle("on", on); if (on) a.setAttribute("aria-current", "page"); else a.removeAttribute("aria-current"); });
@@ -467,7 +502,8 @@
       else if (pg === "track") track();
       else if (pg === "how") { if (S.method) methodology(); else loadMethod(); }
       else if (pg === "longterm") { if (S.lt) longterm(); else loadLT(); }
-      else home();
+      else if (pg === "scan") home();
+      else if (window.V5) landing(); else home();
     } catch (e) {
       app.classList.remove("boot"); app.removeAttribute("aria-busy");
       if (window.console) console.warn("view failed", pg, e);
@@ -487,7 +523,7 @@
       el.hidden = false;
     }).catch(function () {});
     window.addEventListener("hashchange", route);
-    var rt; window.addEventListener("resize", function () { clearTimeout(rt); rt = setTimeout(function () { if (!location.hash || location.hash === "#/") home(); }, 250); });
+    var rt; window.addEventListener("resize", function () { clearTimeout(rt); rt = setTimeout(function () { if (/^#\/scan/.test(location.hash)) home(); else if (S.rg && Math.abs(window.innerWidth - S.rgW) > 40) landing(); }, 250); });
     route();
   }).catch(function () {
     app.classList.remove("boot"); app.removeAttribute("aria-busy");

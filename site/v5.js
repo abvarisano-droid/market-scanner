@@ -310,6 +310,7 @@
     return '<table class="sr"><caption>' + esc(p.t) + " month-end closes and averages</caption><thead><tr><th>Month</th><th>Close</th><th>50 day average</th><th>200 day average</th></tr></thead><tbody>" + rows + "</tbody></table>";
   }
   function drawChart(box, p) {
+    if (box._rg) rgClose(box);
     var plot = box.querySelector(".cplot"), st = state(), D = dims(st), W = Math.round(plot.clientWidth);
     plot.style.height = (D.total + 28) + "px";
     if (!W) return;
@@ -327,15 +328,17 @@
   }
   function chipRow(st) {
     var seg = [["candles", "Candlesticks"], ["line", "Line"]].map(function (m) { return '<button type="button" class="tg seg" data-mode="' + m[0] + '" aria-pressed="' + (st.mode === m[0]) + '">' + m[1] + "</button>"; }).join("");
-    return '<div class="tgs" role="group" aria-label="Chart layers"><span class="tgseg" role="group" aria-label="Price style">' + seg + "</span>" +
+    return '<div class="tgs" role="group" aria-label="Chart layers"><button type="button" class="tgplay" aria-pressed="false"><span>Play the range</span></button><span class="tgseg" role="group" aria-label="Price style">' + seg + "</span>" +
       LAYERS.map(function (l) { return '<button type="button" class="tg" data-k="' + l[0] + '" aria-pressed="' + st.has(l[0]) + '"><span>' + chipLabel(l[1]) + "</span></button>"; }).join("") + "</div>";
   }
   function chartBox(t) {
     var st = state();
     return '<div class="chartbox" data-t="' + esc(t) + '"><div class="cstats">' + STATS.map(function (l) { return '<div class="cs"><span class="label">' + l + "</span><b>&nbsp;</b></div>"; }).join("") + "</div>" + chipRow(st) +
-      '<div class="cplot" style="height:' + (dims(st).total + 28) + 'px"></div><p class="ccap"><strong>Illustration from past volatility, not a forecast.</strong> The volatility cone is centered on no change from the last close. Its edges are plus and minus one standard deviation of the stock\u2019s own yearly moves (daily volatility over up to three years times the square root of 252), so it widens with time. It is a range of typical moves, not an expected price. Candles are weekly, then daily for the last six months; indicators are computed on daily closes. Prices from Yahoo Finance daily bars, split and dividend adjusted. Not investment advice.</p><div class="cdata"></div></div>';
+      '<div class="cplot" style="height:' + (dims(st).total + 28) + 'px"></div><p class="ccap"><strong>Illustration from past volatility, not a forecast.</strong> The volatility cone is centered on no change from the last close. Its edges are plus and minus one standard deviation of the stock\u2019s own yearly moves (daily volatility over up to three years times the square root of 252), so it widens with time. It is a range of typical moves, not an expected price. Candles are weekly, then daily for the last six months; indicators are computed on daily closes. Prices from Yahoo Finance daily bars, split and dividend adjusted. Play the range replays five past dates: each draws 1,000 paths from the stock\u2019s own earlier daily moves, centered on no change, and checks the 10th to 90th band against the real close 20 trading days later. Replay on past data. A range of typical moves, not a forecast. Not investment advice.</p><div class="cdata"></div></div>';
   }
   function wire(box) {
+    var pb = box.querySelector(".tgplay");
+    if (pb) pb.addEventListener("click", function () { if (box._rg) rgClose(box); else if (box._p) rgOpen(box); });
     [].forEach.call(box.querySelectorAll(".tg"), function (b) {
       b.addEventListener("click", function () {
         var st = state();
@@ -370,6 +373,264 @@
   var rz; window.addEventListener("resize", function () { clearTimeout(rz); rz = setTimeout(function () {
     [].forEach.call(document.querySelectorAll(".chartbox"), function (b) { if (b._p && +b.getAttribute("data-w") !== Math.round(b.querySelector(".cplot").clientWidth)) drawChart(b, b._p); });
   }, 150); });
+
+  /* ---------- play the range: replay a bootstrap fan on past data, round by round ----------
+     Spec: docs/forecast-cone-animation.md. Opt-in only: the static cone stays the default view.
+     Paths draw on two canvases inside a stage that covers the plot (absolute, so nothing moves). DOM beats
+     (beam, orb, ring) animate transform and opacity only, with the Web Animations API.
+     Easing cubic-bezier(.2,.8,.2,1); durations 160 / 600 / 900 ms. Reduced motion: final frame per round, Next button. */
+  var RANGE = null, rangeP = null, EASE = "cubic-bezier(.2,.8,.2,1)", D_MICRO = 160, D_BEAT = 600, D_FAN = 900, LAND = 60;
+  var RGC = { bg: "#04080b", grid: "#10202a", axis: "#5f7a80", teal: "#3ad6c4", red: "#e0675a", gold: "#d4af37", up: "#5fa97c", dn: "#cb5d46", ink: "#d8e6e6" };
+  var NOTE = "Replay on past data. A range of typical moves, not a forecast. Not investment advice.";
+  /* timeline of one round, in ms from its start */
+  var T_ORB = 450, T_FAN = 900, T_MED = T_FAN + D_FAN, T_LAND = T_MED + 300, T_RING = T_LAND + 20 * LAND, T_END = T_RING + 1100, T_TODAY_END = T_MED + 800;
+  function getRange() {
+    if (RANGE) return Promise.resolve(RANGE);
+    if (!rangeP) rangeP = new Promise(function (ok, no) { var sc = document.createElement("script"); sc.src = "range.js?v=1"; sc.onload = function () { RANGE = window.RANGE; ok(RANGE); }; sc.onerror = no; document.head.appendChild(sc); });
+    return rangeP;
+  }
+  function reduced() { return window.matchMedia && matchMedia("(prefers-reduced-motion: reduce)").matches; }
+  function rgPanel() {
+    var seg = ""; for (var i = 0; i < 20; i++) seg += "<i></i>";
+    return '<div class="rgp"><div class="rgc rgpx"><span class="label">Price</span><b class="rgn">&nbsp;</b><span class="rgd label">&nbsp;</span></div>' +
+      '<div class="rgc"><span class="label">Paths ending up vs down</span><div class="rgseg" aria-hidden="true">' + seg + '</div><div class="rgsn"><span><b class="rgu">0</b> up</span><span><b class="rgdn">0</b> down</span></div></div>' +
+      '<div class="rgc rghr"><span class="label">Inside the 10th to 90th band</span><div><b class="rgh">n/a</b><span class="rgfr">0/0</span></div><small class="rgbase">A 10th to 90th band catches about 8 in 10 by chance.</small></div>' +
+      '<div class="rgc rgrc"><span class="label">Regime</span><div class="rgrg"><span class="rgchip">&nbsp;</span><small class="rgrs">&nbsp;</small></div></div>' +
+      '<ol class="rglog" aria-label="Replay log"></ol><p class="rgnote">' + NOTE + ' <span class="rgmeth">Each round draws 1,000 paths from the stock\u2019s own past daily moves (centered on no change), then checks the 10th to 90th band against the real close 20 trading days later.</span></p></div>';
+  }
+  /* Mount a replay stage. o: host (the stage fills it), p (chart data), side (panel inside the stage, right),
+     after (element the panel goes after when not side), mainH (height of the price area), single (one round per
+     Next, no auto advance), first (first round), closable, onClose */
+  function rgMount(o) {
+    var st = document.createElement("div"); st.className = "rg"; st.setAttribute("role", "region"); st.setAttribute("aria-label", "Range replay on past data");
+    st.innerHTML = '<canvas class="rgb" aria-hidden="true"></canvas><canvas class="rgf" aria-hidden="true"></canvas>' +
+      '<div class="rgbeam" aria-hidden="true"><i></i></div><div class="rgorb" aria-hidden="true"><u></u><i></i><b></b></div><div class="rgring" aria-hidden="true"><i></i><span></span></div>' +
+      '<div class="rghd"><span class="rgpill label">&nbsp;</span><span class="rgctl">' + (reduced() ? "" : '<button type="button" class="rgbtn rgpause">Pause</button>') +
+      '<button type="button" class="rgbtn rgnext">Next</button>' + (o.closable ? '<button type="button" class="rgbtn rgclose" aria-label="Close the range replay">Close</button>' : "") + "</span></div>" +
+      '<p class="sr" role="status" aria-live="polite"></p>';
+    var panel = document.createElement("div"); panel.innerHTML = rgPanel(); panel = panel.firstChild;
+    o.host.appendChild(st);
+    if (o.side) { st.appendChild(panel); st.classList.add("rg-side"); } else o.after.parentNode.insertBefore(panel, o.after.nextSibling);
+    var R = { box: o.box, p: o.p, st: st, panel: panel, side: o.side, mainH: o.mainH, single: o.single, j: -1, hits: 0, done: 0, paused: false, raf: 0, t: 0, t0: 0, seen: true, rm: reduced(), live: true };
+    if (o.closable) st.querySelector(".rgclose").addEventListener("click", function () { o.onClose(); });
+    st.querySelector(".rgnext").addEventListener("click", function () { rgNext(R); });
+    var pz = st.querySelector(".rgpause");
+    if (pz) pz.addEventListener("click", function () { if (R.paused) { R.paused = false; rgResume(R); } else { R.paused = true; rgHalt(R); } pz.textContent = R.paused ? "Resume" : "Pause"; });
+    R.onVis = function () { if (document.hidden) rgHalt(R); else rgResume(R); };
+    document.addEventListener("visibilitychange", R.onVis);
+    if (window.IntersectionObserver) { R.io = new IntersectionObserver(function (e) { R.seen = e[0].isIntersecting; if (R.seen) rgResume(R); else rgHalt(R); }); R.io.observe(st); }
+    OPEN.push(R);
+    R.ready = Promise.all([getRange(), Promise.resolve(o.p)]).then(function (r) {
+      if (!R.live) return;
+      var p = R.p = r[1]; R.days = RANGE.roundDays(p.dc);
+      R.cdl = {}; R.date = {};
+      for (var i = p.daily_from; i < p.c.length; i++) { R.cdl[p.ix[i]] = i; R.date[p.ix[i]] = day(p, i); }
+      rgSize(R); rgRound(R, Math.min(o.first || 0, R.days.length - 1));
+    }).catch(function () { rgLog(R, "The range math could not be loaded. Try again later."); });
+    return R;
+  }
+  var OPEN = [];
+  function rgUnmount(R) {
+    if (!R || !R.st) return;
+    var i = OPEN.indexOf(R); if (i >= 0) OPEN.splice(i, 1);
+    R.live = false; rgHalt(R);
+    document.removeEventListener("visibilitychange", R.onVis); if (R.io) R.io.disconnect();
+    R.st.remove(); R.panel.remove(); R.sim = null; R.st = null;
+    if (R.box && R.box._rg === R) { R.box._rg = null; var btn = R.box.querySelector(".tgplay"); if (btn) { btn.setAttribute("aria-pressed", "false"); btn.querySelector("span").textContent = "Play the range"; } }
+  }
+  /* the router calls this on every view change, so no replay keeps listeners, observers or buffers alive */
+  function rgCloseAll() { OPEN.slice().forEach(function (R) { try { rgUnmount(R); } catch (e) { /* keep going */ } }); }
+  function rgOpen(box) {
+    var p = box._p, plot = box.querySelector(".cplot"); if (!p || box._rg) return;
+    var btn = box.querySelector(".tgplay");
+    btn.setAttribute("aria-pressed", "true"); btn.querySelector("span").textContent = "Hide the range";
+    box._rg = rgMount({ box: box, host: plot, p: p, side: plot.clientWidth >= 900, after: plot, mainH: dims(state()).main, closable: true, onClose: function () { rgClose(box, true); } });
+  }
+  function rgClose(box, focus) {
+    var R = box._rg; if (!R) return;
+    rgUnmount(R); box._rg = null;
+    var btn = box.querySelector(".tgplay"); if (btn) { btn.setAttribute("aria-pressed", "false"); btn.querySelector("span").textContent = "Play the range"; if (focus) btn.focus(); }
+  }
+  function rgSize(R) {
+    var w = R.st.clientWidth, h = R.st.clientHeight, dpr = Math.min(2, window.devicePixelRatio || 1);
+    R.W = w; R.H = h; R.cw = R.side ? w - 284 : w; R.dpr = dpr;
+    [].forEach.call(R.st.querySelectorAll("canvas"), function (c) { c.width = Math.round(R.cw * dpr); c.height = Math.round(h * dpr); c.style.width = R.cw + "px"; c.style.height = h + "px"; });
+    R.bx = R.st.querySelector(".rgb").getContext("2d"); R.fx = R.st.querySelector(".rgf").getContext("2d");
+    R.mono = getComputedStyle(document.documentElement).getPropertyValue("--mono") || "monospace";
+  }
+  /* geometry for round j (j === days.length is today) */
+  function rgGeo(R, j) {
+    var p = R.p, dc = p.dc, today = j >= R.days.length, k = today ? dc.length - 1 : R.days[j], h = today ? RANGE.H_TODAY : RANGE.H_REPLAY;
+    var narrow = R.cw < 600, back = today ? (narrow ? 40 : 60) : narrow ? 30 : 40;
+    var tagW = narrow ? 92 : 108, x0 = 8, x1 = R.cw - tagW, y0 = 46, y1 = Math.min(R.H, R.mainH || R.H) - 26;
+    var s = R.sim, slots = today ? back + 1 : back + 1 + h, hx1 = today ? x0 + (x1 - x0) * 0.56 : x1, slot = (hx1 - x0) / slots, a = Math.max(1, k - back);
+    var X = function (i) { return x0 + (i - a + 0.5) * slot; }, xNow = X(k);
+    var FX = today ? function (st) { return xNow + st / h * (x1 - xNow); } : function (st) { return X(k + st); };
+    var vals = []; for (var i = a; i <= Math.min(dc.length - 1, today ? k : k + h); i++) { var ci = R.cdl[i]; if (ci != null) { vals.push(p.h[ci], p.l[ci]); } else vals.push(dc[i]); }
+    var ends = []; for (var q = 0; q < s.n; q++) ends.push(s.cum[q * s.w + h]); ends.sort(function (u, v) { return u - v; });
+    vals.push(s.start * Math.exp(RANGE.pct(ends, today ? 0.05 : 0.02)), s.start * Math.exp(RANGE.pct(ends, today ? 0.95 : 0.98)));
+    var lo = Math.log(Math.min.apply(null, vals)), hi = Math.log(Math.max.apply(null, vals)), pad = (hi - lo) * 0.08 || 0.02; lo -= pad; hi += pad;
+    var Y = function (v) { return y0 + (hi - Math.log(v)) / (hi - lo) * (y1 - y0); };
+    return { k: k, h: h, a: a, X: X, FX: FX, Y: Y, x0: x0, x1: x1, y0: y0, y1: y1, slot: slot, xNow: xNow, today: today, lo: lo, hi: hi, drawn: Math.min(s.n, R.cw >= 600 ? 200 : 80) };
+  }
+  function rgCandle(R, g, i, bright) {
+    var c = R.bx, p = R.p, ci = R.cdl[i], x = g.X(i), bw = Math.max(1, g.slot * 0.62);
+    if (ci == null) { c.fillStyle = RGC.axis; c.fillRect(x - bw / 2, g.Y(p.dc[i]) - 0.5, bw, 1); return; }
+    var O = p.o[ci], C = p.c[ci], col = C >= O ? RGC.up : RGC.dn, yt = g.Y(Math.max(O, C)), yb = g.Y(Math.min(O, C));
+    c.globalAlpha = bright ? 1 : 0.8; c.strokeStyle = col; c.fillStyle = col; c.lineWidth = 1;
+    c.beginPath(); c.moveTo(Math.round(x) + 0.5, g.Y(p.h[ci])); c.lineTo(Math.round(x) + 0.5, g.Y(p.l[ci])); c.stroke();
+    c.fillRect(x - bw / 2, yt, bw, Math.max(1, yb - yt));
+    if (bright) { c.globalAlpha = 0.9; c.strokeStyle = RGC.ink; c.strokeRect(x - bw / 2 - 0.5, yt - 0.5, bw + 1, Math.max(1, yb - yt) + 1); }
+    c.globalAlpha = 1;
+  }
+  function rgBase(R, g) {
+    var c = R.bx, dpr = R.dpr; c.setTransform(dpr, 0, 0, dpr, 0, 0); c.clearRect(0, 0, R.cw, R.H);
+    var fs = R.cw < 600 ? 10 : 11; c.font = fs + "px " + R.mono; c.textBaseline = "alphabetic";
+    niceTicks(Math.exp(g.lo), Math.exp(g.hi), 4).forEach(function (v) { var y = g.Y(v); if (y < g.y0 + 6 || y > g.y1 - 4) return;
+      c.fillStyle = RGC.grid; c.fillRect(g.x0, Math.round(y) + 0.5, g.x1 - g.x0, 1); c.fillStyle = RGC.axis; c.fillText(fmt(v), g.x0 + 2, y - 4); });
+    if (g.today) { c.fillStyle = "rgba(58,214,196,.035)"; c.fillRect(g.xNow, g.y0, g.x1 - g.xNow, g.y1 - g.y0); c.fillStyle = RGC.axis; c.textAlign = "right"; c.fillText("+12 MO", g.x1, g.y1 + 18); c.textAlign = "left"; }
+    else { c.fillStyle = RGC.axis; c.textAlign = "right"; c.fillText("+20 DAYS", g.FX(g.h), g.y1 + 18); c.textAlign = "left"; }
+    var d0 = R.date[g.a]; if (d0) c.fillText(MON[d0.getUTCMonth()].toUpperCase() + " " + d0.getUTCDate(), g.x0 + 2, g.y1 + 18);
+    for (var i = g.a; i <= g.k; i++) rgCandle(R, g, i, false);
+  }
+  /* draw path segments for steps (s0, s1] of the drawn subset; teal when the path ends above the start, red below */
+  function rgFan(R, g, s0, s1) {
+    var c = R.fx, s = R.sim, w = s.w, st = s.start;
+    c.setTransform(R.dpr, 0, 0, R.dpr, 0, 0); c.save(); c.beginPath(); c.rect(0, g.y0 - 6, R.cw, g.y1 - g.y0 + 12); c.clip();
+    c.globalCompositeOperation = "lighter"; c.lineJoin = "round";
+    [[true, RGC.teal], [false, RGC.red]].forEach(function (grp) {
+      c.beginPath();
+      for (var q = 0; q < g.drawn; q++) {
+        var o = q * w; if ((s.cum[o + g.h] > 0) !== grp[0]) continue;
+        c.moveTo(g.FX(s0), g.Y(st * Math.exp(s.cum[o + s0])));
+        for (var t = s0 + 1; t <= s1; t++) c.lineTo(g.FX(t), g.Y(st * Math.exp(s.cum[o + t])));
+      }
+      c.strokeStyle = grp[1]; c.globalAlpha = 0.05; c.lineWidth = 3; c.stroke();
+      c.globalAlpha = g.drawn > 100 ? 0.16 : 0.24; c.lineWidth = 1; c.stroke();
+    });
+    c.restore();
+  }
+  function rgMedian(R, g) {
+    var c = R.fx, s = R.sim, fs = R.cw < 600 ? 10 : 11;
+    c.beginPath(); s.med.forEach(function (v, t) { if (t) c.lineTo(g.FX(t), g.Y(v)); else c.moveTo(g.FX(0), g.Y(v)); });
+    c.strokeStyle = RGC.gold; c.lineJoin = "round";
+    [[7, 0.1], [3.5, 0.25], [1.6, 1]].forEach(function (k) { c.lineWidth = k[0]; c.globalAlpha = k[1]; c.stroke(); });
+    c.globalAlpha = 1; c.font = "600 " + fs + "px " + R.mono;
+    var tags = spread([{ y: g.Y(s.p90), t: "90TH " + fmt(s.p90), c: RGC.teal }, { y: g.Y(s.p50), t: "50TH " + fmt(s.p50), c: RGC.gold }, { y: g.Y(s.p10), t: "10TH " + fmt(s.p10), c: RGC.red }], fs + 10, g.y0 + 8, g.y1 - 8);
+    var xe = g.FX(g.h);
+    tags.forEach(function (t) {
+      var tw = c.measureText(t.t).width + 10, x = xe + 6;
+      c.fillStyle = "rgba(4,8,11,.92)"; c.fillRect(x, t.y - fs / 2 - 4, tw, fs + 8); c.strokeStyle = t.c; c.lineWidth = 1; c.strokeRect(x + 0.5, t.y - fs / 2 - 3.5, tw - 1, fs + 7);
+      c.fillStyle = t.c; c.fillText(t.t, x + 5, t.y + fs / 2 - 1);
+    });
+  }
+  function rgAnim(el, kf, o) { if (reduced() || !el.animate) return null; return el.animate(kf, Object.assign({ easing: EASE, fill: "both" }, o)); }
+  function rgPlace(el, x, y) { el.style.transform = "translate(" + x.toFixed(1) + "px," + y.toFixed(1) + "px)"; }
+  function rgLog(R, txt) {
+    /* the log grows downward and scrolls to the newest line (scrolling is not a layout shift; trimming the top would be) */
+    var ol = R.panel.querySelector(".rglog"), li = document.createElement("li"); li.textContent = txt; ol.appendChild(li);
+    ol.scrollTop = ol.scrollHeight;
+  }
+  function rgSplit(R, up) {
+    [].forEach.call(R.panel.querySelectorAll(".rgseg i"), function (c, i) { c.className = i < Math.round(up / 5) ? "u" : "d"; });
+    R.panel.querySelector(".rgu").textContent = up; R.panel.querySelector(".rgdn").textContent = 100 - up;
+  }
+  function rgPrice(R, v, d) { R.panel.querySelector(".rgn").textContent = fmt(v); R.panel.querySelector(".rgd").textContent = d ? longDate(d.toISOString().slice(0, 10)).toUpperCase() : " "; }
+  function rgRound(R, j) {
+    var p = R.p, today = j >= R.days.length;
+    if (j > R.days.length) return;
+    R.j = j; R.t = 0; R.fired = {}; R.fanAt = 0; R.landed = 0;
+    R.sim = today ? RANGE.today(p.dc, p.t) : RANGE.replay(p.dc, p.t, j, R.days[j]);
+    var g = R.g = rgGeo(R, j), s = R.sim, d = R.date[g.k];
+    R.fx.setTransform(R.dpr, 0, 0, R.dpr, 0, 0); R.fx.clearRect(0, 0, R.cw, R.H);
+    R.st.querySelector(".rgf").classList.remove("dim");
+    rgBase(R, g);
+    var ds = d ? MON[d.getUTCMonth()].toUpperCase() + " " + d.getUTCDate() + ", " + d.getUTCFullYear() : "";
+    var nar = R.cw < 600;
+    R.st.querySelector(".rgpill").textContent = today ? (nar ? "TODAY · 12 MO" : "TODAY · 12-MONTH RANGE") : nar ? (j + 1) + "/" + R.days.length + " · " + ds.replace(/, \d+$/, "") : "ROUND " + (j + 1) + "/" + R.days.length + " · REPLAY FROM " + ds;
+    R.st.querySelector(".rgnext").textContent = today ? "Replay" : "Next";
+    var beam = R.st.querySelector(".rgbeam"), orb = R.st.querySelector(".rgorb"), ring = R.st.querySelector(".rgring");
+    beam.style.height = g.y1 + "px"; rgPlace(beam, g.xNow, 0); rgPlace(orb, g.xNow, g.Y(s.start));
+    ring.style.opacity = "0"; orb.querySelector("b").style.opacity = ""; orb.querySelector("b").textContent = today ? "NOW" : "FROM HERE";
+    rgPrice(R, s.start, d);
+    var rg = s.regime, chip = R.panel.querySelector(".rgchip");
+    chip.textContent = rg.label; chip.className = "rgchip " + (rg.label === "TRENDING" ? "tr" : "ch");
+    R.panel.querySelector(".rgrs").textContent = "50-day slope " + sp(rg.slope * 100) + ", efficiency " + rg.eff.toFixed(2);
+    rgLog(R, (today ? "Today, " : "Round " + (j + 1) + ", ") + ds + ": " + s.n + " paths from " + fmt(s.start) + (today ? " over 12 months." : " over 20 trading days, using only moves before this date."));
+    if (R.rm) { rgFinish(R); return; }
+    beam.style.opacity = "1"; orb.style.opacity = "1";
+    R.anims = [rgAnim(beam.firstChild, [{ transform: "scaleY(0)", opacity: 0 }, { transform: "scaleY(1)", opacity: 1 }], { duration: D_BEAT }),
+      rgAnim(orb.firstChild, [{ transform: "scale(.2)", opacity: 0 }, { transform: "scale(1)", opacity: 1 }], { duration: D_MICRO * 2, delay: T_ORB }),
+      rgAnim(orb.querySelector("b"), [{ opacity: 0, transform: "translateY(4px)" }, { opacity: 1, transform: "none" }], { duration: D_MICRO, delay: T_ORB + D_MICRO })].filter(Boolean);
+    rgResume(R, true);
+  }
+  /* all beats of the current round at once (reduced motion, Next, or the end of the clock) */
+  function rgFinish(R) {
+    var g = R.g, s = R.sim;
+    if (R.fanAt < g.h) { rgFan(R, g, R.fanAt, g.h); R.fanAt = g.h; }
+    if (!R.fired.med) { R.fired.med = 1; rgMedian(R, g); rgSplit(R, s.upPct); }
+    if (g.today) { if (!R.fired.end) { R.fired.end = 1; rgVerdict(R); } return; }
+    while (R.landed < g.h) rgLand(R);
+    if (!R.fired.ring) { R.fired.ring = 1; rgVerdict(R); }
+  }
+  function rgLand(R) {
+    var g = R.g; R.landed++; var i = g.k + R.landed;
+    rgCandle(R, g, i, true); rgPrice(R, R.p.dc[i], R.date[i]);
+    if (R.landed === 1) R.st.querySelector(".rgf").classList.add("dim");
+  }
+  function rgVerdict(R) {
+    var g = R.g, s = R.sim, live = R.st.querySelector("[role=status]");
+    if (g.today) {
+      rgLog(R, "12-month range from past daily moves: 10th " + fmt(s.p10) + ", median " + fmt(s.p50) + ", 90th " + fmt(s.p90) + ".");
+      live.textContent = "Today: 12-month range " + fmt(s.p10) + " to " + fmt(s.p90) + ". Replay finished, " + R.hits + " of " + R.days.length + " rounds inside the band.";
+      return;
+    }
+    if (s.hit) R.hits++; R.done++;
+    var ring = R.st.querySelector(".rgring"), x = g.FX(g.h), y = g.Y(s.real);
+    rgPlace(ring, x, y); ring.className = "rgring " + (s.hit ? "hit" : "miss") + (y > g.y1 - 40 ? " lo" : ""); ring.querySelector("span").textContent = s.hit ? "HIT" : "MISS";
+    ring.style.opacity = "1"; R.st.querySelector(".rgorb b").style.opacity = "0";
+    rgAnim(ring.firstChild, [{ transform: "scale(.3)", opacity: 0 }, { transform: "scale(1.15)", opacity: 1, offset: 0.6 }, { transform: "scale(1)", opacity: 1 }], { duration: D_BEAT });
+    rgAnim(ring.querySelector("span"), [{ opacity: 0 }, { opacity: 1 }], { duration: D_MICRO, delay: D_MICRO });
+    R.panel.querySelector(".rgh").textContent = Math.round(R.hits / R.done * 100) + "%";
+    R.panel.querySelector(".rgfr").textContent = R.hits + "/" + R.done;
+    var msg = "Real close 20 trading days later " + fmt(s.real) + ": " + (s.hit ? "HIT, inside" : "MISS, outside") + " the 10th to 90th band (" + fmt(s.p10) + " to " + fmt(s.p90) + ").";
+    rgLog(R, msg);
+    live.textContent = "Round " + (R.j + 1) + " of " + R.days.length + ": " + (s.hit ? "HIT" : "MISS") + ". " + msg;
+  }
+  function rgNext(R) {
+    if (!R.days) return;
+    if (R.j >= R.days.length) { R.hits = 0; R.done = 0; R.panel.querySelector(".rgh").textContent = "n/a"; R.panel.querySelector(".rgfr").textContent = "0/0"; rgHalt(R); rgRound(R, 0); return; }
+    rgHalt(R); rgFinish(R); rgRound(R, R.j + 1);
+  }
+  function rgHalt(R) {
+    if (R.raf) { cancelAnimationFrame(R.raf); R.raf = 0; R.t = performance.now() - R.t0; }
+    if (R.anims) R.anims.forEach(function (a) { if (a.playState === "running") a.pause(); });
+    if (R.pulse && R.pulse.playState === "running") R.pulse.pause();
+  }
+  function rgResume(R, fresh) {
+    if (R.rm || R.raf || R.paused || !R.days || (!fresh && R.over) || document.hidden || !R.seen) return;
+    if (fresh) R.over = false;
+    R.t0 = performance.now() - R.t;
+    if (R.anims) R.anims.forEach(function (a) { if (a.playState === "paused") a.play(); });
+    if (R.pulse && R.pulse.playState === "paused") R.pulse.play();
+    R.raf = requestAnimationFrame(function f(now) { R.raf = 0; if (rgTick(R, now - R.t0)) R.raf = requestAnimationFrame(f); else R.t = now - R.t0; });
+  }
+  /* one frame: returns true while there is more to do */
+  function rgTick(R, t) {
+    var g = R.g, s = R.sim, budget = performance.now() + 6;
+    if (!R.fired.pulse && t >= T_ORB) { R.fired.pulse = 1; R.pulse = rgAnim(R.st.querySelector(".rgorb u"), [{ transform: "scale(.6)", opacity: 0.8 }, { transform: "scale(2.6)", opacity: 0 }], { duration: D_BEAT * 1.5, iterations: 3, fill: "none", easing: "linear" }); }
+    if (t >= T_FAN && R.fanAt < g.h) {
+      var e = Math.min(1, (t - T_FAN) / D_FAN), target = Math.ceil(g.h * (1 - Math.pow(1 - e, 3)));
+      while (R.fanAt < target && performance.now() < budget) { var nx = Math.min(target, R.fanAt + Math.max(1, Math.ceil(g.h / 40))); rgFan(R, g, R.fanAt, nx); R.fanAt = nx; }
+    }
+    if (t >= T_MED && R.fanAt >= g.h && !R.fired.med) { R.fired.med = 1; rgMedian(R, g); rgSplit(R, s.upPct);
+      rgLog(R, "Spread: 10th " + fmt(s.p10) + ", median " + fmt(s.p50) + ", 90th " + fmt(s.p90) + ". " + s.upPct + "% of paths end up."); }
+    if (g.today) { if (t >= T_TODAY_END && R.fired.med) { rgFinish(R); R.over = true; return false; } return true; }
+    if (t >= T_LAND) while (R.landed < g.h && t >= T_LAND + R.landed * LAND) rgLand(R);
+    if (t >= T_RING && R.landed >= g.h && !R.fired.ring) { R.fired.ring = 1; rgVerdict(R); }
+    if (t >= T_END && R.fired.ring) { if (R.single) { R.over = true; return false; } rgRound(R, R.j + 1); return false; }
+    return true;
+  }
 
   /* ---------- fundamentals card (stock page) ---------- */
   var FUND = [
@@ -461,5 +722,17 @@
     if (lb && !(e.relatedTarget && lb.contains(e.relatedTarget))) root.classList.remove("tipx");
   });
 
-  window.V5 = { changes: changes, report: report, link: link, stock: stock, chartBox: chartBox, chart: chart };
+  /* ---------- landing hero: one replay round on a featured stock ----------
+     Featured = the stock page with the largest market cap among USD listings (a size rule, not a pick). */
+  function featured(d) {
+    var best = null, bm = -1;
+    Object.keys(d.stocks).sort().forEach(function (t) { var s = d.stocks[t], f = s.fund || {}; if (!s.chart) return; var m = f.cur === "USD" && f.mcap ? f.mcap : 0; if (m > bm) { bm = m; best = t; } });
+    return best;
+  }
+  function hero(o) {
+    var dP = get(), R = rgMount({ host: o.host, p: dP.then(function (d) { return getChart(featured(d)); }), side: o.side, after: o.after, single: true, first: 4 });
+    dP.then(function (d) { var t = featured(d); if (o.onTicker) o.onTicker(t, d); }).catch(function () {});
+    return R;
+  }
+  window.V5 = { hero: hero, unmount: rgUnmount, closeAll: rgCloseAll, data: get, featured: featured, changes: changes, report: report, link: link, stock: stock, chartBox: chartBox, chart: chart };
 })();

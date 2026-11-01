@@ -447,3 +447,103 @@ h3{letter-spacing:-.006em;line-height:1.2}
   .btn:active,.tab:active,.sugg button:active,.more-btn:active,nav a:active,.info:active,.tg:active,.sec:active{transform:none;opacity:.75}
   .tip{transform:none}
 }
+
+/* ===== Play the range (2026-11-01). Spec: docs/forecast-cone-animation.md.
+   Type: mono 10 / 11 / 13, panel price 28 (24 on phones). Easing --rg-ease, durations 160 / 600 / 900 ms.
+   Motion is transform and opacity only (set from v5.js with the Web Animations API). No blur filters. */
+:root{
+  --rg-bg:#04080b; --rg-panel:#071015; --rg-line:#10202a; --rg-ink:#d8e6e6; --rg-mute:#7f9aa0;
+  --rg-teal:#3ad6c4; --rg-red:#e0675a; --rg-gold:#d4af37; --rg-amber:#e0a43a; --rg-hit:#4fe08a;
+  --rg-ease:cubic-bezier(.2,.8,.2,1); --rg-d1:160ms; --rg-d2:600ms; --rg-d3:900ms;
+}
+.tgplay{font:600 10px var(--mono);letter-spacing:.12em;text-transform:uppercase;color:var(--rg-teal);background:rgba(58,214,196,.06);border:1px solid rgba(58,214,196,.55);border-radius:99px;padding:0 13px 0 11px;min-height:32px;cursor:pointer;display:inline-flex;align-items:center;gap:7px;flex:0 0 auto;white-space:nowrap;transition:transform var(--rg-d1) var(--rg-ease)}
+.tgplay::before{content:"";width:0;height:0;border-left:7px solid currentColor;border-top:4.5px solid transparent;border-bottom:4.5px solid transparent}
+.tgplay[aria-pressed=true]{color:var(--rg-bg);background:var(--rg-teal)}
+.tgplay[aria-pressed=true]::before{border:0;width:7px;height:7px;background:currentColor}
+.tgplay:active{transform:scale(.97)}
+.rg{position:absolute;inset:0;z-index:2;background:radial-gradient(ellipse 55% 45% at 58% 62%,rgba(58,214,196,.10),transparent 70%),var(--rg-bg);border-radius:8px;overflow:hidden;color:var(--rg-ink);contain:strict}
+.rg canvas{position:absolute;left:0;top:0;width:auto;height:auto}
+.rgf{transition:opacity var(--rg-d2) var(--rg-ease)}
+.rgf.dim{opacity:.38}
+.rghd{position:absolute;left:8px;right:8px;top:8px;display:flex;justify-content:space-between;align-items:center;gap:8px;pointer-events:none}
+.rg-side .rghd{right:292px}
+.rgpill{color:var(--rg-teal)!important;border:1px solid rgba(58,214,196,.4);border-radius:99px;padding:5px 10px;background:rgba(4,8,11,.85);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;min-width:0;font-size:10px!important;letter-spacing:.1em!important}
+.rgctl{display:flex;gap:6px;pointer-events:auto;flex:0 0 auto}
+.rgbtn{font:600 10px var(--mono);letter-spacing:.1em;text-transform:uppercase;color:var(--rg-ink);background:rgba(4,8,11,.9);border:1px solid var(--rg-line);border-radius:99px;min-height:32px;min-width:44px;padding:0 10px;cursor:pointer;transition:transform var(--rg-d1) var(--rg-ease)}
+.rgbtn:hover{border-color:var(--rg-teal);color:var(--rg-teal)}
+.rgbtn:active{transform:scale(.97)}
+.rgbeam,.rgorb,.rgring{position:absolute;left:0;top:0;pointer-events:none;opacity:0}
+.rgbeam i{position:absolute;left:-1px;top:0;width:2px;height:100%;transform-origin:top;background:linear-gradient(rgba(58,214,196,.0),rgba(58,214,196,.75) 30%,rgba(58,214,196,.25))}
+.rgbeam i::after{content:"";position:absolute;left:-7px;top:0;width:16px;height:100%;background:linear-gradient(90deg,transparent,rgba(58,214,196,.10),transparent)}
+.rgorb i{position:absolute;left:-7px;top:-7px;width:14px;height:14px;border-radius:50%;background:radial-gradient(circle,#e8fffb 0,var(--rg-teal) 45%,rgba(58,214,196,.0) 72%);box-shadow:0 0 18px 6px rgba(58,214,196,.35)}
+.rgorb u{position:absolute;left:-12px;top:-12px;width:24px;height:24px;border-radius:50%;border:1.5px solid var(--rg-teal);opacity:0}
+.rgorb b{position:absolute;left:12px;top:-26px;font:600 10px var(--mono);letter-spacing:.1em;color:var(--rg-teal);background:rgba(4,8,11,.88);border:1px solid rgba(58,214,196,.35);border-radius:4px;padding:2px 6px;white-space:nowrap}
+.rgring i{position:absolute;left:-13px;top:-13px;width:26px;height:26px;border-radius:50%;border:2px solid var(--rg-hit);box-shadow:0 0 14px 2px rgba(79,224,138,.35)}
+.rgring span{position:absolute;right:-4px;top:18px;font:700 11px var(--mono);letter-spacing:.12em;color:var(--rg-bg);background:var(--rg-hit);border-radius:4px;padding:3px 7px}
+.rgring.miss i{border-color:var(--rg-red);box-shadow:0 0 14px 2px rgba(224,103,90,.35)}
+.rgring.miss span{background:var(--rg-red)}
+.rgp{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:10px;font-family:var(--mono)}
+.rg-side .rgp{position:absolute;right:8px;top:8px;bottom:8px;width:276px;margin:0;grid-template-columns:1fr;grid-template-rows:auto auto auto auto minmax(0,1fr) auto}
+.rgc{background:var(--rg-panel);border:1px solid var(--rg-line);border-radius:6px;padding:9px 10px;min-width:0;display:flex;flex-direction:column;gap:5px}
+.rgc .label,.rgp .label{font-size:10px;letter-spacing:.12em;color:var(--rg-mute)}
+.rgpx{grid-column:1/-1;flex-direction:row;align-items:baseline;justify-content:space-between;flex-wrap:wrap}
+.rgn{font:500 24px/1.1 var(--mono);color:var(--rg-ink);font-variant-numeric:tabular-nums}
+.rgseg{display:grid;grid-template-columns:repeat(20,1fr);gap:2px;height:12px}
+.rgseg i{background:var(--rg-line);border-radius:1px}
+.rgseg i.u{background:var(--rg-teal)} .rgseg i.d{background:var(--rg-red)}
+.rgsn{display:flex;justify-content:space-between;font-size:11px;color:var(--rg-mute)}
+.rgsn b{font:600 13px var(--mono);color:var(--rg-teal)} .rgsn span+span b{color:var(--rg-red)}
+.rghr div{display:flex;align-items:baseline;justify-content:space-between}
+.rgh{font:500 24px/1.1 var(--mono);color:var(--rg-hit);font-variant-numeric:tabular-nums}
+.rgfr{font-size:13px;color:var(--rg-ink)}
+.rgrg{display:flex;align-items:center;gap:8px;min-width:0}
+.rgchip{font:700 10px var(--mono);letter-spacing:.14em;border-radius:4px;padding:4px 8px;border:1px solid currentColor}
+.rgchip.tr{color:var(--rg-teal);background:rgba(58,214,196,.08)} .rgchip.ch{color:var(--rg-amber);background:rgba(224,164,58,.08)}
+.rgrs{font-size:10px;color:var(--rg-mute);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;min-width:0;flex:1}
+.rglog{grid-column:1/-1;list-style:none;margin:0;padding:8px 10px;height:132px;overflow:hidden;background:#03070a;border:1px solid var(--rg-line);border-radius:6px;font-size:11px;line-height:1.45;color:var(--rg-mute)}
+.rglog li{padding-left:12px;position:relative}
+.rglog li::before{content:">";position:absolute;left:0;color:var(--rg-teal)}
+.rglog li:last-child{color:var(--rg-ink)}
+.rg-side .rglog{height:auto;min-height:0}
+.rglog{position:relative}.rglog::before{content:"";position:absolute;left:0;right:0;top:0;height:26px;background:linear-gradient(#03070a,rgba(3,7,10,0));z-index:1}
+.rgrc{grid-column:1/-1}
+.rgnote{grid-column:1/-1;margin:0;font:12px/1.45 var(--serif);color:var(--rg-mute)}
+@media(min-width:760px){.rgn,.rgh{font-size:28px}}
+/* landing (2026-11-01): the replay is the hero; the scan moved to #/scan */
+.lhero{padding-top:8px}
+.lhero h1{font-size:clamp(32px,6.4vw,60px);max-width:16ch}
+.lhtext .label{color:var(--rg-teal)!important}
+.lstage{position:relative;height:340px;margin-top:22px;border:1px solid var(--rg-line);border-radius:10px;background:var(--rg-bg)}
+.lstage .rg{border-radius:9px}
+.lhero .rgp{margin-top:10px}
+.lflow{margin-top:26px;max-width:62ch}
+.lone{margin:0;color:var(--text);font-size:17px;line-height:1.55}
+.lsearch{margin:22px 0 6px}
+.lsearch .btn{flex:0 0 auto;min-height:48px;padding:0 22px}
+.lnote{min-height:1.5em;margin:0}
+.lcards{display:grid;grid-template-columns:1fr;gap:12px;margin-top:40px}
+.lcard{display:flex;flex-direction:column;gap:6px;text-decoration:none;padding:18px;border:1px solid var(--edge,var(--line));border-radius:var(--r-tile,10px);background:var(--glass-flat,var(--panel));box-shadow:var(--edge-hi,none);transition:transform var(--rg-d1) var(--rg-ease)}
+.lcard b{font:400 24px/1.15 var(--serif);color:var(--text)}
+.lsub{color:var(--muted);font-size:14px;line-height:1.45}
+.lgo{font:11px var(--mono);letter-spacing:.14em;text-transform:uppercase;color:var(--gold);margin-top:6px}
+.lcard:hover{border-color:rgba(212,175,55,.55)}
+.lcard:active{transform:scale(.99)}
+@media(max-width:759px){.lstage{height:300px}.lhero .rglog,.lhero .rgpx,.lhero .rgrc{display:none}.lhero .rgp .rgnote{order:-1}}
+@media(min-width:760px){
+  .lstage{height:460px}
+  .lcards{grid-template-columns:repeat(3,1fr)}
+}
+.rgring.lo span{top:-32px}
+.rg-side .rgmeth{display:none}
+/* fixed tracks so numbers changing width never move their neighbours (CLS 0) */
+.rgpx{display:grid;grid-template-columns:44px minmax(0,1fr) 112px;align-items:baseline}
+.rgpx .rgn{text-align:center}.rgpx .rgd{text-align:right}
+.rgchip{min-width:86px;text-align:center;flex:0 0 auto}
+.rgnext{min-width:68px}
+.rgbase{font-size:10px;color:var(--rg-mute);line-height:1.35}
+.lfeat{margin:18px 0 0;min-height:1.5em;color:var(--rg-mute)!important;font-size:10px!important}
+.lfeat+.lstage{margin-top:8px}
+/* the honesty note sits directly under the stage whenever the panel is stacked (phones), same as the landing */
+.rgp>.rgnote{order:-1}
+.rg-side .rgp>.rgnote{order:0}
+@media(max-width:759px){.lfeat{min-height:3.2em}}
