@@ -37,7 +37,9 @@ def test_run(tmp_path, monkeypatch):
     assert 0 <= sc["hit_rate_60d"] <= 1 and sc["status"] == "enough days to read"
 
 
-def test_asof_is_latest_bar_across_markets_and_skips_relog(tmp_path, monkeypatch):
+def test_asof_is_the_us_session_and_skips_relog(tmp_path, monkeypatch):
+    """A market with a bar after SPY's last date (an Asian session already open when a late run starts) no longer
+    moves the as-of date forward; that bar is cut off instead (2026-11-01 back-end fix, was max across markets)."""
     from scanner import data
     from tests.fixtures.synthetic import make_prices, patch_engine
     patch_engine(monkeypatch, tmp_path)
@@ -56,19 +58,15 @@ def test_asof_is_latest_bar_across_markets_and_skips_relog(tmp_path, monkeypatch
     monkeypatch.setattr(data, "prices", prices_with_later_bar)
     spy_last = pd.Timestamp(fake_prices(["SPY"])["SPY"].index[-1]).normalize()
     res = pipeline.run(live_constituents=False)
-    assert pd.Timestamp(res["date"]) == spy_last + pd.Timedelta(days=1)
-    import datetime as dt
-
-    class Later(dt.date):
-        @classmethod
-        def today(cls):
-            return cls(2026, 11, 5)
-    monkeypatch.setattr(pipeline, "date", Later)
+    assert pd.Timestamp(res["date"]) == spy_last
+    from datetime import datetime, timezone
+    monkeypatch.setattr(pipeline, "_now", lambda: datetime(2026, 11, 5, 22, tzinfo=timezone.utc))
+    monkeypatch.setattr(pipeline, "_RUN_ID", "a-later-run")
     led0 = tracker.load()
     led0["thesis"] = "marker"
     led0.to_csv(tracker.LEDGER, index=False)
     n = len(led0)
-    pipeline.run(live_constituents=False)  # same as-of date, earlier than today: not logged again
+    pipeline.run(live_constituents=False)  # same as-of date, already logged by another run: not logged again
     assert len(tracker.load()) == n and set(tracker.load()["thesis"]) == {"marker"}  # untouched
 
 

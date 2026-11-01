@@ -27,7 +27,7 @@ from scanner.labels import BEARISH, BULLISH, NEUTRAL, normalize  # noqa: E402
 BULL_AT = 35  # mispricing score that counts as Bullish / Bearish (before news adjustment)
 SAMPLE_NOTE = "Sample data. Synthetic prices, replaced by the first real daily scan. Graded results are illustrative only."
 DISCLAIMER = "Not investment advice."
-BANNED = re.compile(r"\b(buy|buys|buying|sell|sells|selling|price targets?)\b", re.I)
+BANNED = re.compile(r"\b(buy|buys|buying|sell|sells|selling|price targets?|ratings?|targets?)\b", re.I)
 TOP_REASONS = 3
 
 

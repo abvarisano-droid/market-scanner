@@ -2,22 +2,53 @@ name: Daily scan
 on:
   schedule:
     - cron: "30 21 * * 1-5"   # 4:30pm ET weekdays after Nov 1 (US clocks go back), 5:30pm ET before; always after the US close
+    - cron: "47 3 * * 2-6"    # backup start (about 11pm ET) for when the first one starts very late or is dropped; the gate makes it a no-op once the scan is in
   workflow_dispatch:
+    inputs:
+      force:
+        description: "Run even if this market date already has a scan (the watchdog's catch-up passes false)"
+        type: boolean
+        default: true
 permissions:
   contents: write
 concurrency:
   group: daily-scan
   cancel-in-progress: false
 jobs:
+  gate:
+    # Scheduled starts and catch-up requests run only when the newest closed US session has no "Daily scan" commit.
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    permissions: { contents: read }
+    outputs:
+      need: ${{ steps.check.outputs.need }}
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262  # v4.4.0
+        with: { fetch-depth: 0 }
+      - uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065  # v5.6.0
+        with: { python-version: "3.12" }
+      - name: Is a scan needed for the newest closed session? (git log only, no network, no secrets)
+        id: check
+        env:
+          EVENT: ${{ github.event_name }}
+          FORCE: ${{ inputs.force }}
+        run: |
+          if [ "$EVENT" = "workflow_dispatch" ] && [ "$FORCE" = "true" ]; then
+            echo "need=true" >> "$GITHUB_OUTPUT"; echo "manual run: forced"
+          else
+            python -m scanner.watchdog --need-scan
+          fi
   scan:
+    needs: gate
+    if: needs.gate.outputs.need == 'true'
     runs-on: ubuntu-latest
     timeout-minutes: 45
     concurrency:
       group: repo-push
       cancel-in-progress: false
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-python@v5
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262  # v4.4.0
+      - uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065  # v5.6.0
         with: { python-version: "3.12", cache: pip }
       - run: pip install -r requirements.txt pytest
       - name: Scan (also refreshes data/universe/russell2000.csv from iShares IWM holdings)
@@ -39,10 +70,13 @@ jobs:
           git config user.email "actions@users.noreply.github.com"
           # add only the paths that exist: data/universe is created only when the iShares Russell 2000 pull works,
           # data/snapshots only once the first weekly snapshot is written
-          for p in reports data/picks.csv data/snapshots data/latest_scan.json data/charts.json data/universe site/data; do
+          for p in reports data/picks.csv data/snapshots data/latest_scan.json data/charts.json data/ai_usage.json data/universe site/data; do
             if [ -e "$p" ]; then git add "$p"; else echo "::warning::$p not present, skipped (Russell 2000 pull may have failed, or no snapshot yet)"; fi
           done
-          git commit -m "Daily scan $(date +%F)" || echo "nothing to commit"
+          # title with the scan's US market as-of date, not the run date: a late start after midnight UTC must not
+          # label Friday's scan as Saturday (the watchdog and the backup gate read these titles)
+          scan_asof=$(python -c "import json; print(json.load(open('data/latest_scan.json'))['date'])")
+          git commit -m "Daily scan ${scan_asof}" || echo "nothing to commit"
           for attempt in 1 2 3; do
             if git pull --rebase && git push; then
               exit 0
