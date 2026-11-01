@@ -1,20 +1,33 @@
 """Nightly scan watchdog: which weekdays have no scan by the next day at 12:00 UTC?
 
 Pure logic plus a tiny CLI. No network and no secrets: the CLI reads the repo's own
-git log (scan commits are titled "Daily scan YYYY-MM-DD") and writes site/data/watchdog.json.
+git log (scan commits are titled "Daily scan YYYY-MM-DD", where the date is the scan's US
+market as-of date, not the day the job happened to run) and writes site/data/watchdog.json.
+
+`python -m scanner.watchdog --need-scan` prints need=true|false (also to $GITHUB_OUTPUT): true when
+the newest US session that has closed has no scan commit yet. The daily scan workflow uses it as a
+gate, so a backup cron or a catch-up dispatch never runs a second scan for the same market date.
 """
 from __future__ import annotations
 
 import json
+import os
 import re
 import subprocess
 import sys
 from datetime import date, datetime, timedelta, timezone
 from pathlib import Path
+from zoneinfo import ZoneInfo
 
 ROOT = Path(__file__).resolve().parent.parent
 LOOKBACK_DAYS = 10
 DEADLINE_HOUR_UTC = 12
+NY = ZoneInfo("America/New_York")
+CLOSE_NY = (16, 0)  # NYSE regular close, New York time (early closes are treated as full days, a few hours of slack)
+
+
+def _now() -> datetime:
+    return datetime.now(timezone.utc)
 
 
 def _easter(y: int) -> date:
@@ -73,6 +86,23 @@ def is_trading_day(d: date) -> bool:
     return d.weekday() < 5 and d not in us_market_holidays(d.year)
 
 
+def market_date(now: datetime) -> date:
+    """The newest US trading day whose 16:00 New York close has passed at `now` (DST handled by the zone)."""
+    if now.tzinfo is None:
+        now = now.replace(tzinfo=timezone.utc)
+    ny = now.astimezone(NY)
+    d = ny.date()
+    if (ny.hour, ny.minute) < CLOSE_NY:
+        d -= timedelta(days=1)
+    while not is_trading_day(d):
+        d -= timedelta(days=1)
+    return d
+
+
+def need_scan(scan_dates, now: datetime) -> bool:
+    return market_date(now) not in set(scan_dates)
+
+
 def missed_weekdays(scan_dates, now: datetime, lookback_days: int = LOOKBACK_DAYS, since: date | None = None) -> list[date]:
     """Trading weekdays in the last `lookback_days` whose scan is overdue.
 
@@ -104,13 +134,37 @@ def scan_dates_from_git(repo: Path = ROOT) -> list[date]:
 
 
 def build_report(scan_dates, now: datetime) -> dict:
+    """{checked_at, missed, status, market_date, last_scan, catch_up}. The site reads `missed`; the Brain can read
+    `status` and `last_scan`. catch_up is true when the newest closed session has no scan, so the workflow asks
+    for one (the scan's own gate makes a duplicate request a no-op)."""
     now = now.astimezone(timezone.utc) if now.tzinfo else now.replace(tzinfo=timezone.utc)
     missed = missed_weekdays(scan_dates, now)
-    return {"checked_at": now.strftime("%Y-%m-%dT%H:%M:%SZ"), "missed": [d.isoformat() for d in missed]}
+    have = sorted(set(scan_dates))
+    return {"checked_at": now.strftime("%Y-%m-%dT%H:%M:%SZ"), "missed": [d.isoformat() for d in missed],
+            "status": "missed" if missed else "ok", "market_date": market_date(now).isoformat(),
+            "last_scan": have[-1].isoformat() if have else None, "catch_up": bool(have) and need_scan(have, now)}
+
+
+def _gh_output(line: str) -> None:
+    path = os.environ.get("GITHUB_OUTPUT")
+    if path:
+        with open(path, "a") as f:
+            f.write(line + "\n")
 
 
 def main(argv=None) -> int:
-    rep = build_report(scan_dates_from_git(), datetime.now(timezone.utc))
+    args = sys.argv[1:] if argv is None else list(argv)
+    now = _now()
+    dates = scan_dates_from_git()
+    if "--need-scan" in args:
+        need = need_scan(dates, now)
+        line = f"need={'true' if need else 'false'}"
+        print(f"{line} (market date {market_date(now).isoformat()}, last scan "
+              f"{dates[-1].isoformat() if dates else 'none'})")
+        _gh_output(line)
+        return 0
+    rep = build_report(dates, now)
+    _gh_output(f"catch_up={'true' if rep['catch_up'] else 'false'}")
     out = ROOT / "site" / "data" / "watchdog.json"
     out.write_text(json.dumps(rep, indent=1) + "\n")
     if rep["missed"]:

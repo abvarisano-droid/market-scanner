@@ -56,7 +56,7 @@ def test_lookback_window():
 
 def test_report_shape():
     rep = w.build_report([d for d in WEEK if d != date(2026, 10, 28)], utc(2026, 10, 31, 13, 7))
-    assert rep == {"checked_at": "2026-10-31T13:07:00Z", "missed": ["2026-10-28"]}
+    assert {k: rep[k] for k in ("checked_at", "missed", "status")} == {"checked_at": "2026-10-31T13:07:00Z", "missed": ["2026-10-28"], "status": "missed"}
     json.dumps(rep)
 
 

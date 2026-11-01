@@ -5,17 +5,18 @@ import json
 import logging
 import os
 import uuid
-from datetime import date
+from datetime import datetime, timezone
 from pathlib import Path
 
 import numpy as np
 import pandas as pd
 
-from . import charts, data, news_ai, signals, technical, tracker, universe, valuation
+from . import charts, data, news_ai, signals, technical, tracker, universe, valuation, watchdog
 
 log = logging.getLogger(__name__)
 ROOT = Path(__file__).resolve().parent.parent
 LATEST = ROOT / "data" / "latest_scan.json"
+AI_USAGE = "data/ai_usage.json"  # relative to ROOT: per-run AI token and cost log the Brain reads (no key values)
 MIN_COVERAGE = 0.4  # share of value and quality metrics a stock needs before its Mispricing score is ranked
 TOP_N = 12  # Mispricing picks on the high side; half as many on the low side
 
@@ -23,16 +24,35 @@ TOP_N = 12  # Mispricing picks on the high side; half as many on the low side
 _RUN_ID = os.getenv("GITHUB_RUN_ID") or uuid.uuid4().hex[:12]
 
 
-def _asof(price_map: dict[str, pd.DataFrame]) -> pd.Timestamp:
-    """Latest bar date across everything fetched. Using the max (not just SPY's last bar) means a market that
-    already has a later bar can never be graded from a day whose close was known at signal time."""
-    last = []
-    for df in price_map.values():
-        idx = df["Close"].dropna().index
-        if len(idx):
-            t = pd.Timestamp(idx[-1])
-            last.append(t.tz_localize(None) if t.tzinfo is not None else t)
-    return max(last).normalize()
+def _now() -> datetime:
+    return datetime.now(timezone.utc)
+
+
+def _naive_index(idx) -> pd.DatetimeIndex:
+    idx = pd.DatetimeIndex(idx)
+    return idx.tz_localize(None) if idx.tz is not None else idx
+
+
+def _asof(price_map: dict[str, pd.DataFrame], now: datetime | None = None) -> pd.Timestamp:
+    """The scan's US market date: SPY's last bar, capped at the newest New York session that has closed.
+
+    The run time never sets the date. A cron that starts hours late (after midnight UTC, when Asian markets
+    already show a partial next-day bar) or a hand-run during market hours still gets the session that closed.
+    Every series is then cut at this date (_cut), so no call is scored on a bar after it and the next-close
+    entry rule can never use a close that was known when the call was made."""
+    bench = price_map[universe.BENCHMARK]["Close"].dropna()
+    last = _naive_index(bench.index)[-1].normalize()
+    closed = pd.Timestamp(watchdog.market_date(now or _now()))
+    return min(last, closed)
+
+
+def _cut(price_map: dict[str, pd.DataFrame], asof: pd.Timestamp) -> dict[str, pd.DataFrame]:
+    out = {}
+    for t, df in price_map.items():
+        keep = df[_naive_index(df.index).normalize() <= asof]
+        if len(keep):
+            out[t] = keep
+    return out
 
 
 def build_table(price_map: dict[str, pd.DataFrame], fundamentals: pd.DataFrame, uni: dict[str, str],
@@ -76,13 +96,14 @@ def run(indexes: list[str] | None = None, top_n: int = TOP_N, live_constituents:
     log.info("scanning %d stocks", len(tickers))
 
     price_map = data.prices(tickers + list(universe.INDEXES.values()) + [universe.BENCHMARK], period="2y")
+    asof = _asof(price_map)
+    price_map = _cut(price_map, asof)
     stock_prices = {t: price_map[t] for t in tickers if t in price_map}
 
     # technical rules (short-term and swing) on the same price data, SPY as the market reference.
     # The history, freshness and liquidity checks run first so illiquid names never cost a fundamentals call.
     bench_df = price_map[universe.BENCHMARK]
     bench = bench_df["Close"].dropna()
-    asof = _asof(price_map)
     tech = technical.scan_technical({t: technical.from_ohlcv(df) for t, df in stock_prices.items()},
                                     technical.from_ohlcv(bench_df))
     tech["dropped"]["no data"] += len(tickers) - len(stock_prices)
@@ -101,6 +122,7 @@ def run(indexes: list[str] | None = None, top_n: int = TOP_N, live_constituents:
     cands = pd.concat([eligible.nlargest(top_n, "mispricing"), eligible.nsmallest(top_n // 2, "mispricing")])
 
     picks = []
+    news_ai.start_run()
     for t, r in cands.iterrows():
         row = {"ticker": t, **r.to_dict()}
         try:
@@ -123,15 +145,16 @@ def run(indexes: list[str] | None = None, top_n: int = TOP_N, live_constituents:
         bench_n = tracker._naive(bench)
         bench_at = float(bench_n[bench_n.index <= asof].iloc[-1])  # benchmark close on or before the as-of date
         prior = tracker.load()
-        if not prior.empty and asof in set(prior["date"]) and asof < pd.Timestamp(date.today()):
-            log.info("as-of %s is already in the ledger and is before today (holiday or stale data): not logging again", asof.date())
+        other = prior[(prior["date"] == asof) & (prior["run_id"].astype(str) != str(_RUN_ID))] if not prior.empty else prior
+        if len(other):  # idempotent: a late, backup or catch-up run never adds to a date another run already logged
+            log.info("as-of %s is already logged by an earlier run (%d rows): not logging again", asof.date(), len(other))
             led = prior
         else:
             led = tracker.log_picks(picks + tech_calls, bench_at, today=asof, run_id=_RUN_ID)
         hist = {t: df["Close"] for t, df in price_map.items()}
         missing = [t for t in led["ticker"].unique() if t not in hist]
         if missing:
-            hist.update({t: d["Close"] for t, d in data.prices(missing).items()})
+            hist.update({t: d["Close"] for t, d in _cut(data.prices(missing), asof).items()})
         ev = tracker.evaluate(led, hist, bench)
         scorecard = tracker.scorecard(ev, tracker.trading_days(led, bench))
         ledger_rows = _clean_records(ev)
@@ -150,10 +173,21 @@ def run(indexes: list[str] | None = None, top_n: int = TOP_N, live_constituents:
     except Exception as exc:  # charts are optional; the scan and ledger never depend on them
         log.warning("charts step failed (%s); keeping the previous data/charts.json", exc)
 
+    try:
+        news_ai.save_usage(ROOT / AI_USAGE, asof.date().isoformat(), _RUN_ID)
+    except Exception as exc:  # cost logging is optional and must never fail the scan
+        log.warning("AI usage log not written (%s)", exc)
+    funnel = _funnel(tags, tickers, stock_prices, tech, len(eligible), len(picks))
+    listed = indexes or universe.DEFAULT_INDEXES
+    # a --max test run cuts the universe on purpose: only judge baskets that still have stocks in it
+    judged = [n for n in listed if not max_tickers or n in universe.DROPPED or funnel["by_index_stages"]["universe"].get(n)]
+    dropped = dropped_baskets(judged, universe.DROPPED, funnel["by_index_stages"])
+    funnel["baskets"] = {"listed": len(listed), "scanned": funnel_scanned(funnel),
+                         "index_levels": len(universe.INDEXES)}
     result = {
         "date": asof.date().isoformat(),
-        "dropped_baskets": [{"name": n, "reason": r} for n, r in universe.DROPPED.items()],
-        "funnel": _funnel(tags, tickers, stock_prices, tech, len(eligible), len(picks)),
+        "dropped_baskets": dropped,
+        "funnel": funnel,
         "spy_spark": [round(float(x), 2) for x in bench.tail(60)],
         "technical": {k: tech[k] for k in ("asof", "dropped", "horizons", "scores", "spark")},
         "indexes": index_snapshot(price_map),
@@ -171,6 +205,27 @@ def run(indexes: list[str] | None = None, top_n: int = TOP_N, live_constituents:
     except Exception as exc:
         log.exception("report failed (%s); latest_scan.json is saved", exc)
     return result
+
+
+def dropped_baskets(names, load_failures: dict[str, str], stages: dict) -> list[dict]:
+    """Every basket with no stock that passed the data checks, with the reason, so the site flag fires whenever
+    a basket is effectively missing: its list failed to load, its prices did not download (for example the download
+    budget ran out before its batches), or none of its stocks passed the checks."""
+    out = []
+    for n in names:
+        if n in load_failures:
+            out.append({"name": n, "reason": load_failures[n]})
+        elif not stages["universe"].get(n):
+            out.append({"name": n, "reason": "no constituents listed"})
+        elif not stages["with_data"].get(n):
+            out.append({"name": n, "reason": f"no price data for any of its {stages['universe'][n]} stocks"})
+        elif not stages["passed_checks"].get(n):
+            out.append({"name": n, "reason": "no stock passed the data checks"})
+    return out
+
+
+def funnel_scanned(funnel: dict) -> int:
+    return sum(1 for v in funnel["by_index_stages"]["passed_checks"].values() if v)
 
 
 def _funnel(tags, tickers, stock_prices, tech, n_scored, n_picks) -> dict:

@@ -5,6 +5,7 @@ on:
   workflow_dispatch:
 permissions:
   contents: write
+  actions: write   # only to request a catch-up run of daily-scan.yml in this repo
 concurrency:
   group: scan-watchdog
   cancel-in-progress: false
@@ -37,6 +38,13 @@ jobs:
             sleep $((attempt * 5))
           done
           exit 1
+      - name: Request a catch-up scan when the newest closed session has no scan
+        # The scan's gate re-checks, so this never runs a second scan for a date that already has one. The scan cuts
+        # every price series at the closed session's date, so a catch-up during market hours is still correct.
+        if: steps.check.outputs.catch_up == 'true'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: gh workflow run daily-scan.yml --ref main -f force=false -R "${{ github.repository }}"
       - name: Fail if a scan was missed
         if: steps.check.outcome == 'failure'
         run: |
