@@ -21,10 +21,10 @@
   function shell() {
     return '<div class="tm" id="tm"><div class="tmhead"><span class="tml"><i class="tmdot"></i>Range terminal <span id="tmt">&middot;</span></span>' +
       '<button type="button" class="tmpause" id="tmp" aria-pressed="false">Pause motion</button></div>' +
-      '<div class="tmchart"><canvas id="tmc" role="img" aria-label="Recent price candles, then a fan of 20 trading day paths drawn from the stock\'s own past daily moves."></canvas>' +
+      '<div class="tmchart"><canvas id="tmc" role="img" aria-label="Recent price candles, then a fan of 20 trading day paths drawn from the stock\'s own past daily moves." aria-describedby="tmdesc"></canvas><span class="sr" id="tmdesc"></span>' +
       '<span class="tmtag tmnow">Now</span><span class="tmtag tmill">Illustrative motion, not market data</span></div>' +
       '<div class="tmgrid"><div class="tmcol tmmet"><span class="tml">Last close</span><b class="tmbig tmnum" id="tmlast">0.00</b>' +
-      '<div class="tmq"><span><span class="tml">10th, 20d</span><b class="tmnum" id="tm10">n/a</b></span><span><span class="tml">Median</span><b class="tmnum" id="tm50">n/a</b></span><span><span class="tml">90th</span><b class="tmnum" id="tm90">n/a</b></span></div>' +
+      '<span class="tmrng">Range, 20d (bootstrap)</span><div class="tmq"><span><span class="tml">10th</span><b class="tmnum" id="tm10">n/a</b></span><span><span class="tml">Median</span><b class="tmnum" id="tm50">n/a</b></span><span><span class="tml">90th</span><b class="tmnum" id="tm90">n/a</b></span></div>' +
       '<div class="tmeq" id="tmeq" aria-label="Index moves on the latest scan day" role="img"></div><div class="tmrow"><span class="tml">Regime</span><span class="tmbadge" id="tmreg">n/a</span></div></div>' +
       '<div class="tmcol tmgau"><div class="tmgs">' + gauge("tmg1", "Paths ending up") + gauge("tmg2", "Replay hits") + gauge("tmg3", "Passed checks") + "</div>" +
       '<div class="tmfr" id="tmfr"></div></div>' +
@@ -56,6 +56,7 @@
       document.getElementById("tm10").textContent = money(sim.p10);
       document.getElementById("tm50").textContent = money(sim.p50);
       document.getElementById("tm90").textContent = money(sim.p90);
+      document.getElementById("tmdesc").textContent = "Range over 20 trading days from " + sim.n + " bootstrap paths: 10th percentile " + money(sim.p10) + ", median " + money(sim.p50) + ", 90th percentile " + money(sim.p90) + ". " + sim.upPct + "% of paths end up.";
       var rb = document.getElementById("tmreg"); rb.textContent = reg.label; rb.classList.toggle("trend", reg.label === "TRENDING");
       /* log: real scan facts as JSON lines */
       var lines = [kv({ scan: L.asof, universe: f.universe, passed: f.passed_checks, scored: f.scored, picks: f.picks })];

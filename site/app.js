@@ -148,7 +148,7 @@
   function heatColor(v, max) {
     if (v == null) return "rgba(141,135,119,.14)";
     var t = Math.max(-1, Math.min(1, v / max)), a = (0.14 + 0.5 * Math.abs(t)).toFixed(2);
-    return t >= 0 ? "rgba(212,175,55," + a + ")" : "rgba(194,85,63," + a + ")";
+    return t >= 0 ? "rgba(52,224,214," + (a * 0.6).toFixed(2) + ")" : "rgba(255,122,69," + (a * 0.6).toFixed(2) + ")";
   }
   function relTxt(v) { return v == null ? "n/a" : (v >= 0 ? "+" : "") + (v * 100).toFixed(1) + "%"; }
   function sectorHtml(secs) {

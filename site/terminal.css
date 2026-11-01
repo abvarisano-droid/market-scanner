@@ -32,7 +32,8 @@ a{color:var(--tm-cyan)}
 .fill{background:var(--tm-cyan)} .fill.bear{background:var(--tm-down)}
 .btn{background:var(--tm-cyan);color:#021014;border-color:transparent;box-shadow:0 0 22px -6px rgba(52,224,214,.7)}
 .btn.ghost{background:transparent;color:var(--tm-cyan);border:1px solid rgba(52,224,214,.4);box-shadow:none}
-.tab[aria-selected=true]{color:var(--tm-cyan);border-color:var(--tm-cyan)}
+.tab[aria-selected=true]{color:var(--tm-cyan)!important;background:rgba(52,224,214,.12)!important;border-color:var(--tm-cyan)!important;box-shadow:inset 0 0 0 1px rgba(52,224,214,.35)}
+.sec:hover,.sec[aria-pressed=true]{border-color:rgba(52,224,214,.7)!important;background:rgba(52,224,214,.07)!important}
 input,select{font-family:var(--tm-mono)}
 /* panels: glow, not frosted glass */
 .card,.cols>div,.stat,.mx,.soon,.ringwrap,.v5strip,.heatrow,.lt .ltbar,.hzs .hz,.tw,.lg-tile,.lcard,.fund .fc,.sec,.ix{
@@ -84,10 +85,10 @@ footer{border-top-color:rgba(52,224,214,.1)}
 .tmlogv{position:relative;flex:1;overflow:hidden;-webkit-mask-image:linear-gradient(180deg,transparent,#000 18%,#000 82%,transparent);mask-image:linear-gradient(180deg,transparent,#000 18%,#000 82%,transparent)}
 .tmlogin{animation:tmscroll var(--dur,40s) linear infinite;will-change:transform}
 .tmlogin p,.tmlogin div p{margin:0 0 5px;font:11px/1.45 var(--tm-mono);color:#7d8b96;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.tmlogin .k{color:#6c7a85}.tmlogin .v{color:var(--tm-cyan)}
+.tmlogin .k{color:#8a98a6}.tmlogin .v{color:var(--tm-cyan)}
 @keyframes tmscroll{to{transform:translateY(-50%)}}
 .tm.still .tmlogin,.tm.still .tmdot{animation-play-state:paused}
-.tmnote{margin:0;padding:10px 16px 12px;border-top:1px solid rgba(52,224,214,.08);font:11px/1.5 var(--tm-mono);color:#7f8e99}
+.tmnote{margin:0;padding:10px 16px 12px;border-top:1px solid rgba(52,224,214,.08);font:12px/1.5 var(--tm-mono);color:#7f8e99}
 @media(max-width:899px){
   .tmgrid{grid-template-columns:1fr 1fr}
   .tmlog{grid-column:1/-1;border-left:0;border-top:1px solid rgba(52,224,214,.08);height:180px}
@@ -112,7 +113,7 @@ footer{border-top-color:rgba(52,224,214,.1)}
 .lstage{border:1px solid rgba(52,224,214,.18);box-shadow:inset 0 2px 10px rgba(0,0,0,.4)}
 .lhero>.rgp .rgnote{color:var(--muted)}
 .lhero input[type=search]{background:#03080c;color:var(--text);border:1px solid rgba(52,224,214,.22);box-shadow:none}
-.lhero input::placeholder{color:#5f7280}
+.lhero input::placeholder{color:#8a98a6}
 .lhero .lsearch .btn{background:var(--tm-cyan);color:#021014;border-color:transparent;box-shadow:0 0 22px -6px rgba(52,224,214,.7)}
 .lhero :focus-visible{outline-color:var(--tm-cyan)}
 .tmq{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
@@ -121,3 +122,9 @@ footer{border-top-color:rgba(52,224,214,.1)}
 @media(max-width:360px){.tmq b{font-size:12.5px}.tmq .tml{font-size:9.5px}.tmhead .tml{font-size:9.5px}.tmpause{padding:0 10px}}
 .tmhead>.tml{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;min-width:0}#tmt{display:inline-block;min-width:8ch}.tmpause{flex:0 0 auto}
 .hero::before,.hero::after{filter:hue-rotate(150deg)}
+/* paused or reduced motion: the log becomes a normal scrollable list, wrapped, every line reachable */
+.tm.still .tmlogv{overflow-y:auto;-webkit-mask-image:none;mask-image:none}
+.tm.still .tmlogin{animation:none;transform:none}
+.tm.still .tmlogin>div{display:none}
+.tm.still .tmlogin p{white-space:normal;overflow-wrap:anywhere;text-overflow:clip}
+.tmrng{font-size:9.5px;color:#8a98a6;letter-spacing:.06em;text-transform:uppercase}
