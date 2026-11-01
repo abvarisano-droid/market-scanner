@@ -252,7 +252,7 @@
       '<a class="lcard" href="#/track"><span class="label">Track record</span><b>Every call, graded</b><span class="lsub">Each call is scored against the S&amp;P 500 over 5, 20 and 60 trading days, misses included.</span><span class="lgo">See the record &rarr;</span></a></section>';
     requestAnimationFrame(function () { app.classList.remove("boot"); app.removeAttribute("aria-busy"); });
     var host = document.getElementById("lstage"), stocks = {};
-    S.heroW = window.innerWidth;
+    S.rgW = window.innerWidth;
     S.rg = V5.hero({ host: host, after: host, side: host.clientWidth >= 900, onTicker: function (t, d) {
       stocks = d.stocks;
       var fe = document.getElementById("lfeat"); if (fe) fe.textContent = "Featured: " + t + ", the largest company by US-dollar market cap with a stock page. Not a pick.";
@@ -523,7 +523,7 @@
       el.hidden = false;
     }).catch(function () {});
     window.addEventListener("hashchange", route);
-    var rt; window.addEventListener("resize", function () { clearTimeout(rt); rt = setTimeout(function () { if (/^#\/scan/.test(location.hash)) home(); else if (S.rg && Math.abs(window.innerWidth - S.heroW) > 40) landing(); }, 250); });
+    var rt; window.addEventListener("resize", function () { clearTimeout(rt); rt = setTimeout(function () { if (/^#\/scan/.test(location.hash)) home(); else if (S.rg && Math.abs(window.innerWidth - S.rgW) > 40) landing(); }, 250); });
     route();
   }).catch(function () {
     app.classList.remove("boot"); app.removeAttribute("aria-busy");
