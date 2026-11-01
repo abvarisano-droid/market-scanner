@@ -3,9 +3,7 @@ on:
   schedule:
     - cron: "7 13 * * 1-6"   # 13:07 UTC Mon to Sat, after the 12:00 UTC deadline for the previous trading day (Saturday catches a missed Friday)
   workflow_dispatch:
-permissions:
-  contents: write
-  actions: write   # only to request a catch-up run of daily-scan.yml in this repo
+permissions: {}
 concurrency:
   group: scan-watchdog
   cancel-in-progress: false
@@ -13,18 +11,29 @@ jobs:
   watch:
     runs-on: ubuntu-latest
     timeout-minutes: 5
+    permissions:
+      contents: write  # commit site/data/watchdog.json
+      actions: write   # only to request a catch-up run of daily-scan.yml in this repo
     concurrency:
       group: repo-push
       cancel-in-progress: false
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262  # v4.4.0
         with: { fetch-depth: 0 }
-      - uses: actions/setup-python@v5
+      - uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065  # v5.6.0
         with: { python-version: "3.12" }
       - name: Check recent scans (reads git log only, no secrets, no network)
         id: check
         run: python -m scanner.watchdog
         continue-on-error: true
+      - name: Request a catch-up scan when the newest closed session has no scan
+        # The scan's gate re-checks, so this never runs a second scan for a date that already has one. The scan cuts
+        # every price series at the closed session's date, so a catch-up during market hours is still correct.
+        # Runs before the commit step, so a failed watchdog.json push can never block it.
+        if: always() && steps.check.outputs.catch_up == 'true'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: gh workflow run daily-scan.yml --ref main -f force=false -R "$GITHUB_REPOSITORY"
       - name: Commit watchdog.json
         run: |
           git config user.name "market-scanner-bot"
@@ -38,13 +47,6 @@ jobs:
             sleep $((attempt * 5))
           done
           exit 1
-      - name: Request a catch-up scan when the newest closed session has no scan
-        # The scan's gate re-checks, so this never runs a second scan for a date that already has one. The scan cuts
-        # every price series at the closed session's date, so a catch-up during market hours is still correct.
-        if: steps.check.outputs.catch_up == 'true'
-        env:
-          GH_TOKEN: ${{ github.token }}
-        run: gh workflow run daily-scan.yml --ref main -f force=false -R "${{ github.repository }}"
       - name: Fail if a scan was missed
         if: steps.check.outcome == 'failure'
         run: |

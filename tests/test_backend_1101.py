@@ -218,9 +218,9 @@ class _FakeClient:
         self.messages = self.beta.messages
 
 
-def _msg(text, stop="end_turn", usage=(700, 260, 0, 0)):
+def _msg(text, stop="end_turn", usage=(700, 260, 0, 0), model="claude-sonnet-5-5"):
     from anthropic.types import Message, TextBlock, ThinkingBlock, Usage
-    return Message(id="msg_1", type="message", role="assistant", model="claude-sonnet-5-5", stop_reason=stop,
+    return Message(id="msg_1", type="message", role="assistant", model=model, stop_reason=stop,
                    stop_sequence=None, content=[ThinkingBlock(type="thinking", thinking="", signature="sig"),
                                                 TextBlock(type="text", text=text)],
                    usage=Usage(input_tokens=usage[0], output_tokens=usage[1],
@@ -307,3 +307,29 @@ def test_pipeline_writes_usage_even_without_a_key(tmp_path, monkeypatch):
     pipeline.run(live_constituents=False)
     d = json.loads((tmp_path / "data" / "ai_usage.json").read_text())
     assert d["runs"][-1]["key_present"] is False and d["runs"][-1]["calls"] == 0
+
+
+def test_fallback_answer_is_priced_at_its_own_model(monkeypatch):
+    from scanner import news_ai
+    monkeypatch.setenv("ANTHROPIC_API_KEY", "test-not-a-key")
+    news_ai.start_run()
+    assert news_ai.ai_call(ROW, [], client=_FakeClient(_msg(GOOD, model="claude-opus-5-5")))
+    assert abs(news_ai.USAGE["cost_usd"] - (700 * 4 + 260 * 20) / 1e6) < 1e-9
+
+
+def test_banned_words_cover_ratings_and_targets():
+    from scripts import export_site
+    for w in ("rating", "Ratings", "target", "targets", "price target"):
+        assert export_site.BANNED.search(f"the {w} is"), w
+    assert not export_site.BANNED.search("cheap vs peers, consensus sits +20% from the last close")
+
+
+def test_workflow_hardening():
+    wf = (ROOT / ".github" / "workflows" / "daily-scan.yml").read_text()
+    wd = (ROOT / ".github" / "workflows" / "scan-watchdog.yml").read_text()
+    assert "${{ inputs.force }}\" ]" not in wf and '"$FORCE"' in wf and '"$EVENT"' in wf
+    assert "permissions: { contents: read }" in wf
+    assert '"$GITHUB_REPOSITORY"' in wd and "permissions: {}" in wd
+    assert wd.index("Request a catch-up scan") < wd.index("Commit watchdog.json") and "always() &&" in wd
+    for text in (wf, wd):
+        assert "@v4\n" not in text and "@v5\n" not in text  # actions pinned to full SHAs

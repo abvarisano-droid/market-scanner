@@ -141,7 +141,8 @@ def _count(msg) -> None:
                                                      "cache_creation_input_tokens")}
     for k, v in vals.items():
         USAGE[k] += v
-    c = cost_usd(MODEL, vals["input_tokens"], vals["output_tokens"], vals["cache_read_input_tokens"],
+    # priced at the model that answered: a refusal fallback can be served by another model
+    c = cost_usd(getattr(msg, "model", MODEL) or MODEL, vals["input_tokens"], vals["output_tokens"], vals["cache_read_input_tokens"],
                  vals["cache_creation_input_tokens"])
     if c is not None:
         USAGE["cost_usd"] += c
