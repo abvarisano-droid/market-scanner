@@ -115,7 +115,7 @@ On phones all three collapse to the same stack. A wins on desktop because the lo
 ## 6. Accessibility and reduced motion
 
 - Opt-in on stock pages: the static cone stays the default. The pill is a real button with `aria-pressed`; its label swaps between "Play the range" and "Hide the range" (same width, no shift).
-- Stage controls are buttons in tab order right after the pill: Pause or Resume, Next (Replay again after the Today beat), Close.
+- Stage controls are buttons in tab order right after the pill: Pause or Resume, Next (labelled Replay after the Today beat), Close.
 - A visually hidden `role=status` live region announces each verdict, for example "Round 2 of 5: HIT. Real close 20 trading days later 256.57: HIT, inside the 10th to 90th band (232.59 to 278.81)."
 - The canvases and decorative beam, orb and ring are `aria-hidden`; every number is in the panel as text.
 - Reduced motion: no Web Animations, no frame loop, no Pause button. Each round renders its final frame (fan, median, tags, real candles, ring) and Next steps through.

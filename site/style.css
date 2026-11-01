@@ -539,3 +539,4 @@ h3{letter-spacing:-.006em;line-height:1.2}
 .rgpx{display:grid;grid-template-columns:44px minmax(0,1fr) 112px;align-items:baseline}
 .rgpx .rgn{text-align:center}.rgpx .rgd{text-align:right}
 .rgchip{min-width:86px;text-align:center;flex:0 0 auto}
+.rgnext{min-width:68px}
