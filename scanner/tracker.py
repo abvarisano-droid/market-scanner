@@ -119,6 +119,9 @@ def evaluate(led: pd.DataFrame, history: dict[str, pd.Series], bench: pd.Series)
             a = s[s.index >= r["date"]]
             b = _align(bench, a.index)
             e, be, off = r["entry"], r["bench_entry"], 0
+            if len(a) == 0 or len(b) == 0:  # no bars on or after the signal date (stale or delisted): not gradable yet
+                for k in out: out[k].append(None)
+                continue
         else:
             a = _after(s, r["date"])
             b = _align(bench, a.index)
