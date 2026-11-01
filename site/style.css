@@ -547,3 +547,177 @@ h3{letter-spacing:-.006em;line-height:1.2}
 .rgp>.rgnote{order:-1}
 .rg-side .rgp>.rgnote{order:0}
 @media(max-width:759px){.lfeat{min-height:3.2em}}
+
+/* ===== Liquid Glass v8 (2026-11-01). Spec: docs/liquid-glass-v8.md, shared layer in lg8.css (loaded after this file).
+   A lit room behind one glass shell: rail on the left (bottom tab bar on phones), the canvas on the right, the replay as the
+   gold hero card, KPI tiles, airy rows. No live blur anywhere: the room is already soft light, so a translucent fill reads
+   the same as frosted glass at none of the scroll cost. Motion: transform and opacity only, 160 / 320 / 480 ms on
+   cubic-bezier(.2,.8,.2,1). Delete this block, lg8.css and the v8shell wrapper to roll back. ===== */
+:root{
+  --bg:#120d08; --text:#f3eee2; --muted:#a8a191;
+  --v8-ink-dk:#17110a; --v8-ink-dk2:rgba(23,17,10,.78);
+  --v8-tint:rgba(34,27,19,.62); --v8-tint-solid:#221b13;
+  --v8-sans:var(--lg-sans,ui-sans-serif,system-ui,-apple-system,"Segoe UI",Roboto,sans-serif);
+  --v8-serif:var(--lg-serif,"Instrument Serif",ui-serif,Georgia,serif);
+  --serif:"Iowan Old Style","Palatino Linotype","Book Antiqua",Palatino,Georgia,"Times New Roman",serif;
+  --v8-rail:216px;
+}
+html{background:var(--bg)}
+body{background:var(--bg);background-image:none;font:15px/1.55 var(--v8-sans);color:var(--text)}
+/* the lit room: three soft glows (gold 22%, amber 14%, a cool counter hue 10%) over warm near-black; composited, never repainted */
+body::before{background:
+  radial-gradient(48vw 40vw at 10% 6%,rgba(212,175,55,.22),transparent 70%),
+  radial-gradient(44vw 36vw at 92% 22%,rgba(245,166,91,.14),transparent 70%),
+  radial-gradient(56vw 44vw at 62% 108%,rgba(91,124,250,.10),transparent 70%),var(--bg)}
+h1,h2,h3,.brand{font-family:var(--serif)}
+h1{font-size:clamp(32px,4.4vw,54px);line-height:1.06}
+.label,.chip,.tab,th,.stage .k{font-family:var(--v8-sans);font-size:11.5px;letter-spacing:.08em}
+.lede,.cap,.lone{font-family:var(--v8-sans)}
+.lede{color:var(--muted)}
+
+/* every view starts the same distance below the top, loading or loaded, so the swap never shifts (CLS 0) */
+#app{display:flow-root}
+#app>section:first-child{margin-top:24px}
+
+/* the shell */
+.v8shell{position:relative}
+.v8canvas{min-width:0}
+.v8canvas>main{max-width:1200px}
+.v8canvas>footer{max-width:1200px;border-top-color:rgba(236,224,186,.10)}
+.top .ic{width:18px;height:18px;flex:0 0 auto;fill:none;stroke:currentColor;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}
+.v8foot{display:none;margin:0}
+
+@media(min-width:900px){
+  .v8shell{display:grid;grid-template-columns:var(--v8-rail) minmax(0,1fr);max-width:1560px;margin:20px auto 28px;width:calc(100% - 40px);
+    border-radius:var(--lg-r-shell,30px);background:linear-gradient(180deg,rgba(255,255,255,.075),rgba(255,255,255,.025)),var(--v8-tint);
+    border:1px solid rgba(255,255,255,.13);box-shadow:var(--lg-hi),var(--lg-shadow-shell)}
+  /* rail: sticky inside the shell, glass a touch lighter than the canvas */
+  .top{position:sticky;top:20px;align-self:start;height:calc(100vh - 40px);max-height:880px;margin:0;max-width:none;flex-direction:column;align-items:stretch;justify-content:flex-start;flex-wrap:nowrap;gap:22px;
+    padding:22px 12px 18px;border-radius:var(--lg-r-shell,30px) 0 0 var(--lg-r-shell,30px);background:none;border:0;box-shadow:none;
+    -webkit-backdrop-filter:none;backdrop-filter:none}
+  .brand{padding:4px 10px 0;font-size:18px}
+  .top nav{flex-direction:column;gap:2px}
+  .top nav a{display:flex;align-items:center;gap:11px;min-height:40px;padding:0 12px;border-radius:12px;border:0;font:500 13.5px/1 var(--v8-sans);letter-spacing:0;text-transform:none;color:rgba(255,255,255,.72)}
+  .top nav a.on,.top nav a[aria-current]{color:#fff;background:rgba(255,255,255,.11);box-shadow:inset 0 1px 0 rgba(255,255,255,.14)}
+  .top nav a.on .ic{color:var(--gold)}
+  .v8foot{display:block;margin-top:auto;padding:0 12px;font-size:11px;color:var(--muted)}
+  .v8canvas{padding:8px 0 0;border-left:1px solid rgba(255,255,255,.08);background:rgba(0,0,0,.08);border-radius:0 var(--lg-r-shell,30px) var(--lg-r-shell,30px) 0}
+  .v8canvas>main,.v8canvas>footer{padding-left:36px;padding-right:36px}
+}
+@media(min-width:900px) and (hover:hover){.top nav a:hover{color:#fff;background:rgba(255,255,255,.06)}}
+
+/* phones and small tablets: brand row on top, the rail becomes a bottom glass tab bar (5 items; Replay lives on the brand) */
+@media(max-width:899px){
+  body{padding-bottom:calc(84px + env(safe-area-inset-bottom))}
+  .top{position:relative;top:auto;border-radius:0;max-width:none;margin:0;padding:14px 16px;background:none;border:0;box-shadow:none;-webkit-backdrop-filter:none;backdrop-filter:none}
+  .top nav{position:fixed;left:10px;right:10px;bottom:calc(10px + env(safe-area-inset-bottom));z-index:40;display:grid;grid-template-columns:repeat(5,1fr);gap:2px;padding:6px;
+    border-radius:22px;background:rgba(30,24,17,.95);border:1px solid rgba(255,255,255,.14);box-shadow:var(--lg-hi),0 18px 40px -12px rgba(0,0,0,.7)}
+  .top nav .v8home{display:none}
+  .top nav a,.top nav a:hover{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;min-height:52px;padding:4px 2px;border-radius:16px;border:0;background:none;
+    font:500 10.5px/1.1 var(--v8-sans);letter-spacing:0;text-transform:none;text-align:center;color:rgba(255,255,255,.66)}
+  .top nav a.on{color:#fff;background:rgba(255,255,255,.11)}
+  .top nav a.on .ic{color:var(--gold)}
+}
+
+/* the replay is the hero widget: one gold gradient card, dark ink, the replay instrument sunk into it */
+.lhero{position:relative;padding:22px 16px 18px;border-radius:var(--lg-r-card,22px);color:var(--v8-ink-dk);
+  background:linear-gradient(160deg,#e6c656,#c9a43a 46%,#a8862c);border:1px solid rgba(255,255,255,.28);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.45),inset 0 -1px 0 rgba(0,0,0,.18),0 30px 70px -24px rgba(0,0,0,.7),0 18px 50px -20px rgba(212,175,55,.35)}
+.lhero h1{color:var(--v8-ink-dk);max-width:18ch}
+.lhero h1 em{color:var(--v8-ink-dk)}
+.lhtext .label{color:var(--v8-ink-dk2)!important}
+.lfeat{color:var(--v8-ink-dk2)!important}
+.lhero .label,.lhero .lfeat{font-weight:600}
+.lstage{border:1px solid rgba(0,0,0,.35);border-radius:16px;box-shadow:0 2px 0 rgba(255,255,255,.25),inset 0 2px 10px rgba(0,0,0,.4)}
+.lstage .rg{border-radius:15px}
+.lhero>.rgp .rgnote{color:var(--v8-ink-dk)}
+.lhero .lone{color:var(--v8-ink-dk)}
+.lhero .lnote{color:var(--v8-ink-dk2)}
+.lhero input[type=search]{background:rgba(23,17,10,.86);color:#f3eee2;border:1px solid rgba(0,0,0,.4);box-shadow:inset 0 1px 2px rgba(0,0,0,.5)}
+.lhero input::placeholder{color:#b5ad98}
+.lhero .lsearch .btn{background:var(--v8-ink-dk);color:#f1d36b;border-color:var(--v8-ink-dk);box-shadow:0 10px 24px -12px rgba(0,0,0,.8)}
+.lhero :focus-visible{outline-color:var(--v8-ink-dk)}
+@media(min-width:760px){.lhero{padding:30px 28px 24px}}
+
+/* KPI tiles: label, serif number, quiet line; fixed heights so nothing shifts */
+.v8kpis{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:16px}
+.v8kpis .v8kpi{display:flex;flex-direction:column;gap:6px;min-height:112px;padding:16px 18px;
+  background:linear-gradient(180deg,rgba(255,255,255,.10),rgba(255,255,255,.035)),var(--v8-tint-solid)!important;border-color:rgba(255,255,255,.13)!important}
+.v8kpi .lg-label{font-family:var(--v8-sans);color:rgba(255,255,255,.72)}
+.v8kpi .lg-num{font-family:var(--serif);font-size:34px;color:#fff}
+.v8kpi .lg-sub{font-size:12.5px;color:rgba(255,255,255,.6)}
+@media(min-width:760px){.v8kpis{grid-template-columns:repeat(4,1fr)}.v8kpi .lg-num{font-size:40px}}
+
+/* ways in: glass cards */
+.lcards{margin-top:16px}
+.lcard{border-radius:var(--lg-r-card,22px);background:linear-gradient(180deg,rgba(255,255,255,.09),rgba(255,255,255,.03)),var(--v8-tint-solid);border-color:rgba(255,255,255,.12)}
+.lcard b{font-family:var(--serif)}
+.lgo{font-family:var(--v8-sans);letter-spacing:.06em}
+
+/* every glass panel: rounder, lighter edge */
+.v5strip,.card,.chartbox,.soon,.ringwrap,.cols>div,.mx,.tw,.lt .ltbar,.hero:has(#cv){border-radius:var(--lg-r-card,22px)}
+.stat,.sec,.hzs .hz{border-radius:var(--lg-r-tile,18px)}
+.stat .v,.ring .c b,.hz .big,.stage .n{font-variant-numeric:tabular-nums}
+
+/* airy rows on the stock lists */
+.cols>div{padding:18px 10px 8px}
+.listhead{padding:0 10px 10px}
+.row{padding:16px 12px;border-radius:14px;border-bottom-color:rgba(236,224,186,.07)}
+.tk{font-family:var(--v8-sans);font-weight:650;letter-spacing:.02em}
+.why{font-size:13.5px;color:#c4bdab}
+.track{height:4px;background:rgba(255,255,255,.08);border-radius:9999px}
+.chip{font-family:var(--v8-sans);font-weight:600;letter-spacing:.06em}
+th,td{padding:12px 14px}
+
+/* interaction layer on this product's own classes (lg8.css covers the .lg-* ones) */
+.lcard,.stat,.sec,.row,.v8kpi,.cols>div{transition:transform var(--lg-t-state,160ms) var(--lg-ease),opacity var(--lg-t-state,160ms) var(--lg-ease)}
+.lcard,.stat{position:relative}
+.lcard::after,.stat::after{content:"";position:absolute;inset:0;border-radius:inherit;pointer-events:none;background:linear-gradient(120deg,rgba(255,255,255,.10),transparent 45%);opacity:0;transition:opacity var(--lg-t-state,160ms) var(--lg-ease)}
+@media(hover:hover) and (pointer:fine){
+  .lcard:hover,.stat:hover{transform:translateY(-3px)}
+  .lcard:hover::after,.stat:hover::after{opacity:1}
+  .row{position:relative}
+  .row::before{content:"";position:absolute;inset:0;border-radius:inherit;background:rgba(255,255,255,.045);opacity:0;pointer-events:none;transition:opacity var(--lg-t-state,160ms) var(--lg-ease)}
+  .row:hover::before{opacity:1}
+}
+:where(a,button,input,select,textarea,[tabindex]):focus-visible{outline:2px solid var(--gold);outline-offset:3px}
+
+/* view swap: each new view rises 8px into place as it is drawn; the shell and rail never move. Starts at .4 opacity so the
+   first paint already counts (LCP), transform and opacity only, off under reduced motion */
+@keyframes v8in{from{opacity:.4;transform:translateY(8px)}to{opacity:1;transform:none}}
+@media(prefers-reduced-motion:no-preference){#app:not(.boot)>*{animation:v8in var(--lg-t-swap,320ms) var(--lg-ease,cubic-bezier(.2,.8,.2,1)) backwards}}
+
+.ixs{scroll-snap-type:x proximity;overscroll-behavior-x:contain}
+.ixs>*{scroll-snap-align:start}
+
+/* fallbacks */
+@media(prefers-reduced-transparency:reduce){
+  .v8shell{background:var(--v8-tint-solid)}
+  .top nav{background:#1e1811}
+}
+@media(prefers-contrast:more){
+  .v8shell,.top nav{border-color:rgba(255,255,255,.45)}
+  .lhero{background:#d4af37}
+  .lfeat,.lhtext .label,.lhero .lnote{color:var(--v8-ink-dk)!important}
+}
+@media(prefers-reduced-motion:reduce){.lcard:hover,.stat:hover{transform:none}}
+@media print{.v8shell{display:block;background:none;box-shadow:none;border:0}.top nav{position:static}}
+@media(max-width:899px){.v8shell{border:0;border-radius:0;background:none;box-shadow:none}}
+/* wide screens (layout C of the three compared, see docs/liquid-glass-v8.md): the KPI tiles float as a widget column beside the
+   replay. Only from 1600px, where the replay stage still gets its 900px side panel. */
+@media(min-width:1600px){
+  .v8canvas>main,.v8canvas>footer{max-width:1360px}
+  #app:has(.lhero){display:grid;align-content:start;grid-template-columns:minmax(0,1fr) 248px;column-gap:20px}
+  #app:has(.lhero)>*{grid-column:1;align-self:start}
+  #app:has(.lhero)>.v8kpis{grid-column:2;grid-row:1;grid-template-columns:1fr;align-self:start;margin:24px -24px 0 0;position:relative;z-index:2}
+  #app:has(.lhero) .v8kpi{box-shadow:var(--lg-hi),var(--lg-shadow-card)}
+}
+/* fix round (QA): from 900 to 1365px a narrower rail and canvas padding keep the replay host at 900px or more, so the live
+   side panel stays beside the chart on the landing and stock pages */
+@media(min-width:900px) and (max-width:1365px){
+  :root{--v8-rail:200px}
+  .v8canvas>main,.v8canvas>footer{padding-left:24px;padding-right:24px}
+  .lhero{padding-left:18px;padding-right:18px}
+}
+/* phones: the brand is the way back to the replay, so it gets a full 44px target */
+.top .brand{min-height:44px;display:inline-flex;align-items:center}

@@ -234,6 +234,15 @@
     });
   }
 
+  /* v8 KPI tiles under the replay: the same four facts the landing already states, nothing new */
+  function kpis(f, nIdx, asof) {
+    var t = [["Stocks scanned", f.universe.toLocaleString(), "from the major indexes"], ["Setups out", String(f.picks), "bullish and bearish"],
+      ["Indexes", String(nIdx), "in the scan"], ["Latest scan", esc(asof), "after the US close"]];
+    return '<section class="v8kpis" aria-label="Scan at a glance">' + t.map(function (k) {
+      return '<div class="lg-tile v8kpi"><span class="lg-label">' + k[0] + '</span><b class="lg-num">' + k[1] + '</b><span class="lg-sub">' + k[2] + "</span></div>";
+    }).join("") + "</section>";
+  }
+
   /* ---------- landing: the replay is the hero, then one line, the ticker search and three ways in ----------
      Spec: docs/forecast-cone-animation.md (landing section). The scan itself moved one click deeper, to #/scan. */
   function landing() {
@@ -245,7 +254,7 @@
       '<p class="lfeat label" id="lfeat">&nbsp;</p><div class="lstage" id="lstage"></div>' +
       '<div class="lflow"><p class="lede lone">Market Scanner runs ' + f.universe.toLocaleString() + " stocks from " + nIdx + ' major indexes through plain rules every weekday and grades every call against the S&amp;P 500, in public. Find a stock below.</p>' +
       '<form class="search lsearch" id="lf" autocomplete="off" role="search"><label class="sr" for="lq">Ticker</label><input type="search" id="lq" list="ltl" placeholder="Search a ticker, like GOOGL" enterkeyhint="go"><datalist id="ltl"></datalist><button type="submit" class="btn">Open</button></form>' +
-      '<p class="note lnote" id="lmsg" role="status"></p></div></section>' + dropNote() +
+      '<p class="note lnote" id="lmsg" role="status"></p></div></section>' + dropNote() + kpis(f, nIdx, L.asof) +
       '<section class="lcards" aria-label="Where to go next">' +
       '<a class="lcard" href="#/scan"><span class="label">Today\u2019s scan</span><b>' + f.universe.toLocaleString() + " in, " + f.picks + ' setups out</b><span class="lsub">The full funnel, sectors and the ranked bullish and bearish lists, as of ' + esc(L.asof) + '.</span><span class="lgo">Open the scan &rarr;</span></a>' +
       '<a class="lcard" id="lcs" href="#/lookup"><span class="label">Stock pages</span><b>Three years of price</b><span class="lsub">Candles, indicator layers, the volatility cone and the full five-round replay.</span><span class="lgo">Open a stock &rarr;</span></a>' +
