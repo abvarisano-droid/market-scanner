@@ -57,7 +57,7 @@ footer{border-top-color:rgba(52,224,214,.1)}
 .tmpause{font:500 11px/1 var(--tm-mono);letter-spacing:.06em;text-transform:uppercase;color:var(--tm-cyan);background:rgba(52,224,214,.06);border:1px solid rgba(52,224,214,.3);border-radius:999px;height:32px;min-width:44px;padding:0 14px;cursor:pointer}
 .tmchart{position:relative;height:clamp(260px,38vw,460px);background:radial-gradient(rgba(52,224,214,.10) 1px,transparent 1.3px) 0 0/20px 20px,radial-gradient(ellipse 45% 60% at 50% 50%,rgba(52,224,214,.07),transparent 70%),#03080c}
 .tmchart canvas{position:absolute;inset:0;width:100%;height:100%;display:block}
-.tmtag{position:absolute;font:500 10px/1 var(--tm-mono);letter-spacing:.08em;text-transform:uppercase;padding:5px 8px;border-radius:6px;pointer-events:none}
+.tmtag{position:absolute;font:500 11px/1 var(--tm-mono);letter-spacing:.08em;text-transform:uppercase;padding:5px 8px;border-radius:6px;pointer-events:none}
 .tmnow{top:10px;left:calc(50% - 22px);color:#021014;background:var(--tm-cyan);box-shadow:0 0 14px rgba(52,224,214,.6)}
 .tmill{bottom:8px;left:12px;color:#9fb0bb;background:rgba(3,8,12,.75);border:1px solid rgba(255,255,255,.08)}
 .tmgrid{display:grid;grid-template-columns:1fr 1.15fr 1.2fr;border-top:1px solid rgba(52,224,214,.1)}
@@ -84,7 +84,7 @@ footer{border-top-color:rgba(52,224,214,.1)}
 .tmfr b{font-size:13px}
 .tmlogv{position:relative;flex:1;overflow:hidden;-webkit-mask-image:linear-gradient(180deg,transparent,#000 18%,#000 82%,transparent);mask-image:linear-gradient(180deg,transparent,#000 18%,#000 82%,transparent)}
 .tmlogin{animation:tmscroll var(--dur,40s) linear infinite;will-change:transform}
-.tmlogin p,.tmlogin div p{margin:0 0 5px;font:11px/1.45 var(--tm-mono);color:#7d8b96;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.tmlogin p,.tmlogin div p{margin:0 0 5px;font:12px/1.45 var(--tm-mono);color:#7d8b96;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .tmlogin .k{color:#8a98a6}.tmlogin .v{color:var(--tm-cyan)}
 @keyframes tmscroll{to{transform:translateY(-50%)}}
 .tm.still .tmlogin,.tm.still .tmdot{animation-play-state:paused}
@@ -100,7 +100,7 @@ footer{border-top-color:rgba(52,224,214,.1)}
   .tmmet{height:206px}.tmgau{height:206px}.tmlog{height:170px}
   .tmbig{font-size:32px}
   .tmhead{padding:0 12px}
-  .tmlogin p{font-size:10.5px}
+  .tmlogin p{font-size:11.5px}
 }
 @media(prefers-reduced-motion:reduce){.tmlogin,.tmdot{animation:none!important}}
 /* the replay card under the terminal: dark terminal panel instead of the gold card */
@@ -128,3 +128,4 @@ footer{border-top-color:rgba(52,224,214,.1)}
 .tm.still .tmlogin>div{display:none}
 .tm.still .tmlogin p{white-space:normal;overflow-wrap:anywhere;text-overflow:clip}
 .tmrng{font-size:9.5px;color:#8a98a6;letter-spacing:.06em;text-transform:uppercase}
+.tmill{white-space:nowrap}@media(max-width:360px){.tmill{font-size:9.5px;letter-spacing:.04em}}

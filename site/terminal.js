@@ -28,13 +28,13 @@
       '<div class="tmeq" id="tmeq" aria-label="Index moves on the latest scan day" role="img"></div><div class="tmrow"><span class="tml">Regime</span><span class="tmbadge" id="tmreg">n/a</span></div></div>' +
       '<div class="tmcol tmgau"><div class="tmgs">' + gauge("tmg1", "Paths ending up") + gauge("tmg2", "Replay hits") + gauge("tmg3", "Passed checks") + "</div>" +
       '<div class="tmfr" id="tmfr"></div></div>' +
-      '<div class="tmcol tmlog" aria-label="Scan log" role="region" tabindex="0"><span class="tml">Scan log</span><div class="tmlogv"><div class="tmlogin" id="tmlog"></div></div></div></div>' +
+      '<div class="tmcol tmlog"><span class="tml">Scan log</span><div class="tmlogv" aria-label="Scan log" role="region" tabindex="0"><div class="tmlogin" id="tmlog"></div></div></div></div>' +
       '<p class="tmnote">Paths: a bootstrap of the stock\'s own past daily moves over 20 trading days, demeaned. A range of typical moves, not a forecast. Not investment advice.</p></div>';
   }
   function kv(o) {
     return "{" + Object.keys(o).map(function (k) { return '<span class="k">"' + esc(k) + '"</span>:<span class="v">' + esc(typeof o[k] === "string" ? '"' + o[k] + '"' : String(o[k])) + "</span>"; }).join(",") + "}";
   }
-  function stop() { if (CUR) { CUR.dead = true; cancelAnimationFrame(CUR.raf); if (CUR.io) CUR.io.disconnect(); window.removeEventListener("resize", CUR.rs); CUR = null; } }
+  function stop() { if (CUR) { CUR.dead = true; cancelAnimationFrame(CUR.raf); if (CUR.io) CUR.io.disconnect(); window.removeEventListener("resize", CUR.rs); if (CUR.vis) document.removeEventListener("visibilitychange", CUR.vis); CUR = null; } }
 
   function mount(host, L, t, ch) {
     stop();
@@ -49,9 +49,13 @@
     }).join("");
     document.getElementById("tmfr").innerHTML = [["Picks", f.picks + "/" + f.scored], ["Bullish", hz.counts.Bullish + "/" + f.scored], ["Bearish", hz.counts.Bearish + "/" + f.scored], ["Indexes", String(Object.keys(L.funnel.by_index).length)]]
       .map(function (x) { return '<span><span class="tml">' + x[0] + '</span><b class="tmnum">' + x[1] + "</b></span>"; }).join("");
-    range().then(function (R) {
+    function idle() { return new Promise(function (ok) { var go = function () { requestAnimationFrame(function () { setTimeout(ok, 0); }); };
+      if (window.requestIdleCallback) requestIdleCallback(go, { timeout: 2500 }); else setTimeout(go, 600); }); }
+    idle().then(range).then(function (R) {
       if (me.dead || !document.getElementById("tm10")) return;
-      var dc = ch.dc, k = dc.length - 1, sim = R.simulate(dc, k, 20, t + "|today20"), reg = R.regime(dc, k), sm = R.summary(dc, t);
+      var dc = ch.dc, k = dc.length - 1, sim = R.simulate(dc, k, 20, t + "|today20"), reg = R.regime(dc, k), sm = { hits: 0, rounds: [] };
+      /* same rounds and seeds as RANGE.summary, without its 252 day run that this panel does not use */
+      R.roundDays(dc).forEach(function (kk, j) { var r = R.replay(dc, t, j, kk); if (r.hit) sm.hits++; sm.rounds.push(r); });
       var nR = sm.rounds.length, hitPct = nR ? sm.hits / nR : 0, passPct = f.passed_checks / f.universe;
       document.getElementById("tm10").textContent = money(sim.p10);
       document.getElementById("tm50").textContent = money(sim.p50);
@@ -107,7 +111,7 @@
       for (i = o0; i < ch.c.length; i++) { lo = Math.min(lo, ch.l[i] || ch.c[i]); hi = Math.max(hi, ch.h[i] || ch.c[i]); }
       paths.forEach(function (q) { q.pts.forEach(function (v) { lo = Math.min(lo, v); hi = Math.max(hi, v); }); });
       var pad = (hi - lo) * 0.08, top = 34, bot = H - 26;
-      G = { xNow: xNow, step: (W - 70 - xNow) / sim.h, cw: (xNow - 16) / nC, paths: paths, Y: function (v) { return bot - (v - lo + pad) / (hi - lo + 2 * pad) * (bot - top); }, top: top, bot: bot };
+      G = { xNow: xNow, step: (W - xNow - 52 - (ctx.font = "12px ui-monospace,SFMono-Regular,Menlo,Consolas,monospace", Math.max(ctx.measureText(money(sim.p90)).width, ctx.measureText(money(sim.p10)).width))) / sim.h, cw: (xNow - 16) / nC, paths: paths, Y: function (v) { return bot - (v - lo + pad) / (hi - lo + 2 * pad) * (bot - top); }, top: top, bot: bot };
     }
     function pathXY(q, s, t) {
       var sway = reduce ? 0 : Math.sin(t * 0.0009 + q.ph + s * 0.35) * 2.2 * (s / sim.h);
@@ -159,10 +163,10 @@
       ctx.globalCompositeOperation = "source-over";
       ctx.fillStyle = "#eafffd"; ctx.beginPath(); ctx.arc(G.xNow, yN, 3.4 + 1.6 * fl, 0, 6.2832); ctx.fill();
       /* real end labels: 90th, median, 10th of all 1000 paths */
-      ctx.font = "11px ui-monospace,SFMono-Regular,Menlo,Consolas,monospace"; ctx.textBaseline = "middle";
-      var xe = G.xNow + sim.h * G.step + 6, ys = [[sim.p90, "90th "], [sim.p50, "Med "], [sim.p10, "10th "]].map(function (r) { return [G.Y(r[0]), r]; });
+      ctx.font = "12px ui-monospace,SFMono-Regular,Menlo,Consolas,monospace"; ctx.textBaseline = "middle";
+      var lw = Math.max.apply(null, [sim.p90, sim.p50, sim.p10].map(function (v) { return ctx.measureText(money(v)).width; })), xe = Math.min(G.xNow + sim.h * G.step + 6, W - 34 - lw - 6), ys = [[sim.p90, "90th "], [sim.p50, "Med "], [sim.p10, "10th "]].map(function (r) { return [G.Y(r[0]), r]; });
       for (var m = 1; m < 3; m++) if (ys[m][0] - ys[m - 1][0] < 14) ys[m][0] = ys[m - 1][0] + 14;
-      ys.forEach(function (r) { ctx.fillStyle = "rgba(160,170,180,.85)"; ctx.fillText(r[1][1], xe - 4, r[0]); ctx.fillStyle = "#e9c46a"; ctx.fillText(money(r[1][0]), xe + 28, r[0]); });
+      ys.forEach(function (r) { ctx.fillStyle = "rgba(160,170,180,.85)"; ctx.fillText(r[1][1], xe, r[0]); ctx.fillStyle = "#e9c46a"; ctx.fillText(money(r[1][0]), xe + 34, r[0]); });
     }
     layout();
     var last = 0;
@@ -175,7 +179,8 @@
     me.rs = function () { if (me.dead) return; layout(); draw(last || performance.now()); };
     window.addEventListener("resize", me.rs);
     if (window.IntersectionObserver) { me.io = new IntersectionObserver(function (en) { me.seen = en[0].isIntersecting; if (me.seen) me.go(); }); me.io.observe(cv); }
-    document.addEventListener("visibilitychange", function () { if (!document.hidden && CUR === me) me.go(); });
+    me.vis = function () { if (!document.hidden && CUR === me) me.go(); };
+    document.addEventListener("visibilitychange", me.vis);
     me.go();
   }
   window.TERM = { mount: mount, stop: stop, shell: shell };
