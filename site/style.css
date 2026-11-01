@@ -496,11 +496,11 @@ h3{letter-spacing:-.006em;line-height:1.2}
 .rghr div{display:flex;align-items:baseline;justify-content:space-between}
 .rgh{font:500 24px/1.1 var(--mono);color:var(--rg-hit);font-variant-numeric:tabular-nums}
 .rgfr{font-size:13px;color:var(--rg-ink)}
-.rgrg{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.rgrg{display:flex;align-items:center;gap:8px;min-width:0}
 .rgchip{font:700 10px var(--mono);letter-spacing:.14em;border-radius:4px;padding:4px 8px;border:1px solid currentColor}
 .rgchip.tr{color:var(--rg-teal);background:rgba(58,214,196,.08)} .rgchip.ch{color:var(--rg-amber);background:rgba(224,164,58,.08)}
-.rgrs{font-size:10px;color:var(--rg-mute)}
-.rglog{grid-column:1/-1;list-style:none;margin:0;padding:8px 10px;height:132px;overflow:hidden;background:#03070a;border:1px solid var(--rg-line);border-radius:6px;font-size:11px;line-height:1.45;color:var(--rg-mute);display:flex;flex-direction:column;justify-content:flex-end}
+.rgrs{font-size:10px;color:var(--rg-mute);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;min-width:0;flex:1}
+.rglog{grid-column:1/-1;list-style:none;margin:0;padding:8px 10px;height:132px;overflow:hidden;background:#03070a;border:1px solid var(--rg-line);border-radius:6px;font-size:11px;line-height:1.45;color:var(--rg-mute)}
 .rglog li{padding-left:12px;position:relative}
 .rglog li::before{content:">";position:absolute;left:0;color:var(--rg-teal)}
 .rglog li:last-child{color:var(--rg-ink)}
@@ -535,3 +535,7 @@ h3{letter-spacing:-.006em;line-height:1.2}
 }
 .rgring.lo span{top:-32px}
 .rg-side .rgmeth{display:none}
+/* fixed tracks so numbers changing width never move their neighbours (CLS 0) */
+.rgpx{display:grid;grid-template-columns:44px minmax(0,1fr) 112px;align-items:baseline}
+.rgpx .rgn{text-align:center}.rgpx .rgd{text-align:right}
+.rgchip{min-width:86px;text-align:center;flex:0 0 auto}

@@ -60,7 +60,7 @@ for (const [w, h, th] of [[390, 844, 4], [1280, 900, 0]]) {
     const ex = expected(t, JSON.parse(readFileSync(new URL(`../site/data/charts/${t}.json`, import.meta.url))).dc);
     if (!full) { await pg.waitForSelector(".rg .rgring.hit, .rg .rgring.miss", { timeout: 30000, state: "attached" }); for (let k = 0; k < 5; k++) { await pg.click(".rgnext"); await pg.waitForTimeout(150); } }
     await pg.waitForFunction(() => /^TODAY/.test(document.querySelector(".rgpill").textContent) && document.querySelector(".rglog").textContent.includes("12-month range"), null, { timeout: 120000 });
-    await pg.waitForTimeout(1500);
+    await pg.waitForTimeout(3000);
     const it = await idle(cdp, pg), cls = await pg.evaluate(() => window.__cls), ov = await overflow(pg);
     const fr = await pg.textContent(".rgfr"), live = await pg.evaluate(() => window.__live.join(" | "));
     ok(fr === `${ex.hits}/5`, `${t} ${w} fraction ${fr} vs ${ex.hits}/5`);

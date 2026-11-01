@@ -520,8 +520,9 @@
   function rgAnim(el, kf, o) { if (reduced() || !el.animate) return null; return el.animate(kf, Object.assign({ easing: EASE, fill: "both" }, o)); }
   function rgPlace(el, x, y) { el.style.transform = "translate(" + x.toFixed(1) + "px," + y.toFixed(1) + "px)"; }
   function rgLog(R, txt) {
+    /* the log grows downward and scrolls to the newest line (scrolling is not a layout shift; trimming the top would be) */
     var ol = R.panel.querySelector(".rglog"), li = document.createElement("li"); li.textContent = txt; ol.appendChild(li);
-    while (ol.children.length > 6) ol.removeChild(ol.firstChild);
+    ol.scrollTop = ol.scrollHeight;
   }
   function rgSplit(R, up) {
     [].forEach.call(R.panel.querySelectorAll(".rgseg i"), function (c, i) { c.className = i < Math.round(up / 5) ? "u" : "d"; });
