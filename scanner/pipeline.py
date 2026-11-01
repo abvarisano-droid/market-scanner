@@ -120,6 +120,7 @@ def run(indexes: list[str] | None = None, top_n: int = TOP_N, live_constituents:
     # rank the most mispriced in both directions, only where we have real data
     eligible = table[(table["coverage"] >= MIN_COVERAGE) & table.index.isin(passed)]
     cands = pd.concat([eligible.nlargest(top_n, "mispricing"), eligible.nsmallest(top_n // 2, "mispricing")])
+    cands = cands[~cands.index.duplicated()]  # a small field puts a name in both lists: analyze and log it once
 
     picks = []
     news_ai.start_run()

@@ -11,7 +11,7 @@ import logging
 import os
 import re
 
-from .labels import BEARISH, BULLISH, NEUTRAL, normalize
+from .labels import BANNED, BEARISH, BULLISH, NEUTRAL, normalize
 
 POS = {"beat", "beats", "raise", "raises", "raised", "upgrade", "upgraded", "record", "surge", "soar",
        "growth", "strong", "buyback", "outperform", "approval", "approved", "wins", "expands", "profit",
@@ -216,6 +216,14 @@ def ai_call(row: dict, headlines: list[dict], client=None) -> dict | None:
         out = json.loads(text)
     except ValueError:
         _err("bad_json")
+        return None
+    if not isinstance(out, dict):
+        _err("bad_json")
+        return None
+    # the prompt forbids advice words, but a reply is checked, not trusted: one that still uses them is dropped and
+    # the rules model writes this pick, so buy/sell/rating/target text never reaches the call log or the site
+    if any(BANNED.search(str(out.get(k) or "")) for k in ("thesis", "catalysts", "risks")):
+        _err("banned_words")
         return None
     out["call"] = normalize(out.get("call"))  # also accepts legacy BUY/SELL/WATCH
     try:

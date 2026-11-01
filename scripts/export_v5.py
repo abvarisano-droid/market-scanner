@@ -7,17 +7,15 @@ A stock page exists only for tickers that appear in the ledger (the scanner made
 from __future__ import annotations
 
 import json
-import re
 from pathlib import Path
 
 import pandas as pd
 
 from scanner import charts as charts_mod
 from scanner import tracker
-from scanner.labels import BEARISH, BULLISH, normalize
+from scanner.labels import BANNED, BEARISH, BULLISH, normalize
 
 LENSES = tracker.LENSES
-BANNED = re.compile(r"\b(buy|buys|buying|sell|sells|selling|price targets?)\b", re.I)
 DISCLAIMER = "Not investment advice."
 
 

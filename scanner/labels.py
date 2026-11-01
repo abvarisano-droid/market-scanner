@@ -5,9 +5,14 @@ maps them to the new names so existing picks.csv rows keep working.
 """
 from __future__ import annotations
 
+import re
+
 BULLISH, BEARISH, NEUTRAL = "Bullish", "Bearish", "Neutral"
 LABELS = (BULLISH, BEARISH, NEUTRAL)
 LEGACY = {"BUY": BULLISH, "SELL": BEARISH, "WATCH": NEUTRAL}
+# Advice words that must never reach the public site or the call log (honesty rule: no buy, sell, rating or target
+# language). One pattern, shared by the AI thesis check and both site exports.
+BANNED = re.compile(r"\b(buy|buys|buying|sell|sells|selling|price targets?|ratings?|targets?)\b", re.I)
 COLOR = {BULLISH: "#16a34a", BEARISH: "#dc2626", NEUTRAL: "#ca8a04"}
 
 
