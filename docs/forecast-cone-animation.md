@@ -21,7 +21,7 @@ On a stock page, "Play the range" runs five rounds back to back, then one "Today
 - It is a replay on past data. The label on the stage, the panel and the chart caption says: "Replay on past data. A range of typical moves, not a forecast. Not investment advice."
 - Each round uses only returns that ended on or before its start date. The real candles are drawn after the fan, as the check.
 - The returns are demeaned, so the fan has no built-in up or down tilt. The up versus down split shows the shape of the stock's past moves (skew), not a direction call.
-- The hit rate is the real count across the five rounds, misses included. The landing shows the latest round, whatever its result (on 2026-10-30 data the featured stock, GOOGL, is a MISS).
+- The hit rate is the real count across the five rounds, misses included. The landing shows the latest round, whatever its result (on the 2026-10-30 data the featured stock, GOOGL, is a MISS: the real close, 279.84, fell under the 10th percentile, 306.52).
 - No buy, sell, target or predict language anywhere in the feature (a test checks the strings).
 - Featured stock on the landing: the stock page with the largest market cap among USD listings. A size rule, not a pick.
 - Ten rounds would say more than five; five rounds of 20 days on one stock is a demonstration of how a range behaves, not evidence that it works. The doc says so here; the UI says "replay" and shows the fraction, never a claim.
@@ -128,6 +128,8 @@ On phones all three collapse to the same stack. A wins on desktop because the lo
 - [x] Screenshots and a screen capture of a full run at 390 and 1280 (stock page and landing), plus a frame next to the reference.
 - [x] No em or en dashes; `?v=` bumped on every changed asset.
 - [ ] Lighthouse 95+ on the deployed preview (not run in this session: no Lighthouse binary here).
+
+Measured on this branch (`scripts/range_check.mjs`, 2026-11-01): CLS 0 on every view; idle main thread after a full run 0.6 ms/s at 390 px with 4x CPU throttle and 0.1 ms/s at 1280 px; 0 console errors; no overflow. One throttled run showed a one-off burst of about 25 to 35 ms/s 3 to 6 seconds after the run (no frames requested, no animations running, most likely garbage collection of the path buffers) that settled to 0.1; the check now waits 6 seconds before it measures.
 
 ## 8. Current flow audit and a simpler information architecture
 

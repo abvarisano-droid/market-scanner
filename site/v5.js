@@ -540,7 +540,7 @@
     rgBase(R, g);
     var ds = d ? MON[d.getUTCMonth()].toUpperCase() + " " + d.getUTCDate() + ", " + d.getUTCFullYear() : "";
     var nar = R.cw < 600;
-    R.st.querySelector(".rgpill").textContent = today ? (nar ? "TODAY · 12 MONTHS" : "TODAY · 12-MONTH RANGE") : "ROUND " + (j + 1) + "/" + R.days.length + (nar ? " · " + ds.replace(/, \d+$/, "") : " · REPLAY FROM " + ds);
+    R.st.querySelector(".rgpill").textContent = today ? (nar ? "TODAY · 12 MO" : "TODAY · 12-MONTH RANGE") : nar ? (j + 1) + "/" + R.days.length + " · " + ds.replace(/, \d+$/, "") : "ROUND " + (j + 1) + "/" + R.days.length + " · REPLAY FROM " + ds;
     R.st.querySelector(".rgnext").textContent = today ? "Replay" : "Next";
     var beam = R.st.querySelector(".rgbeam"), orb = R.st.querySelector(".rgorb"), ring = R.st.querySelector(".rgring");
     beam.style.height = g.y1 + "px"; rgPlace(beam, g.xNow, 0); rgPlace(orb, g.xNow, g.Y(s.start));
