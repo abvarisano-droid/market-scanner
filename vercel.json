@@ -23,7 +23,7 @@
       ]
     },
     {
-      "source": "/(app\\.js|v5\\.js|indicators\\.js|style\\.css|lg8\\.css)",
+      "source": "/(app\\.js|v5\\.js|indicators\\.js|style\\.css|lg8\\.css|terminal\\.js|terminal\\.css)",
       "has": [
         {
           "type": "query",
