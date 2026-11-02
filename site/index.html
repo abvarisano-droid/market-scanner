@@ -40,8 +40,9 @@
   <p class="v8foot label">Not investment advice</p>
 </header>
 <div class="v8canvas">
-<main id="app" class="boot" aria-live="polite" aria-busy="true"><section class="hero" aria-hidden="true"><span class="label">Daily scan across the major indexes</span><h1>Loading the <em>latest scan.</em></h1></section></main>
+<main id="app" class="boot" aria-busy="true"><section class="hero" aria-hidden="true"><span class="label">Daily scan across the major indexes</span><h1>Loading the <em>latest scan.</em></h1></section></main>
 
+<p id="route-status" class="sr" role="status"></p>
 <footer>
   <p class="disc"><strong>Not investment advice.</strong> Scores are mechanical rules on valuation, price and volume. They are not forecasts and nothing here is a recommendation. Data may be delayed or wrong.</p>
   <p class="label"><a href="#/track">Public track record</a> &middot; Updated every weekday after the US close <span id="asof"></span></p>
@@ -49,6 +50,7 @@
 </footer>
 </div>
 </div>
+<script src="a11y.js?v=2" defer></script>
 <script src="v5.js?v=12" defer></script>
 <script src="terminal.js?v=5" defer></script>
 <script src="app.js?v=14" defer></script>
