@@ -1,6 +1,6 @@
 /* ===== Scanner terminal look on every view (2026-11-01, grok). Loaded last; delete this file, terminal.js and the
    tmhost line in app.js to roll back. Near-black teal room, faint cyan dot grid, mono technical type with tabular
-   numbers, cyan for chrome, gold for highlighted numbers, depth from glow instead of frosted glass. ===== */
+   numbers, cyan for chrome, cyan or white for highlighted numbers, depth from glow instead of frosted glass. ===== */
 :root{
   --bg:#050a10; --text:#dfe8ee; --muted:#8a98a6; --line:#13232e;
   --tm-cyan:#34e0d6; --tm-cyan-2:#1aa9a2; --tm-down:#ff7a45; --tm-hi:#34e0d6;
@@ -103,7 +103,7 @@ footer{border-top-color:rgba(52,224,214,.1)}
   .tmlogin p{font-size:11.5px}
 }
 @media(prefers-reduced-motion:reduce){.tmlogin,.tmdot{animation:none!important}}
-/* the replay card under the terminal: dark terminal panel instead of the gold card */
+/* the replay card under the terminal: dark terminal panel instead of the old hero card */
 .lhero{margin-top:22px;color:var(--text);background:var(--tm-panel);border:1px solid var(--tm-edge);box-shadow:var(--tm-glow)}
 .lhero h1{color:#eef5f8}
 .lhero h1 em{color:var(--tm-cyan)}
