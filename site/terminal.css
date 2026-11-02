@@ -129,47 +129,10 @@ footer{border-top-color:rgba(52,224,214,.1)}
 .tm.still .tmlogin p{white-space:normal;overflow-wrap:anywhere;text-overflow:clip}
 .tmrng{font-size:9.5px;color:#8a98a6;letter-spacing:.06em;text-transform:uppercase}
 .tmill{white-space:nowrap}@media(max-width:360px){.tmill{font-size:9.5px;letter-spacing:.04em}}
-/* ===== 2026-11-02 forecast-look redesign (grok): chart takes the top ~58% of the screen, three panels below.
-   Cyan #00e5ff up, orange #ff7a45 flat and median, red #ff4d6d down. No gold or yellow. ===== */
-.tm{--fc-cyan:#00e5ff;--fc-orange:#ff7a45;--fc-red:#ff4d6d}
-.tmchart{height:clamp(340px,58vh,640px);background:linear-gradient(rgba(0,229,255,.05) 1px,transparent 1px) 0 0/40px 40px,linear-gradient(90deg,rgba(0,229,255,.05) 1px,transparent 1px) 0 0/40px 40px,radial-gradient(ellipse 50% 60% at 52% 50%,rgba(0,229,255,.06),transparent 70%),#050a10}
-.tmsim{top:10px;right:12px;left:auto;color:var(--fc-cyan);background:rgba(5,10,16,.85);border:1px solid rgba(0,229,255,.35);font-size:12px}
-.tmill{bottom:8px;left:12px;font-size:12px}
-.tmpause{height:44px;font-size:12px;padding:0 18px}
-.tml{font-size:12px}
-.tmgrid{grid-template-columns:1.05fr 1fr 1.15fr}
-.tmcol{height:300px;gap:8px}
-.tmsp{justify-content:space-between;align-items:center}
-.tmbig{font-size:44px;color:#eafcff;text-shadow:0 0 24px rgba(0,229,255,.35)}
-.tmhl{display:grid;grid-template-columns:auto 1fr auto;align-items:center;gap:10px}
-.tmhl b{font-size:12px;margin-left:4px;color:#dfe8ee}
-.tmhlt{position:relative;height:2px;background:linear-gradient(90deg,rgba(255,77,109,.6),rgba(255,122,69,.6),rgba(0,229,255,.7));border-radius:2px}
-.tmhlt i{position:absolute;top:50%;left:50%;width:9px;height:9px;margin:-4.5px 0 0 -4.5px;border-radius:50%;background:#e9fdff;box-shadow:0 0 10px var(--fc-cyan)}
-.tmsub{margin-top:4px;color:#8a98a6}
-.tmpb{display:grid;grid-template-columns:7.5em 1fr 3.2em;align-items:center;gap:10px}
-.tmpb b{font-size:13px;text-align:right}
-.tmpbt{position:relative;height:12px;border-radius:3px;background:rgba(255,255,255,.04);overflow:hidden}
-.tmpbt i{position:absolute;inset:0;transform-origin:left;transform:scaleX(0);background:var(--c);box-shadow:0 0 12px var(--c)}
-.tmpbt::after{content:"";position:absolute;inset:0;background:repeating-linear-gradient(90deg,rgba(5,10,16,.85) 0 1px,transparent 1px 4px);pointer-events:none}
-.tmpb.up{--c:var(--fc-cyan)}.tmpb.flat{--c:var(--fc-orange)}.tmpb.dn{--c:var(--fc-red)}
-.tmbadge{color:var(--fc-orange);border-color:rgba(255,122,69,.5);transition:color .6s ease,border-color .6s ease,background-color .6s ease}
-.tmbadge.trend{color:var(--fc-cyan);border-color:rgba(0,229,255,.5);background:rgba(0,229,255,.08)}
-.tmhls{display:grid;grid-template-columns:1fr 1fr;gap:6px 14px;margin-bottom:4px}
-.tmhls>span{display:flex;justify-content:space-between;gap:6px;border-bottom:1px solid rgba(0,229,255,.08);padding-bottom:5px}
-.tmhls b{font-size:13px}
-.tmlogin time{color:#6f8794}
-.tmlogin .v{color:var(--fc-cyan)}.tmlogin .d{color:var(--fc-red)}
-.tmterm{background:#03070b;border:1px solid rgba(0,229,255,.1);border-radius:10px;padding:8px 10px}
-.tmlogin p{font-size:12px}
-@media(max-width:899px){.tmgrid{grid-template-columns:1fr 1fr}.tmlog{height:220px}}
-@media(max-width:560px){
-  .tmchart{height:clamp(320px,52vh,420px)}
-  .tmgrid{grid-template-columns:1fr}
-  .tmmet,.tmev{height:auto}.tmev .tmlogv{height:170px;flex:none}.tmlog{height:220px}
-  .tmbig{font-size:38px}
-  .tmsim{top:auto;bottom:40px;left:12px;right:auto}
-  .tml,.tmq .tml,.tmhead .tml{font-size:12px}
-}
-@media(prefers-reduced-motion:reduce){.tmbadge{transition:none}.tmpbt i{transition:none}}
-.tmbadge{font-size:12px}@media(max-width:560px){.tmhead .tml{letter-spacing:.04em}}
-@media(max-width:560px){.tmpause{padding:0 14px}.tmhead{gap:8px}}
+/* 2026-11-02: simulated-range tag on the stage, same colors as the Now tag family */
+.tmsim{top:10px;right:12px;color:var(--tm-cyan);background:rgba(3,8,12,.8);border:1px solid rgba(52,224,214,.35);white-space:nowrap}
+@media(max-width:560px){.tmsim{top:auto;bottom:36px;left:12px;right:auto}}
+@media(max-width:360px){.tmsim{font-size:9.5px;letter-spacing:.04em}}
+.tmbadge{transition:color .6s ease,border-color .6s ease,background-color .6s ease}
+@media(prefers-reduced-motion:reduce){.tmbadge{transition:none}}
+.tmpause{height:44px}
