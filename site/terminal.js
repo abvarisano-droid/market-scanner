@@ -25,7 +25,7 @@
       '<span class="tmtag tmnow">Now</span><span class="tmtag tmsim">Simulated range, not a prediction</span><span class="tmtag tmill">Illustrative motion, not market data</span></div>' +
       '<div class="tmgrid"><div class="tmcol tmmet"><span class="tml">Last close</span><b class="tmbig tmnum" id="tmlast">0.00</b>' +
       '<span class="tmrng">Range, 20d (bootstrap)</span><div class="tmq"><span><span class="tml">10th</span><b class="tmnum" id="tm10">n/a</b></span><span><span class="tml">Median</span><b class="tmnum" id="tm50">n/a</b></span><span><span class="tml">90th</span><b class="tmnum" id="tm90">n/a</b></span></div>' +
-      '<div class="tmeq" id="tmeq" aria-label="Index moves on the latest scan day" role="img"></div><div class="tmrow"><span class="tml">Regime</span><span class="tmbadge" id="tmreg">n/a</span></div></div>' +
+      '<div class="tmeq" id="tmeq" aria-label="Index moves on the latest scan day" role="img"></div><div class="tmrow"><span class="tml" id="tmregl">Regime, today</span><span class="tmbadge" id="tmreg">n/a</span></div></div>' +
       '<div class="tmcol tmgau"><div class="tmgs">' + gauge("tmg1", "Paths ending up") + gauge("tmg2", "Replay hits") + gauge("tmg3", "Passed checks") + "</div>" +
       '<div class="tmfr" id="tmfr"></div></div>' +
       '<div class="tmcol tmlog"><span class="tml">Scan log</span><div class="tmlogv" aria-label="Scan log" role="region" tabindex="0"><div class="tmlogin" id="tmlog"></div></div></div></div>' +
@@ -63,9 +63,9 @@
       document.getElementById("tmdesc").textContent = "Range over 20 trading days from " + sim.n + " bootstrap paths: 10th percentile " + money(sim.p10) + ", median " + money(sim.p50) + ", 90th percentile " + money(sim.p90) + ". " + sim.upPct + "% of paths end up.";
       var rb = document.getElementById("tmreg"); rb.textContent = reg.label; rb.classList.toggle("trend", reg.label === "TRENDING");
       /* 2026-11-02: the badge steps through the five replay rounds' real regimes, then holds on today's (title says which) */
-      var seq = sm.rounds.map(function (r, j) { return [r.regime.label, "Regime at replay " + (j + 1) + " start"]; }).concat([[reg.label, "Regime today"]]);
-      rb.title = "Regime today";
-      if (!reduce && seq.length > 1) { var si = seq.length - 1; me.rt = setInterval(function () { if (me.paused || document.hidden) return; si = (si + 1) % (seq.length + 2); var q = seq[Math.min(si, seq.length - 1)]; rb.textContent = q[0]; rb.title = q[1]; rb.classList.toggle("trend", q[0] === "TRENDING"); }, 2600); }
+      var seq = sm.rounds.map(function (r, j) { return [r.regime.label, "Regime, replay " + (j + 1)]; }).concat([[reg.label, "Regime, today"]]);
+      var rl = document.getElementById("tmregl");
+      if (!reduce && seq.length > 1) { var si = seq.length - 1; me.rt = setInterval(function () { if (me.paused || document.hidden || !me.seen) return; si = (si + 1) % (seq.length + 2); var q = seq[Math.min(si, seq.length - 1)]; rb.textContent = q[0]; rl.textContent = q[1]; rb.classList.toggle("trend", q[0] === "TRENDING"); }, 2600); }
       /* log: real scan facts as JSON lines */
       var lines = [kv({ scan: L.asof, universe: f.universe, passed: f.passed_checks, scored: f.scored, picks: f.picks })];
       lines.push(kv({ range: t, days: 20, paths: sim.n, p10: +sim.p10.toFixed(2), p50: +sim.p50.toFixed(2), p90: +sim.p90.toFixed(2), up: sim.upPct + "%", regime: reg.label }));
@@ -180,9 +180,16 @@
       var mx = ctx.measureText("Med " + money(sim.p50)).width; ctx.strokeStyle = "rgba(217,249,247,.75)"; ctx.lineWidth = 1; ctx.shadowColor = "rgba(52,224,214,.6)"; ctx.shadowBlur = 10;
       ctx.beginPath(); if (ctx.roundRect) ctx.roundRect(xe - 6, ys[1][0] - 11, 34 + lw + 12, 22, 6); else ctx.rect(xe - 6, ys[1][0] - 11, 34 + lw + 12, 22); ctx.stroke(); ctx.shadowBlur = 0;
       /* node tooltip beside the playhead */
+      if (W < 560) {
+        /* narrow: one line, right of the playhead and above the fan, so it never covers candles */
+        var tl = "T0 SIMULATED", tw1 = ctx.measureText(tl).width + 16, fanTop = G.Y(sim.p90), tx1 = Math.min(W - tw1 - 4, G.xNow + 10), ty1 = Math.max(G.top, Math.min(yN - 34, fanTop - 30));
+        ctx.beginPath(); if (ctx.roundRect) ctx.roundRect(tx1, ty1, tw1, 20, 6); else ctx.rect(tx1, ty1, tw1, 20); ctx.fillStyle = "rgba(3,8,12,.85)"; ctx.fill(); ctx.strokeStyle = "rgba(52,224,214,.35)"; ctx.stroke();
+        ctx.fillStyle = "#34e0d6"; ctx.fillText(tl, tx1 + 8, ty1 + 10);
+      } else {
       var l1 = "NODE T0", l2 = "SIMULATED", tw = Math.max(ctx.measureText(l1).width, ctx.measureText(l2).width + 12) + 18, tx = Math.max(4, G.xNow - tw - 14), ty = Math.max(G.top, yN - 60);
       ctx.beginPath(); if (ctx.roundRect) ctx.roundRect(tx, ty, tw, 42, 8); else ctx.rect(tx, ty, tw, 42); ctx.fillStyle = "rgba(3,8,12,.85)"; ctx.fill(); ctx.strokeStyle = "rgba(52,224,214,.35)"; ctx.stroke();
       ctx.fillStyle = "#cfe9ef"; ctx.fillText(l1, tx + 9, ty + 13); ctx.fillStyle = "rgba(52,224,214,.14)"; ctx.fillRect(tx + 9, ty + 22, ctx.measureText(l2).width + 12, 15); ctx.fillStyle = "#34e0d6"; ctx.fillText(l2, tx + 15, ty + 30);
+      }
       ys.forEach(function (r) { ctx.fillStyle = "rgba(160,170,180,.85)"; ctx.fillText(r[1][1], xe, r[0]); ctx.fillStyle = "#34e0d6"; ctx.fillText(money(r[1][0]), xe + 34, r[0]); });
     }
     layout();
