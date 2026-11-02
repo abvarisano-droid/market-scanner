@@ -129,3 +129,18 @@ footer{border-top-color:rgba(52,224,214,.1)}
 .tm.still .tmlogin p{white-space:normal;overflow-wrap:anywhere;text-overflow:clip}
 .tmrng{font-size:9.5px;color:#8a98a6;letter-spacing:.06em;text-transform:uppercase}
 .tmill{white-space:nowrap}@media(max-width:360px){.tmill{font-size:9.5px;letter-spacing:.04em}}
+
+/* mobile pass (Nov 2026): Matcha Mucho benchmark. Tab bar labels in sans so all five fit at 320, 44px taps, readable small type */
+@media(max-width:899px){
+  .top nav a,.top nav a:hover{min-width:0;font-family:var(--v8-sans)!important;letter-spacing:0!important;white-space:nowrap}
+  .top nav a span{display:block;max-width:100%;overflow:hidden;text-overflow:clip}
+  .top{padding:12px 16px 4px}
+  .tmpause,.tm button{min-height:44px}
+  .tmnote,.tmlogin p{font-size:12px}
+  .rgbtn{position:relative}.rgbtn::after{content:"";position:absolute;left:-2px;right:-2px;top:-6px;bottom:-6px}
+  footer .label a{display:inline-block;padding:14px 0;margin:-14px 0}
+}
+@media(max-width:399px){
+  .top nav a,.top nav a:hover{font-size:10px;line-height:1.05;white-space:normal;min-height:56px}
+  .top nav a span{overflow:visible}
+}
