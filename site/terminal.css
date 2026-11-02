@@ -129,3 +129,10 @@ footer{border-top-color:rgba(52,224,214,.1)}
 .tm.still .tmlogin p{white-space:normal;overflow-wrap:anywhere;text-overflow:clip}
 .tmrng{font-size:9.5px;color:#8a98a6;letter-spacing:.06em;text-transform:uppercase}
 .tmill{white-space:nowrap}@media(max-width:360px){.tmill{font-size:9.5px;letter-spacing:.04em}}
+/* 2026-11-02: simulated-range tag on the stage, same colors as the Now tag family */
+.tmsim{top:10px;right:12px;color:var(--tm-cyan);background:rgba(3,8,12,.8);border:1px solid rgba(52,224,214,.35);white-space:nowrap}
+@media(max-width:560px){.tmsim{top:auto;bottom:36px;left:12px;right:auto}}
+@media(max-width:360px){.tmsim{font-size:10px;letter-spacing:.04em}}
+.tmbadge{transition:color .6s ease,border-color .6s ease,background-color .6s ease}
+@media(prefers-reduced-motion:reduce){.tmbadge{transition:none}}
+.tmpause{height:44px}
