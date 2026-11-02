@@ -69,7 +69,8 @@
     if (!sec) return;
     sec.innerHTML = shell();
     /* the index lists the pages that have a range, so a page without one makes no failing request */
-    if (!IDX) IDX = fetch("data/kronos/index.json").then(function (r) { if (!r.ok) throw new Error("index"); return r.json(); });
+    if (!IDX) IDX = fetch("data/kronos/index.json").then(function (r) { if (!r.ok) throw new Error("index"); return r.json(); })
+      .catch(function (e) { IDX = null; throw e; });  /* a failed index is fetched again on the next page */
     IDX.then(function (ix) {
       if (!ix || !ix.pages || !Object.prototype.hasOwnProperty.call(ix.pages, t)) throw new Error("none");
       return fetch("data/kronos/" + encodeURIComponent(t) + ".json?v=" + encodeURIComponent(ix.pages[t] || ""));

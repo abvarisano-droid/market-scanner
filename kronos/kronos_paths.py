@@ -37,8 +37,8 @@ def block_network() -> None:
     """After this, any attempt to open a network connection in this process raises."""
     def refuse(*a, **k):
         raise KronosError("network is blocked while the Kronos model runs")
-    socket.socket.connect = refuse  # type: ignore[assignment]
-    socket.socket.connect_ex = refuse  # type: ignore[assignment]
+    for name in ("connect", "connect_ex", "sendto", "sendmsg", "bind"):
+        setattr(socket.socket, name, refuse)
     socket.create_connection = refuse  # type: ignore[assignment]
     socket.getaddrinfo = refuse  # type: ignore[assignment]
 

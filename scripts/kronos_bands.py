@@ -17,6 +17,7 @@ from __future__ import annotations
 
 import argparse
 import json
+import math
 import re
 import sys
 from datetime import datetime, timedelta, timezone
@@ -109,7 +110,7 @@ def ingest(inp: dict, raw: dict, charts: dict, out_dir: Path = OUT_DIR, log_path
         ok_raw = False
     log_rows, seen = [], set()
     if ok_raw:
-        for res in (raw.get("results") or [])[:60]:
+        for res in (raw.get("results") if isinstance(raw.get("results"), list) else [])[:60]:
             t = str(res.get("ticker", "")) if isinstance(res, dict) else ""
             if t not in series or t in seen:
                 rep["rejected"].append({"ticker": t if TICKER_RE.match(t) else "?", "why": "not a prepared ticker, or a repeat"})
@@ -145,7 +146,9 @@ def ingest(inp: dict, raw: dict, charts: dict, out_dir: Path = OUT_DIR, log_path
         rep["rescored"] += 1
     (out_dir / "index.json").write_text(json.dumps({"note": kb.NOTE, "model": model, "pages": index}, separators=(",", ":"), sort_keys=True),
                                         encoding="utf-8")
-    secs = [r.get("seconds") for r in (raw.get("results") or []) if isinstance(r, dict) and isinstance(r.get("seconds"), (int, float))] if ok_raw else []
+    results = raw.get("results") if ok_raw and isinstance(raw.get("results"), list) else []
+    secs = [r.get("seconds") for r in results if isinstance(r, dict) and not isinstance(r.get("seconds"), bool)
+            and isinstance(r.get("seconds"), (int, float)) and math.isfinite(r["seconds"]) and 0 <= r["seconds"] <= 3600]
     rep["seconds_per_ticker"] = round(sum(secs) / len(secs), 1) if secs else None
     return rep
 

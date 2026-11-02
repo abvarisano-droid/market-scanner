@@ -138,3 +138,11 @@ def test_site_copy_is_honest():
     assert "\u2014" not in js and "\u2013" not in js
     assert 'kronos.js?v=' in (ROOT / "site" / "index.html").read_text()
     assert "KRONOS.mount" in (ROOT / "site" / "v5.js").read_text()
+
+
+def test_malformed_results_write_nothing_but_keep_the_index(tmp_path):
+    charts = {"AAA": chart()}
+    inp = kbs.build_input(charts, ["AAA"], NOW)
+    raw = {"status": "ok", "model": "m", "paths": 20, "made_at": "2026-10-31T02:10:00Z", "results": 7}
+    rep = kbs.ingest(inp, raw, charts, out_dir=tmp_path / "k", log_path=tmp_path / "l.csv", now=NOW + timedelta(minutes=20))
+    assert rep["written"] == [] and json.loads((tmp_path / "k" / "index.json").read_text())["pages"] == {}
