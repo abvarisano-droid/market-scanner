@@ -61,7 +61,7 @@
   /* ---------- price chart: 3 years of candles, chosen layers, volatility cone ----------
      Spec: main plot 320px (<760) / 460px (>=760); RSI and MACD panels 84px / 110px each.
      The box height is set from the layer state before data arrives, so loading never shifts layout.
-     Palette: up #5fa97c, down #cb5d46, 50d #d4af37, 200d #9c8fd0, Bollinger #6fa8c8, grid #1c1a14.
+     Palette: up (bull) #34e0d6, down (bear) #ff7a45, 50d #c9d6df, 200d #9c8fd0, Bollinger #6fa8c8, grid #0b1725.
      Type: mono 10px axis (11px desktop), mono 11px cone labels (12px desktop).
      Motion: cone fades in, opacity only, 700ms cubic-bezier(.2,.8,.2,1), 250ms delay. Reduced motion: none.
      Static fallback: the visually hidden table and the role=img summary carry the key numbers.
@@ -70,7 +70,7 @@
   var LAYERS = [["vol", "Volume"], ["ma50", "50-day SMA"], ["ma200", "200-day SMA"], ["bb", "Bollinger Bands (20, 2)"], ["rsi", "RSI (14)"],
     ["macd", "MACD (12, 26, 9)"], ["hl", "52-week range"], ["fan", "Volatility cone (\u00b11\u03c3)"], ["earn", "Next earnings"]];
   var DEF = ["ma50", "ma200", "fan"], STATS = ["Last close", "1 year", "52-week range", "Yearly volatility", "Next event"];
-  var COL = { up: "#5fa97c", dn: "#cb5d46", m50: "#d4af37", m200: "#9c8fd0", bb: "#6fa8c8", up1: "#5fa97c", flat: "#ebe6d8", dn1: "#cb5d46" };
+  var COL = { up: "#34e0d6", dn: "#ff7a45", m50: "#c9d6df", m200: "#9c8fd0", bb: "#6fa8c8", up1: "#34e0d6", flat: "#d9f9f7", dn1: "#ff7a45" };
   function getChart(t) {
     if (!CH[t]) CH[t] = fetch("data/charts/" + encodeURIComponent(t) + ".json").then(function (r) { if (!r.ok) throw new Error("chart"); return r.json(); });
     return CH[t];
@@ -261,10 +261,10 @@
     /* draw the line-end tags (positions set above) */
     lt.forEach(function (t) {
       var tw = t.tw, xr = t.xr;
-      o.push('<rect x="' + (xr - tw).toFixed(1) + '" y="' + (t.y - 8).toFixed(1) + '" width="' + tw.toFixed(1) + '" height="16" rx="3" fill="' + (t.now ? COL.m50 : "#0b0a08") + '"' + (t.now ? "" : ' stroke="' + t.c + '" stroke-opacity=".7"') + "/>" +
+      o.push('<rect x="' + (xr - tw).toFixed(1) + '" y="' + (t.y - 8).toFixed(1) + '" width="' + tw.toFixed(1) + '" height="16" rx="3" fill="' + (t.now ? COL.m50 : "#05090e") + '"' + (t.now ? "" : ' stroke="' + t.c + '" stroke-opacity=".7"') + "/>" +
         '<text x="' + (xr - tw / 2).toFixed(1) + '" y="' + (t.y + 3.5).toFixed(1) + '" font-size="' + fs + '" text-anchor="middle" class="ctag" fill="' + (t.now ? "#050505" : t.c) + '">' + esc(t.t) + "</text>");
     });
-    o.push('<circle cx="' + xNow.toFixed(1) + '" cy="' + yNow.toFixed(1) + '" r="9" fill="#d4af37" opacity=".18"/><circle cx="' + xNow.toFixed(1) + '" cy="' + yNow.toFixed(1) + '" r="4" fill="#d4af37" stroke="#050505" stroke-width="1.5"/>');
+    o.push('<circle cx="' + xNow.toFixed(1) + '" cy="' + yNow.toFixed(1) + '" r="9" fill="#34e0d6" opacity=".18"/><circle cx="' + xNow.toFixed(1) + '" cy="' + yNow.toFixed(1) + '" r="4" fill="#34e0d6" stroke="#050505" stroke-width="1.5"/>');
     /* sub panels */
     subs.forEach(function (sb) {
       var top = sb[1] + gapP, h = D.sub - gapP - 4, xr0 = padL, xr1 = xNow + slot / 2;
@@ -334,7 +334,7 @@
   function chartBox(t) {
     var st = state();
     return '<div class="chartbox" data-t="' + esc(t) + '"><div class="cstats">' + STATS.map(function (l) { return '<div class="cs"><span class="label">' + l + "</span><b>&nbsp;</b></div>"; }).join("") + "</div>" + chipRow(st) +
-      '<div class="cplot" style="height:' + (dims(st).total + 28) + 'px"></div><p class="ccap"><strong>Illustration from past volatility, not a forecast.</strong> The volatility cone is centered on no change from the last close. Its edges are plus and minus one standard deviation of the stock\u2019s own yearly moves (daily volatility over up to three years times the square root of 252), so it widens with time. It is a range of typical moves, not an expected price. Candles are weekly, then daily for the last six months; indicators are computed on daily closes. Prices from Yahoo Finance daily bars, split and dividend adjusted. Play the range replays five past dates: each draws 1,000 paths from the stock\u2019s own earlier daily moves, centered on no change, and checks the 10th to 90th band against the real close 20 trading days later. Replay on past data. A range of typical moves, not a forecast. Not investment advice.</p><div class="cdata"></div></div>';
+      '<div class="cplot" style="height:' + (dims(st).total + 28) + 'px"></div><p class="ccap"><strong>Illustration from past volatility, not a forecast.</strong> The volatility cone is centered on no change from the last close. Its edges are plus and minus one standard deviation of the stock\u2019s own yearly moves (daily volatility over up to three years times the square root of 252), so it widens with time. It is a range of typical moves, not an expected price. Candles are weekly, then daily for the last six months (cyan closed up, orange closed down); indicators are computed on daily closes. Prices from Yahoo Finance daily bars, split and dividend adjusted. Play the range replays five past dates: each draws 1,000 paths from the stock\u2019s own earlier daily moves, centered on no change, and checks the 10th to 90th band against the real close 20 trading days later. Replay on past data. A range of typical moves, not a forecast. Not investment advice.</p><div class="cdata"></div></div>';
   }
   function wire(box) {
     var pb = box.querySelector(".tgplay");
@@ -380,7 +380,7 @@
      (beam, orb, ring) animate transform and opacity only, with the Web Animations API.
      Easing cubic-bezier(.2,.8,.2,1); durations 160 / 600 / 900 ms. Reduced motion: final frame per round, Next button. */
   var RANGE = null, rangeP = null, EASE = "cubic-bezier(.2,.8,.2,1)", D_MICRO = 160, D_BEAT = 600, D_FAN = 900, LAND = 60;
-  var RGC = { bg: "#04080b", grid: "#10202a", axis: "#5f7a80", teal: "#3ad6c4", red: "#e0675a", gold: "#d4af37", up: "#5fa97c", dn: "#cb5d46", ink: "#d8e6e6" };
+  var RGC = { bg: "#04080b", grid: "#10202a", axis: "#5f7a80", teal: "#34e0d6", red: "#ff7a45", median: "#d9f9f7", up: "#34e0d6", dn: "#ff7a45", ink: "#d8e6e6" };
   var NOTE = "Replay on past data. A range of typical moves, not a forecast. Not investment advice.";
   /* timeline of one round, in ms from its start */
   var T_ORB = 450, T_FAN = 900, T_MED = T_FAN + D_FAN, T_LAND = T_MED + 300, T_RING = T_LAND + 20 * LAND, T_END = T_RING + 1100, T_TODAY_END = T_MED + 800;
@@ -488,12 +488,12 @@
     var fs = R.cw < 600 ? 10 : 11; c.font = fs + "px " + R.mono; c.textBaseline = "alphabetic";
     niceTicks(Math.exp(g.lo), Math.exp(g.hi), 4).forEach(function (v) { var y = g.Y(v); if (y < g.y0 + 6 || y > g.y1 - 4) return;
       c.fillStyle = RGC.grid; c.fillRect(g.x0, Math.round(y) + 0.5, g.x1 - g.x0, 1); c.fillStyle = RGC.axis; c.fillText(fmt(v), g.x0 + 2, y - 4); });
-    if (g.today) { c.fillStyle = "rgba(58,214,196,.035)"; c.fillRect(g.xNow, g.y0, g.x1 - g.xNow, g.y1 - g.y0); c.fillStyle = RGC.axis; c.textAlign = "right"; c.fillText("+12 MO", g.x1, g.y1 + 18); c.textAlign = "left"; }
+    if (g.today) { c.fillStyle = "rgba(52,224,214,.035)"; c.fillRect(g.xNow, g.y0, g.x1 - g.xNow, g.y1 - g.y0); c.fillStyle = RGC.axis; c.textAlign = "right"; c.fillText("+12 MO", g.x1, g.y1 + 18); c.textAlign = "left"; }
     else { c.fillStyle = RGC.axis; c.textAlign = "right"; c.fillText("+20 DAYS", g.FX(g.h), g.y1 + 18); c.textAlign = "left"; }
     var d0 = R.date[g.a]; if (d0) c.fillText(MON[d0.getUTCMonth()].toUpperCase() + " " + d0.getUTCDate(), g.x0 + 2, g.y1 + 18);
     for (var i = g.a; i <= g.k; i++) rgCandle(R, g, i, false);
   }
-  /* draw path segments for steps (s0, s1] of the drawn subset; teal when the path ends above the start, red below */
+  /* draw path segments for steps (s0, s1] of the drawn subset; cyan when the path ends above the start, orange below */
   function rgFan(R, g, s0, s1) {
     var c = R.fx, s = R.sim, w = s.w, st = s.start;
     c.setTransform(R.dpr, 0, 0, R.dpr, 0, 0); c.save(); c.beginPath(); c.rect(0, g.y0 - 6, R.cw, g.y1 - g.y0 + 12); c.clip();
@@ -513,10 +513,10 @@
   function rgMedian(R, g) {
     var c = R.fx, s = R.sim, fs = R.cw < 600 ? 10 : 11;
     c.beginPath(); s.med.forEach(function (v, t) { if (t) c.lineTo(g.FX(t), g.Y(v)); else c.moveTo(g.FX(0), g.Y(v)); });
-    c.strokeStyle = RGC.gold; c.lineJoin = "round";
+    c.strokeStyle = RGC.median; c.lineJoin = "round";
     [[7, 0.1], [3.5, 0.25], [1.6, 1]].forEach(function (k) { c.lineWidth = k[0]; c.globalAlpha = k[1]; c.stroke(); });
     c.globalAlpha = 1; c.font = "600 " + fs + "px " + R.mono;
-    var tags = spread([{ y: g.Y(s.p90), t: "90TH " + fmt(s.p90), c: RGC.teal }, { y: g.Y(s.p50), t: "50TH " + fmt(s.p50), c: RGC.gold }, { y: g.Y(s.p10), t: "10TH " + fmt(s.p10), c: RGC.red }], fs + 10, g.y0 + 8, g.y1 - 8);
+    var tags = spread([{ y: g.Y(s.p90), t: "90TH " + fmt(s.p90), c: RGC.teal }, { y: g.Y(s.p50), t: "50TH " + fmt(s.p50), c: RGC.median }, { y: g.Y(s.p10), t: "10TH " + fmt(s.p10), c: RGC.red }], fs + 10, g.y0 + 8, g.y1 - 8);
     var xe = g.FX(g.h);
     tags.forEach(function (t) {
       var tw = c.measureText(t.t).width + 10, x = xe + 6;

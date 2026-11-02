@@ -146,7 +146,7 @@
   }
 
   function heatColor(v, max) {
-    if (v == null) return "rgba(141,135,119,.14)";
+    if (v == null) return "rgba(126,132,136,.14)";
     var t = Math.max(-1, Math.min(1, v / max)), a = (0.14 + 0.5 * Math.abs(t)).toFixed(2);
     return t >= 0 ? "rgba(52,224,214," + (a * 0.6).toFixed(2) + ")" : "rgba(255,122,69," + (a * 0.6).toFixed(2) + ")";
   }
@@ -280,8 +280,8 @@
   function spark(vals) {
     var w = 600, h = 110, mn = Math.min.apply(null, vals), mx = Math.max.apply(null, vals), sp = mx - mn || 1;
     var pts = vals.map(function (v, i) { return (i / (vals.length - 1) * w).toFixed(1) + "," + (h - 8 - (v - mn) / sp * (h - 16)).toFixed(1); });
-    return '<svg class="spark" viewBox="0 0 ' + w + " " + h + '" preserveAspectRatio="none" role="img" aria-label="Last ' + vals.length + ' closes"><defs><linearGradient id="g" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#d4af37" stop-opacity=".28"/><stop offset="1" stop-color="#d4af37" stop-opacity="0"/></linearGradient></defs>' +
-      '<polygon points="0,' + h + " " + pts.join(" ") + " " + w + "," + h + '" fill="url(#g)"/><polyline points="' + pts.join(" ") + '" fill="none" stroke="#d4af37" stroke-width="2" vector-effect="non-scaling-stroke"/></svg>';
+    return '<svg class="spark" viewBox="0 0 ' + w + " " + h + '" preserveAspectRatio="none" role="img" aria-label="Last ' + vals.length + ' closes"><defs><linearGradient id="g" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#34e0d6" stop-opacity=".28"/><stop offset="1" stop-color="#34e0d6" stop-opacity="0"/></linearGradient></defs>' +
+      '<polygon points="0,' + h + " " + pts.join(" ") + " " + w + "," + h + '" fill="url(#g)"/><polyline points="' + pts.join(" ") + '" fill="none" stroke="#34e0d6" stroke-width="2" vector-effect="non-scaling-stroke"/></svg>';
   }
 
   function hzCard(name, r, signed) {
@@ -432,8 +432,8 @@
       '<p class="lede">Every published pick is logged with its date, then graded against the S&amp;P 500 from the next trading day\'s close, over 5, 20 and 60 trading days. A Bullish call wins by beating the index, a Bearish call by lagging it. ' + esc(T.note) + "</p>" +
       '<p class="lede sample" id="sample-size"><strong>Sample size:</strong> ' + T.calls_logged.toLocaleString() + " calls logged, " + T.graded.length.toLocaleString() + " graded, across " + T.trading_days + " trading day" + (T.trading_days === 1 ? "" : "s") + ". " + (noise ? "Day " + T.trading_days + " of " + T.min_days + ": under " + T.min_days + " trading days this is still noise, do not read skill into it." : "Past " + T.min_days + " trading days, but a few months of calls is still a small sample.") +
       " Each hit rate shows n, the number of graded calls, and a 95% range (Wilson interval) that is wide when n is small. Calls made on the same day share market conditions, so the true range is wider still.</p>" +
-      '<div class="ringwrap"><div class="ring"><svg viewBox="0 0 220 220" aria-hidden="true"><circle cx="110" cy="110" r="96" fill="none" stroke="#1a1812" stroke-width="8"/><circle class="p" id="pr" cx="110" cy="110" r="96" fill="none" stroke="#d4af37" stroke-width="8" stroke-linecap="round" stroke-dasharray="' + C + '" stroke-dashoffset="' + C + '"/></svg>' +
-      '<div class="c" role="img" aria-label="' + esc(noise ? "still noise" : "readable") + ", " + T.trading_days + " of " + T.min_days + ' trading days"><b>' + T.trading_days + '</b><span class="label">of ' + T.min_days + ' trading days</span><span class="label" style="color:var(--gold);margin-top:6px">' + (noise ? "still noise" : "readable") + "</span></div></div>" +
+      '<div class="ringwrap"><div class="ring"><svg viewBox="0 0 220 220" aria-hidden="true"><circle cx="110" cy="110" r="96" fill="none" stroke="#0a1522" stroke-width="8"/><circle class="p" id="pr" cx="110" cy="110" r="96" fill="none" stroke="#34e0d6" stroke-width="8" stroke-linecap="round" stroke-dasharray="' + C + '" stroke-dashoffset="' + C + '"/></svg>' +
+      '<div class="c" role="img" aria-label="' + esc(noise ? "still noise" : "readable") + ", " + T.trading_days + " of " + T.min_days + ' trading days"><b>' + T.trading_days + '</b><span class="label">of ' + T.min_days + ' trading days</span><span class="label" style="color:var(--hi);margin-top:6px">' + (noise ? "still noise" : "readable") + "</span></div></div>" +
       '<div class="stats">' + stat("mispricing") + stat("short_term") + stat("swing") + '<div class="stat"><span class="label">Calls logged</span><div class="v">' + T.calls_logged.toLocaleString() + '</div><span class="label">' + T.pending + " pending</span></div>" +
       '<div class="stat"><span class="label">Rule</span><div class="v" style="font-size:18px">Nothing is hidden or removed after the fact.</div></div></div></div></section>' +
       '<section><h2>Graded calls</h2><p class="lede" style="margin-top:6px">Most recent 40 of the latest 300 graded calls shown here. <a href="https://github.com/abvarisano-droid/market-scanner/blob/main/data/picks.csv" target="_blank" rel="noopener">Full ledger</a> (every call, logged once and never replaced by a later run). Every row carries a hash chain value, so a check fails if any past row is edited, removed or reordered, and the record is snapshotted weekly. Neutral names are never called. Results this early are not evidence of skill.</p>' + tbl + "</section>";

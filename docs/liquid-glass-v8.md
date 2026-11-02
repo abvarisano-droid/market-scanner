@@ -6,7 +6,7 @@ Source: the shared v8 spec in the Brain (`Resources/design/liquid-glass-v8.md`, 
 
 ```
 SITE: Market Scanner (static, site/)
-ONE SIGNATURE MOMENT: the replay card on the landing, filled with the gold accent gradient, the dark replay instrument sunk into it
+ONE SIGNATURE MOMENT: the replay card on the landing, filled with the cyan accent gradient, the dark replay instrument sunk into it
 WEBSITE MAP: #/ (replay hero, KPI tiles, ways in), #/scan, #/lookup, #/longterm, #/how, #/track, #/stock/<ticker>
 
 TYPE
@@ -15,8 +15,8 @@ TYPE
   tracking: titles -0.018em, labels +0.08em uppercase
   body: system sans / 15px / 1.55; tickers and the replay panel stay mono
 PALETTE
-  bg #120d08 / surface rgba(34,27,19,.62) on #221b13 / text #f3eee2 / muted #a8a191 / accent #d4af37 to #8f7424
-  hero card gradient #e6c656 to #a8862c with ink #17110a
+  bg #060d0f / surface rgba(13,25,40,.62) on #0d1928 / text #e5fbfa / muted #989ea2 / accent #34e0d6 to #0b7a75
+  hero card gradient #34e0d6 to #0b7a75 with ink #071013
   status: green #4ade80, red #f87171 (always with a word or sign)
 SPACING
   base 4px, canvas padding 36px desktop / 16px phone, main max 1200px (1360px from 1600px)
@@ -48,16 +48,16 @@ PERF TARGETS
 Picked: A below 1600px and C from 1600px. The rail tested better than the pill (B): it frees vertical space so the replay and its panel sit fully above the fold, and it is the reference's main move. C only kicks in where the replay still gets its 900px side panel, so the replay never changes behaviour.
 
 ## Anti-slop checklist (section 7)
-- One signature moment (the gold replay card); everything else is quiet glass. Yes.
+- One signature moment (the cyan replay card); everything else is quiet glass. Yes.
 - 3 layouts generated and compared. Yes (above).
 - Type scale explicit. Yes.
 - Motion in numbers. Yes.
 - Transform/opacity only. Yes (lg8.css and the v8 block in style.css).
-- Reduced-motion fallback. Yes; plus reduced-transparency (solid fills) and more-contrast (stronger edges, flat gold).
+- Reduced-motion fallback. Yes; plus reduced-transparency (solid fills) and more-contrast (stronger edges, flat cyan).
 - Static fallback for 3D or video. Not applicable.
 - Mobile first with touch equivalents: phones get a bottom tab bar (5 items, 52px targets), Replay lives on the brand link. Yes.
 - CLS 0.000 measured at 390, 1280, 1600 and 1920 on every view; no console errors, no horizontal overflow, axe clean.
-- A specific decision: gold card with dark ink, teal instrument inside, warm lit room. Yes.
+- A specific decision: #34e0d6 card with dark ink, teal instrument inside, warm lit room. Yes.
 
 ## Roll back
 Delete the "Liquid Glass v8" blocks at the end of `site/style.css`, `site/lg8.css`, the `v8shell` / `v8canvas` wrappers and rail icons in `site/index.html`, and `kpis()` in `site/app.js`.
