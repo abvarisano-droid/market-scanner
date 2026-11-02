@@ -394,7 +394,7 @@
     var seg = ""; for (var i = 0; i < 20; i++) seg += "<i></i>";
     return '<div class="rgp"><div class="rgc rgpx"><span class="label">Price</span><b class="rgn">&nbsp;</b><span class="rgd label">&nbsp;</span></div>' +
       '<div class="rgc"><span class="label">Paths ending up vs down</span><div class="rgseg" aria-hidden="true">' + seg + '</div><div class="rgsn"><span><b class="rgu">0</b> up</span><span><b class="rgdn">0</b> down</span></div></div>' +
-      '<div class="rgc rghr"><span class="label">Inside the 10th to 90th band</span><div><b class="rgh">n/a</b><span class="rgfr">0/0</span></div><small class="rgbase">A 10th to 90th band catches about 8 in 10 by chance.</small></div>' +
+      '<div class="rgc rghr"><span class="label">Inside the 10th to 90th band</span><div><b class="rgh">n/a</b><span class="rgfr">no rounds yet</span></div><small class="rgbase">A 10th to 90th band catches about 8 in 10 by chance.</small></div>' +
       '<div class="rgc rgrc"><span class="label">Regime</span><div class="rgrg"><span class="rgchip">&nbsp;</span><small class="rgrs">&nbsp;</small></div></div>' +
       '<ol class="rglog" aria-label="Replay log"></ol><p class="rgnote">' + NOTE + ' <span class="rgmeth">Each round draws 1,000 paths from the stock\u2019s own past daily moves (centered on no change), then checks the 10th to 90th band against the real close 20 trading days later.</span></p></div>';
   }
@@ -592,14 +592,14 @@
     rgAnim(ring.firstChild, [{ transform: "scale(.3)", opacity: 0 }, { transform: "scale(1.15)", opacity: 1, offset: 0.6 }, { transform: "scale(1)", opacity: 1 }], { duration: D_BEAT });
     rgAnim(ring.querySelector("span"), [{ opacity: 0 }, { opacity: 1 }], { duration: D_MICRO, delay: D_MICRO });
     R.panel.querySelector(".rgh").textContent = Math.round(R.hits / R.done * 100) + "%";
-    R.panel.querySelector(".rgfr").textContent = R.hits + "/" + R.done;
+    R.panel.querySelector(".rgfr").textContent = R.hits + " of " + R.done + (R.done === 1 ? " round" : " rounds");
     var msg = "Real close 20 trading days later " + fmt(s.real) + ": " + (s.hit ? "HIT, inside" : "MISS, outside") + " the 10th to 90th band (" + fmt(s.p10) + " to " + fmt(s.p90) + ").";
     rgLog(R, msg);
     live.textContent = "Round " + (R.j + 1) + " of " + R.days.length + ": " + (s.hit ? "HIT" : "MISS") + ". " + msg;
   }
   function rgNext(R) {
     if (!R.days) return;
-    if (R.j >= R.days.length) { R.hits = 0; R.done = 0; R.panel.querySelector(".rgh").textContent = "n/a"; R.panel.querySelector(".rgfr").textContent = "0/0"; rgHalt(R); rgRound(R, 0); return; }
+    if (R.j >= R.days.length) { R.hits = 0; R.done = 0; R.panel.querySelector(".rgh").textContent = "n/a"; R.panel.querySelector(".rgfr").textContent = "no rounds yet"; rgHalt(R); rgRound(R, 0); return; }
     rgHalt(R); rgFinish(R); rgRound(R, R.j + 1);
   }
   function rgHalt(R) {

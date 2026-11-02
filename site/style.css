@@ -741,3 +741,5 @@ th,td{padding:12px 14px}
 .ch{stroke:#04080b}
 /* Layout A of three compared (A stacked glass cards, B one shared shell, C lists on the chart stage): stacked glass cards, lists as separate floating cards */
 .cols{gap:20px}
+/* #app takes focus on each route change (a11y.js); the view itself is the indicator, so no ring on the whole page. */
+#app:focus{outline:none}
