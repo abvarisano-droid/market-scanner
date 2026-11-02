@@ -15,8 +15,8 @@ TYPE
   tracking: titles -0.018em, labels +0.08em uppercase
   body: system sans / 15px / 1.55; tickers and the replay panel stay mono
 PALETTE
-  bg #1aa9a2 / surface rgba(22,28,32,.62) on #161c20 / text #34e0d6 / muted #a8a191 / accent #34e0d6 to #1aa9a2
-  hero card gradient #34e0d6 to #1aa9a2 with ink #1aa9a2
+  bg #060d0f / surface rgba(13,25,40,.62) on #0d1928 / text #e5fbfa / muted #989ea2 / accent #34e0d6 to #0b7a75
+  hero card gradient #34e0d6 to #0b7a75 with ink #071013
   status: green #4ade80, red #f87171 (always with a word or sign)
 SPACING
   base 4px, canvas padding 36px desktop / 16px phone, main max 1200px (1360px from 1600px)
