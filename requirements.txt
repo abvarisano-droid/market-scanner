@@ -6,3 +6,4 @@ lxml>=5.0
 streamlit>=1.40
 plotly>=5.24
 anthropic>=0.40
+httpx>=0.27
