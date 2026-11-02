@@ -1,0 +1,15 @@
+{
+ "note": "Kronos pins. Private paper-trading experiment. Not investment advice.",
+ "code": {"repo": "https://github.com/shiyu-coder/Kronos", "commit": "67b630e67f6a18c9e9be918d9b4337c960db1e9a", "license": "MIT (Copyright (c) 2025 ShiYu)",
+  "files": {"vendor/kronos/module.py": {"upstream": "model/module.py", "upstream_sha256": "a07edbadc0e96804c8158c021bbc6063bb7cc43b34d7fc470d5c8ff2005a409f", "changes": "none (verbatim)"},
+            "vendor/kronos/model.py": {"upstream": "model/kronos.py", "upstream_sha256": "0a5f90282e2039c2de0771473419715c845def154896dbd0f5747837e6241032", "changes": "lines 13 to 386 and 472 to 479 only; PyTorchModelHubMixin base, tqdm and sys.path removed; relative import"},
+            "vendor/kronos/LICENSE": {"upstream": "LICENSE", "upstream_sha256": "acb2d194d378204e5f2be4dcd24d39ecac437903620c790c3315a96dab388fdc", "changes": "none (verbatim)"}}},
+ "weights": {
+  "model": {"repo": "NeoQuasar/Kronos-small", "revision": "901c26c1332695a2a8f243eb2f37243a37bea320", "license": "MIT (Hugging Face model card)", "params": "24.7M (upstream README)",
+            "sha256": {"config.json": "5e0f6a605d5f81b5c9b559fe5cf716a1acb041c744e6f41bd05b097b7a685396", "model.safetensors": "b082dfcbd8e8c142a725c8bbb99781802f38fec81210e13479effb32b3c3e020"}},
+  "tokenizer": {"repo": "NeoQuasar/Kronos-Tokenizer-base", "revision": "0e0117387f39004a9016484a186a908917e22426", "license": "MIT (Hugging Face model card)",
+            "sha256": {"config.json": "2366e7ccfec76cbc19cf3c4c1b9c5d901be336ca1e83f2d2292c9bff381b77a2", "model.safetensors": "59d85f6af76a2c3b8240ea06cb21db4213b4eeca053f246b23e29cf832fc6bee"}}
+ },
+ "paper": "https://arxiv.org/abs/2508.02739 (AAAI 2026 per the upstream README; not independently verified)",
+ "sampling": {"T": 1.0, "top_p": 0.9, "top_k": 0, "max_context": 512, "clip": 5}
+}

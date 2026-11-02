@@ -697,11 +697,13 @@
       root.innerHTML = '<section class="hero"><span class="label">' + esc("Stock | " + (s.index ? s.index + " | " : "") + (s.sector || "")) + "</span><h1>" + esc(t) + ' <em style="font-size:.5em">' + esc(s.name) + "</em></h1>" +
         '<p class="lede">What the scanner currently says in each view, how its calls on this name have changed, and how they graded.</p>' +
         '<p class="v5link"><a class="btn ghost" href="#/lookup/' + encodeURIComponent(t) + '">Open in lookup</a></p></section>' +
-        (s.chart ? '<section class="csec" aria-label="Price chart"><h2>Three years of price</h2>' + chartBox(t) + "</section>" : "") + fundCard(s.fund) +
+        (s.chart ? '<section class="csec" aria-label="Price chart"><h2>Three years of price</h2>' + chartBox(t) + "</section>" : "") +
+        (s.chart ? '<section class="csec kxsec" aria-label="Kronos model range"></section>' : "") + fundCard(s.fund) +
         '<section><h2>Current call by view</h2><div class="hzs">' + cur + "</div></section>" +
         "<section><h2>Call and score history</h2><p class=\"note\" style=\"margin-top:6px\">" + n + " logged date" + (n === 1 ? "" : "s") + (n === 1 ? ". Only one scan so far, so there is no trend to show yet." : ".") + '</p><div class="twrap hist"><div class="tw" tabindex="0" role="region" aria-label="Call history"><table><tbody>' + hist + "</tbody></table></div></div></section>" +
         "<section><h2>Graded calls</h2>" + gr + '<p class="note">Mechanical rules on past data, not a forecast. Not investment advice.</p></section>';
       var cb = root.querySelector(".chartbox"); if (cb) chart(cb);
+      try { if (window.KRONOS) KRONOS.mount(root.querySelector(".kxsec"), t); } catch (e) { if (window.console) console.warn("kronos card failed", e); }
     }).catch(function () { root.classList.remove("boot"); root.innerHTML = '<section class="hero"><h1>Stock data <em>unavailable.</em></h1><p class="lede">Not investment advice.</p></section>'; });
   }
 

@@ -87,3 +87,133 @@ jobs:
           done
           echo "push failed after 3 attempts"
           exit 1
+  # Kronos model range for stock pages (2026-11-02, brief: second-brain Projects/Market Scanner/picks/brief-kronos-trader.md;
+  # spec: docs/kronos-range.md). A model range, not a prediction. Not investment advice. Free: CPU only, no API, no secrets.
+  # kronos-forecast has no write token: it reads the chart file the scan just committed, downloads the pinned weights
+  # (exact Hugging Face revisions, sha256 checked, safetensors only), installs the hash-locked CPU torch stack and runs
+  # the model with the network cut. kronos-commit runs no model code: it copies the trusted scripts first, treats the model
+  # output as data, and commits only site/data/kronos/ and data/kronos_log.csv. Both are continue-on-error, so a Kronos
+  # problem never touches the scan. Runtime cap: the model step stops starting tickers after 13 minutes.
+  kronos-forecast:
+    needs: scan
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    continue-on-error: true
+    permissions: { contents: read }
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262  # v4.4.0
+        with: { ref: main, persist-credentials: false }
+      - uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065  # v5.6.0
+        with: { python-version: "3.11" }
+      - name: Model input (last 64 daily candles of each page, ending at the scan's close)
+        run: |
+          set -euo pipefail
+          mkdir -p "$RUNNER_TEMP/k"
+          python3 -I scripts/kronos_bands.py prepare --out "$RUNNER_TEMP/k/input.json"
+      - name: Pinned weights (exact revisions, sha256 checked, safetensors only)
+        run: |
+          set -euo pipefail
+          W="$RUNNER_TEMP/weights"
+          python3 -I - "$W" <<'PY'
+          import hashlib, json, sys, urllib.request
+          from pathlib import Path
+          man = json.loads(Path("kronos/MANIFEST.json").read_text())
+          root = Path(sys.argv[1])
+          for part, pin in man["weights"].items():
+              d = root / part
+              d.mkdir(parents=True, exist_ok=True)
+              for name, digest in pin["sha256"].items():
+                  assert name in ("config.json", "model.safetensors") and len(pin["revision"]) == 40
+                  url = f"https://huggingface.co/{pin['repo']}/resolve/{pin['revision']}/{name}"
+                  req = urllib.request.Request(url, headers={"User-Agent": "market-scanner-kronos/1.0"})
+                  with urllib.request.urlopen(req, timeout=120) as r:
+                      data = r.read(200_000_000)
+                  if hashlib.sha256(data).hexdigest() != digest:
+                      sys.exit(f"{part}/{name}: sha256 does not match the pin")
+                  (d / name).write_bytes(data)
+                  print(f"{part}/{name}: ok ({len(data)} bytes)")
+          PY
+          echo "W=$W" >> "$GITHUB_ENV"
+      - name: Hash-locked CPU torch stack (own venv)
+        run: |
+          set -euo pipefail
+          python -m venv "$RUNNER_TEMP/kv"
+          "$RUNNER_TEMP/kv/bin/pip" install -q --require-hashes --no-deps --only-binary=:all: \
+            --index-url https://download.pytorch.org/whl/cpu --extra-index-url https://pypi.org/simple -r kronos/requirements.txt
+      - name: Kronos (network cut)
+        run: |
+          set -euo pipefail
+          mkdir -p "$RUNNER_TEMP/out"
+          CMD=("$RUNNER_TEMP/kv/bin/python" -I kronos/run_model.py --input "$RUNNER_TEMP/k/input.json" --weights "$W" --out "$RUNNER_TEMP/out/raw.json" --budget 780)
+          if sudo -n unshare --net true 2>/dev/null; then
+            echo "running in a network namespace with no interfaces"
+            sudo -n unshare --net -- sudo -n -u "$(id -un)" -- env HOME="$HOME" OMP_NUM_THREADS="$(nproc)" "${CMD[@]}"
+          else
+            echo "::warning::no network namespace; relying on the in-process socket block"
+            OMP_NUM_THREADS="$(nproc)" "${CMD[@]}"
+          fi
+          cp "$RUNNER_TEMP/k/input.json" "$RUNNER_TEMP/out/input.json"
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02  # v4.6.2
+        if: always()
+        with:
+          name: kronos-raw
+          path: ${{ runner.temp }}/out/
+          if-no-files-found: ignore
+          retention-days: 7
+  kronos-commit:
+    needs: kronos-forecast
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    continue-on-error: true
+    permissions: { contents: write }
+    concurrency:
+      group: repo-push
+      cancel-in-progress: false
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262  # v4.4.0
+        with: { ref: main, persist-credentials: false }
+      - uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065  # v5.6.0
+        with: { python-version: "3.11" }
+      - name: Copy the trusted scripts (before the artifact is read)
+        run: |
+          set -euo pipefail
+          T="$RUNNER_TEMP/trusted"
+          mkdir -p "$T/scripts" "$T/scanner"
+          cp scripts/kronos_bands.py "$T/scripts/"
+          cp scanner/kronos_band.py "$T/scanner/"
+          : > "$T/scanner/__init__.py"
+          echo "TRUSTED=$T" >> "$GITHUB_ENV"
+          echo "DIGEST=$(cd "$T" && find . -type f -print0 | LC_ALL=C sort -z | xargs -0 sha256sum | sha256sum | cut -c1-64)" >> "$GITHUB_ENV"
+      - uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093  # v4.3.0
+        with:
+          name: kronos-raw
+          path: ${{ runner.temp }}/in
+      - name: Bands and the walk-forward count (trusted code; the model output is data only)
+        run: |
+          set -euo pipefail
+          [ "$(cd "$TRUSTED" && find . -type f -print0 | LC_ALL=C sort -z | xargs -0 sha256sum | sha256sum | cut -c1-64)" = "$DIGEST" ] || { echo "::error::trusted scripts changed"; exit 1; }
+          # The trusted copy writes into this checkout (ROOT is the copy's parent, so point it here with a link).
+          ln -s "$GITHUB_WORKSPACE/data" "$TRUSTED/data"
+          ln -s "$GITHUB_WORKSPACE/site" "$TRUSTED/site"
+          python3 -I -B "$TRUSTED/scripts/kronos_bands.py" ingest --input "$RUNNER_TEMP/in/input.json" --raw "$RUNNER_TEMP/in/raw.json"
+      - name: Commit only the Kronos files
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -uo pipefail
+          bad="$(git status --porcelain --untracked-files=all | grep -v -e '^?? site/data/kronos/' -e '^ M site/data/kronos/' -e '^?? data/kronos_log.csv$' -e '^ M data/kronos_log.csv$' || true)"
+          if [ -n "$bad" ]; then echo "::error::changes outside the Kronos files:"; printf '%s\n' "$bad"; exit 1; fi
+          git add -- site/data/kronos data/kronos_log.csv 2>/dev/null || true
+          git diff --cached --quiet && { echo "nothing to commit"; exit 0; }
+          git config user.name "market-scanner-bot"
+          git config user.email "actions@users.noreply.github.com"
+          git -c core.hooksPath=/dev/null commit -q -m "Kronos ranges $(python3 -c "import json; print(json.load(open('data/latest_scan.json'))['date'])")"
+          git config --local http.https://github.com/.extraheader "AUTHORIZATION: basic $(printf 'x-access-token:%s' "$GH_TOKEN" | base64 -w0)"
+          trap 'git config --local --unset-all http.https://github.com/.extraheader || true' EXIT
+          for attempt in 1 2 3; do
+            if git pull -q --rebase origin main && git push -q origin HEAD:main; then exit 0; fi
+            echo "push attempt $attempt failed, retrying"
+            git rebase --abort 2>/dev/null || true
+            sleep $((attempt * 5))
+          done
+          echo "::error::push failed after 3 attempts"; exit 1

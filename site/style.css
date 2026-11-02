@@ -743,3 +743,15 @@ th,td{padding:12px 14px}
 .cols{gap:20px}
 /* #app takes focus on each route change (a11y.js); the view itself is the indicator, so no ring on the whole page. */
 #app:focus{outline:none}
+
+/* ===== Kronos model range card (2026-11-02, claude; look pending grok). Spec: docs/kronos-range.md.
+   Reuses the replay tokens and panel cells (.rgp, .rgc, .rgseg, .rgh). Static SVG, no motion. The stage height is fixed
+   from the first paint so filling the card moves nothing. */
+.kx{color:var(--rg-ink)}
+.kxstage{position:relative;background:var(--kx-stage,var(--rg-bg));border:1px solid var(--rg-line);border-radius:8px;overflow:hidden}
+.kxstage svg{display:block;width:100%;height:100%}
+.kxwait{position:absolute;left:12px;top:12px;margin:0;font-size:10px;letter-spacing:.12em;color:var(--rg-mute)}
+.kxp{grid-template-columns:repeat(3,minmax(0,1fr))}
+.kxp .rgpx{grid-column:auto;flex-direction:column;align-items:flex-start}
+.kxnote{grid-column:1/-1}
+@media (max-width:640px){.kxp{grid-template-columns:1fr 1fr}.kxp .rgpx{grid-column:1/-1}}
