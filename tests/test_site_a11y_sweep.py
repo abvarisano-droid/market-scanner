@@ -22,3 +22,12 @@ def test_replay_counter_reads_in_words():
     v5 = (SITE / "v5.js").read_text()
     assert 'R.hits + " of " + R.done + (R.done === 1 ? " round" : " rounds")' in v5
     assert '"0/0"' not in v5 and ">0/0<" not in v5
+
+
+def test_late_redraws_and_load_errors_are_spoken():
+    html = (SITE / "index.html").read_text()
+    assert '<p id="route-status" class="sr" role="status"></p>' in html
+    js = (SITE / "a11y.js").read_text()
+    assert "var ERROR = /unavailable|could not|hit a snag/i;" in js
+    assert 'live.setAttribute("role", urgent ? "alert" : "status");' in js
+    assert "if (focused && t && !/^Loading/.test(t))" in js and "focused = true;" in js
