@@ -1,4 +1,8 @@
 {
- "checked_at": "2026-10-31T17:40:07Z",
- "missed": []
+ "checked_at": "2026-11-02T19:38:26Z",
+ "missed": [],
+ "status": "ok",
+ "market_date": "2026-10-30",
+ "last_scan": "2026-10-31",
+ "catch_up": false
 }
