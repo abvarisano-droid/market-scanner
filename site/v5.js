@@ -61,7 +61,7 @@
   /* ---------- price chart: 3 years of candles, chosen layers, volatility cone ----------
      Spec: main plot 320px (<760) / 460px (>=760); RSI and MACD panels 84px / 110px each.
      The box height is set from the layer state before data arrives, so loading never shifts layout.
-     Palette: up #5fa97c, down #cb5d46, 50d #d4af37, 200d #9c8fd0, Bollinger #6fa8c8, grid #1c1a14.
+     Palette: up #5fa97c, down #cb5d46, 50d #34e0d6, 200d #9c8fd0, Bollinger #6fa8c8, grid #141a1e.
      Type: mono 10px axis (11px desktop), mono 11px cone labels (12px desktop).
      Motion: cone fades in, opacity only, 700ms cubic-bezier(.2,.8,.2,1), 250ms delay. Reduced motion: none.
      Static fallback: the visually hidden table and the role=img summary carry the key numbers.
@@ -70,7 +70,7 @@
   var LAYERS = [["vol", "Volume"], ["ma50", "50-day SMA"], ["ma200", "200-day SMA"], ["bb", "Bollinger Bands (20, 2)"], ["rsi", "RSI (14)"],
     ["macd", "MACD (12, 26, 9)"], ["hl", "52-week range"], ["fan", "Volatility cone (\u00b11\u03c3)"], ["earn", "Next earnings"]];
   var DEF = ["ma50", "ma200", "fan"], STATS = ["Last close", "1 year", "52-week range", "Yearly volatility", "Next event"];
-  var COL = { up: "#5fa97c", dn: "#cb5d46", m50: "#d4af37", m200: "#9c8fd0", bb: "#6fa8c8", up1: "#5fa97c", flat: "#ebe6d8", dn1: "#cb5d46" };
+  var COL = { up: "#5fa97c", dn: "#cb5d46", m50: "#34e0d6", m200: "#9c8fd0", bb: "#6fa8c8", up1: "#5fa97c", flat: "#34e0d6", dn1: "#cb5d46" };
   function getChart(t) {
     if (!CH[t]) CH[t] = fetch("data/charts/" + encodeURIComponent(t) + ".json").then(function (r) { if (!r.ok) throw new Error("chart"); return r.json(); });
     return CH[t];
@@ -261,10 +261,10 @@
     /* draw the line-end tags (positions set above) */
     lt.forEach(function (t) {
       var tw = t.tw, xr = t.xr;
-      o.push('<rect x="' + (xr - tw).toFixed(1) + '" y="' + (t.y - 8).toFixed(1) + '" width="' + tw.toFixed(1) + '" height="16" rx="3" fill="' + (t.now ? COL.m50 : "#0b0a08") + '"' + (t.now ? "" : ' stroke="' + t.c + '" stroke-opacity=".7"') + "/>" +
+      o.push('<rect x="' + (xr - tw).toFixed(1) + '" y="' + (t.y - 8).toFixed(1) + '" width="' + tw.toFixed(1) + '" height="16" rx="3" fill="' + (t.now ? COL.m50 : "#060c10") + '"' + (t.now ? "" : ' stroke="' + t.c + '" stroke-opacity=".7"') + "/>" +
         '<text x="' + (xr - tw / 2).toFixed(1) + '" y="' + (t.y + 3.5).toFixed(1) + '" font-size="' + fs + '" text-anchor="middle" class="ctag" fill="' + (t.now ? "#050505" : t.c) + '">' + esc(t.t) + "</text>");
     });
-    o.push('<circle cx="' + xNow.toFixed(1) + '" cy="' + yNow.toFixed(1) + '" r="9" fill="#d4af37" opacity=".18"/><circle cx="' + xNow.toFixed(1) + '" cy="' + yNow.toFixed(1) + '" r="4" fill="#d4af37" stroke="#050505" stroke-width="1.5"/>');
+    o.push('<circle cx="' + xNow.toFixed(1) + '" cy="' + yNow.toFixed(1) + '" r="9" fill="#34e0d6" opacity=".18"/><circle cx="' + xNow.toFixed(1) + '" cy="' + yNow.toFixed(1) + '" r="4" fill="#34e0d6" stroke="#050505" stroke-width="1.5"/>');
     /* sub panels */
     subs.forEach(function (sb) {
       var top = sb[1] + gapP, h = D.sub - gapP - 4, xr0 = padL, xr1 = xNow + slot / 2;
@@ -380,7 +380,7 @@
      (beam, orb, ring) animate transform and opacity only, with the Web Animations API.
      Easing cubic-bezier(.2,.8,.2,1); durations 160 / 600 / 900 ms. Reduced motion: final frame per round, Next button. */
   var RANGE = null, rangeP = null, EASE = "cubic-bezier(.2,.8,.2,1)", D_MICRO = 160, D_BEAT = 600, D_FAN = 900, LAND = 60;
-  var RGC = { bg: "#04080b", grid: "#10202a", axis: "#5f7a80", teal: "#3ad6c4", red: "#e0675a", gold: "#d4af37", up: "#5fa97c", dn: "#cb5d46", ink: "#d8e6e6" };
+  var RGC = { bg: "#04080b", grid: "#10202a", axis: "#5f7a80", teal: "#3ad6c4", red: "#e0675a", gold: "#34e0d6", up: "#5fa97c", dn: "#cb5d46", ink: "#d8e6e6" };
   var NOTE = "Replay on past data. A range of typical moves, not a forecast. Not investment advice.";
   /* timeline of one round, in ms from its start */
   var T_ORB = 450, T_FAN = 900, T_MED = T_FAN + D_FAN, T_LAND = T_MED + 300, T_RING = T_LAND + 20 * LAND, T_END = T_RING + 1100, T_TODAY_END = T_MED + 800;

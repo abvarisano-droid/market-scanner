@@ -166,7 +166,7 @@
       ctx.font = "12px ui-monospace,SFMono-Regular,Menlo,Consolas,monospace"; ctx.textBaseline = "middle";
       var lw = Math.max.apply(null, [sim.p90, sim.p50, sim.p10].map(function (v) { return ctx.measureText(money(v)).width; })), xe = Math.min(G.xNow + sim.h * G.step + 6, W - 34 - lw - 6), ys = [[sim.p90, "90th "], [sim.p50, "Med "], [sim.p10, "10th "]].map(function (r) { return [G.Y(r[0]), r]; });
       for (var m = 1; m < 3; m++) if (ys[m][0] - ys[m - 1][0] < 14) ys[m][0] = ys[m - 1][0] + 14;
-      ys.forEach(function (r) { ctx.fillStyle = "rgba(160,170,180,.85)"; ctx.fillText(r[1][1], xe, r[0]); ctx.fillStyle = "#e9c46a"; ctx.fillText(money(r[1][0]), xe + 34, r[0]); });
+      ys.forEach(function (r) { ctx.fillStyle = "rgba(160,170,180,.85)"; ctx.fillText(r[1][1], xe, r[0]); ctx.fillStyle = "#34e0d6"; ctx.fillText(money(r[1][0]), xe + 34, r[0]); });
     }
     layout();
     var last = 0;
