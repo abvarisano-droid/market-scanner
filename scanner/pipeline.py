@@ -11,6 +11,7 @@ from pathlib import Path
 import numpy as np
 import pandas as pd
 
+from .labels import round_price
 from . import charts, data, news_ai, signals, technical, tracker, universe, valuation, watchdog
 
 log = logging.getLogger(__name__)
@@ -189,7 +190,7 @@ def run(indexes: list[str] | None = None, top_n: int = TOP_N, live_constituents:
         "date": asof.date().isoformat(),
         "dropped_baskets": dropped,
         "funnel": funnel,
-        "spy_spark": [round(float(x), 2) for x in bench.tail(60)],
+        "spy_spark": [round_price(x) for x in bench.tail(60)],
         "technical": {k: tech[k] for k in ("asof", "dropped", "horizons", "scores", "spark")},
         "indexes": index_snapshot(price_map),
         "picks": picks,

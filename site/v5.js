@@ -98,7 +98,7 @@
   }
   function fmt(v) {
     if (v == null) return "n/a";
-    var a = Math.abs(v), d = a >= 10000 ? 0 : a >= 1000 ? 1 : 2;
+    var a = Math.abs(v), d = a >= 10000 ? 0 : a >= 1000 ? 1 : a > 0 && a < 1 ? 4 : 2;
     return v.toLocaleString("en-US", { minimumFractionDigits: d, maximumFractionDigits: d });
   }
   function big(v) { if (v == null) return "n/a"; var a = Math.abs(v); return a >= 1e12 ? (v / 1e12).toFixed(2) + "T" : a >= 1e9 ? (v / 1e9).toFixed(1) + "B" : a >= 1e6 ? (v / 1e6).toFixed(1) + "M" : a >= 1e3 ? (v / 1e3).toFixed(0) + "K" : String(Math.round(v)); }

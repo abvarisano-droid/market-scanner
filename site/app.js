@@ -312,7 +312,7 @@
       if (!v) { res.innerHTML = ""; return; }
       var r = LK[v];
       if (!r) { res.innerHTML = '<p class="note">No scored data for "' + esc(v) + '" in the latest scan. It may be outside the universe or failed a data check.</p>'; return; }
-      res.innerHTML = '<div class="card fade"><span class="label">' + esc((r.ix && r.ix.length > 1 ? r.ix.join(", ") + " | " : r.i ? r.i + " | " : "") + (r.s || "")) + "</span><h2>" + esc(v) + " <span style=\"color:var(--muted);font-size:.5em\">" + esc(r.n) + '</span></h2><div class="meta"><span class="label">Last close ' + (r.c == null ? "n/a" : r.c.toFixed(2) + (r.cur ? " " + esc(r.cur) : "")) + '</span><span class="label">As of ' + esc(S.latest.asof) + "</span></div>" +
+      res.innerHTML = '<div class="card fade"><span class="label">' + esc((r.ix && r.ix.length > 1 ? r.ix.join(", ") + " | " : r.i ? r.i + " | " : "") + (r.s || "")) + "</span><h2>" + esc(v) + " <span style=\"color:var(--muted);font-size:.5em\">" + esc(r.n) + '</span></h2><div class="meta"><span class="label">Last close ' + (r.c == null ? "n/a" : (Math.abs(r.c) < 1 ? String(+r.c.toPrecision(4)) : r.c.toFixed(2)) + (r.cur ? " " + esc(r.cur) : "")) + '</span><span class="label">As of ' + esc(S.latest.asof) + "</span></div>" +
         (r.ch && window.V5 ? V5.chartBox(v) : spark(r.spark)) + '<div class="hzs">' + hzCard("Mispricing", r.mp, true) + hzCard("Short-term", r.st) + hzCard("Swing", r.sw) + '</div><p class="note">Mechanical rules on past data, not a forecast. Not investment advice.</p></div>';
       var cb = res.querySelector(".chartbox"); if (cb) V5.chart(cb);
       if (window.V5) V5.link(res, v);

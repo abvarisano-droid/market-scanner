@@ -30,3 +30,18 @@ def normalize(label) -> str:
 def sign(label) -> int:
     lab = normalize(label)
     return 1 if lab == BULLISH else -1 if lab == BEARISH else 0
+
+
+def round_price(x, sig: int = 4):
+    """Round a share price for display: 2 decimals at $1 and up, at least `sig` significant
+    figures below $1 (so a $0.112 stock is not shown as $0.11). None and non-finite give None."""
+    import math
+    try:
+        x = float(x)
+    except (TypeError, ValueError):
+        return None
+    if not math.isfinite(x):
+        return None
+    if x == 0 or abs(x) >= 1:
+        return round(x, 2)
+    return round(x, sig - 1 - int(math.floor(math.log10(abs(x)))))

@@ -6,6 +6,8 @@ from typing import NamedTuple, Optional
 import numpy as np
 import pandas as pd
 
+from .labels import round_price
+
 BULL, BEAR = 65, 35
 MIN_SHORT, MIN_SWING = 30, 252
 BULL_L, BEAR_L = "Bullish", "Bearish"
@@ -197,4 +199,4 @@ def scan_technical(frames: dict, spy: pd.DataFrame, top_n: int = TOP_N) -> dict:
         horizons[hz] = {"counts": counts, "top_bull": bull, "top_bear": bear, "scored": len(items)}
     return {"asof": ref, "with_data": len(frames), "passed_checks": len(passed), "dropped": dropped,
             "horizons": horizons, "scores": rows,
-            "spark": {t: [round(float(x), 2) for x in df["close"].tail(60)] for t, df in passed.items()}}
+            "spark": {t: [round_price(x) for x in df["close"].tail(60)] for t, df in passed.items()}}
