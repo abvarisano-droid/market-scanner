@@ -1,0 +1,1650 @@
+{
+ "as_of": "2026-11-02",
+ "generated_at": "2026-11-03T04:34:35Z",
+ "deals_as_of": "2026-11-03",
+ "about": "Pending US public-company acquisitions. Terms come only from SEC filings and the companies' press releases. verified is true only where the value was read in the raw text of the linked source; anything read only through a summary, or taken from price data, is marked Unverified with a note. Pending means no completion (Item 2.01) or termination (Item 1.02) 8-K was found on EDGAR as of as_of. Not investment advice.",
+ "close_date_rule": "When a source states a period instead of a date, by_date is the last day of that period (for example first half of 2027 is 2027-06-30).",
+ "unaffected_rule": "Target close on the last trading day before the announcement, or on the announcement day itself when the deal was announced after that day's close (announced_after_close). When the release names an earlier unaffected date (a leak), that date is used.",
+ "disclaimer": "Not investment advice. Spreads and the implied chance are mechanical arithmetic on public prices and filed terms, not forecasts or recommendations. Prices can be delayed or wrong.",
+ "deals": [
+  {
+   "id": "MKTX",
+   "status": "pending",
+   "acquirer": {
+    "value": "Intercontinental Exchange, Inc.",
+    "source_url": "https://s2.q4cdn.com/154085107/files/doc_news/Intercontinental-Exchange-to-Acquire-MarketAxess-Creating-a-Premier-Fixed-Income-Marketplace-2026.pdf",
+    "as_of": "2026-11-03",
+    "verified": true
+   },
+   "acquirer_ticker": {
+    "value": "ICE",
+    "source_url": "https://s2.q4cdn.com/154085107/files/doc_news/Intercontinental-Exchange-to-Acquire-MarketAxess-Creating-a-Premier-Fixed-Income-Marketplace-2026.pdf",
+    "as_of": "2026-11-03",
+    "verified": true
+   },
+   "target": {
+    "value": "MarketAxess Holdings Inc.",
+    "source_url": "https://s2.q4cdn.com/154085107/files/doc_news/Intercontinental-Exchange-to-Acquire-MarketAxess-Creating-a-Premier-Fixed-Income-Marketplace-2026.pdf",
+    "as_of": "2026-11-03",
+    "verified": true
+   },
+   "target_ticker": {
+    "value": "MKTX",
+    "source_url": "https://s2.q4cdn.com/154085107/files/doc_news/Intercontinental-Exchange-to-Acquire-MarketAxess-Creating-a-Premier-Fixed-Income-Marketplace-2026.pdf",
+    "as_of": "2026-11-03",
+    "verified": true
+   },
+   "cash_per_share": {
+    "value": 167.0,
+    "source_url": "https://s2.q4cdn.com/154085107/files/doc_news/Intercontinental-Exchange-to-Acquire-MarketAxess-Creating-a-Premier-Fixed-Income-Marketplace-2026.pdf",
+    "as_of": "2026-11-03",
+    "verified": true
+   },
+   "exchange_ratio": {
+    "value": null,
+    "source_url": "https://s2.q4cdn.com/154085107/files/doc_news/Intercontinental-Exchange-to-Acquire-MarketAxess-Creating-a-Premier-Fixed-Income-Marketplace-2026.pdf",
+    "as_of": "2026-11-03",
+    "verified": true,
+    "note": "All cash."
+   },
+   "cvr": {
+    "value": null,
+    "source_url": "https://www.sec.gov/Archives/edgar/data/1278021/000119312526395678/d171374ddefm14a.htm",
+    "as_of": "2026-11-03",
+    "verified": false,
+    "note": "No CVR in the proxy. Read only through a summarizing fetch of the filing, not checked against its raw text."
+   },
+   "agreement_date": {
+    "value": "2026-07-29",
+    "source_url": "https://www.sec.gov/Archives/edgar/data/1278021/000119312526395678/d171374ddefm14a.htm",
+    "as_of": "2026-11-03",
+    "verified": false,
+    "note": "Read only through a summarizing fetch of the filing, not checked against its raw text."
+   },
+   "announce_date": {
+    "value": "2026-07-30",
+    "source_url": "https://s2.q4cdn.com/154085107/files/doc_news/Intercontinental-Exchange-to-Acquire-MarketAxess-Creating-a-Premier-Fixed-Income-Marketplace-2026.pdf",
+    "as_of": "2026-11-03",
+    "verified": true,
+    "note": "Release dated July 30, 2026."
+   },
+   "announced_after_close": {
+    "value": false,
+    "source_url": "https://s2.q4cdn.com/154085107/files/doc_news/Intercontinental-Exchange-to-Acquire-MarketAxess-Creating-a-Premier-Fixed-Income-Marketplace-2026.pdf",
+    "as_of": "2026-11-03",
+    "verified": false,
+    "note": "Release cites the July 29 close and a July 30, 8:30 a.m. ET call; the July 30 close (162.76) had already moved to the offer."
+   },
+   "expected_close": {
+    "value": "first half of 2027",
+    "source_url": "https://s2.q4cdn.com/154085107/files/doc_news/Intercontinental-Exchange-to-Acquire-MarketAxess-Creating-a-Premier-Fixed-Income-Marketplace-2026.pdf",
+    "as_of": "2026-11-03",
+    "verified": true,
+    "by_date": "2027-06-30"
+   },
+   "unaffected_price": {
+    "value": 125.73,
+    "source_url": "https://finance.yahoo.com/quote/MKTX/history/",
+    "as_of": "2026-11-03",
+    "verified": false,
+    "note": "Close on the last trading day before the announcement (2026-07-29), from Yahoo Finance (yfinance, unadjusted). The number itself is not stated in the sources read. Consistent with the release's 33% premium to the July 29 close.",
+    "date": "2026-07-29"
+   },
+   "steps": [
+    {
+     "name": "Stockholder vote",
+     "status": "done",
+     "source_url": "https://www.sec.gov/Archives/edgar/data/1278021/000119312526437772/mktx-20261029.htm",
+     "as_of": "2026-11-03",
+     "verified": false,
+     "note": "Approved October 29, 2026. Read only through a summarizing fetch of the filing, not checked against its raw text."
+    },
+    {
+     "name": "HSR",
+     "status": "open",
+     "source_url": "https://www.sec.gov/Archives/edgar/data/1278021/000119312526407834/d142535d8k.htm",
+     "as_of": "2026-11-03",
+     "verified": false,
+     "note": "Refiled September 29, 2026; scheduled to expire October 29, 2026. No filing confirms it expired. Read only through a summarizing fetch of the filing, not checked against its raw text."
+    },
+    {
+     "name": "Other regulators (FINRA, CIRO, OSC, Dutch central bank, AFM, UK FCA, MAS)",
+     "status": "open",
+     "source_url": "https://www.sec.gov/Archives/edgar/data/1278021/000119312526395678/d171374ddefm14a.htm",
+     "as_of": "2026-11-03",
+     "verified": false,
+     "note": "Read only through a summarizing fetch of the filing, not checked against its raw text."
+    },
+    {
+     "name": "Financing",
+     "status": "done",
+     "source_url": "https://www.sec.gov/Archives/edgar/data/1278021/000119312526395678/d171374ddefm14a.htm",
+     "as_of": "2026-11-03",
+     "verified": false,
+     "note": "Not a closing condition per the proxy. Read only through a summarizing fetch of the filing, not checked against its raw text."
+    }
+   ],
+   "proxy_url": "https://www.sec.gov/Archives/edgar/data/1278021/000119312526395678/d171374ddefm14a.htm",
+   "calc": {
+    "target_price": 165.48,
+    "acquirer_price": null,
+    "offer_value": 167.0,
+    "spread_usd": 1.52,
+    "spread": 0.009185,
+    "days_to_close": 239,
+    "annualized": 0.014028,
+    "implied_chance": 0.9632,
+    "open_steps": 2,
+    "kind": "cash",
+    "price_date": "2026-11-02"
+   }
+  },
+  {
+   "id": "DV",
+   "status": "pending",
+   "acquirer": {
+    "value": "Nielsen Holdings (through Neptune BidCo US Inc.)",
+    "source_url": "https://www.provequity.com/news/nielsen-acquire-doubleverify",
+    "as_of": "2026-11-03",
+    "verified": true,
+    "note": "Neptune BidCo US Inc. is the buyer entity named in the proxy (not read in raw text)."
+   },
+   "acquirer_ticker": {
+    "value": null,
+    "source_url": "https://www.provequity.com/news/nielsen-acquire-doubleverify",
+    "as_of": "2026-11-03",
+    "verified": false,
+    "note": "Private buyer; no listed ticker."
+   },
+   "target": {
+    "value": "DoubleVerify Holdings, Inc.",
+    "source_url": "https://www.sec.gov/Archives/edgar/data/1819928/000110465926111962/tm2621904-12_defm14a.htm",
+    "as_of": "2026-11-03",
+    "verified": false,
+    "note": "Read only through a summarizing fetch of the filing, not checked against its raw text."
+   },
+   "target_ticker": {
+    "value": "DV",
+    "source_url": "https://www.provequity.com/news/nielsen-acquire-doubleverify",
+    "as_of": "2026-11-03",
+    "verified": true
+   },
+   "cash_per_share": {
+    "value": 13.6,
+    "source_url": "https://www.provequity.com/news/nielsen-acquire-doubleverify",
+    "as_of": "2026-11-03",
+    "verified": true
+   },
+   "exchange_ratio": {
+    "value": null,
+    "source_url": "https://www.provequity.com/news/nielsen-acquire-doubleverify",
+    "as_of": "2026-11-03",
+    "verified": true,
+    "note": "All cash."
+   },
+   "cvr": {
+    "value": null,
+    "source_url": "https://www.sec.gov/Archives/edgar/data/1819928/000110465926111962/tm2621904-12_defm14a.htm",
+    "as_of": "2026-11-03",
+    "verified": false,
+    "note": "No CVR in the proxy. Read only through a summarizing fetch of the filing, not checked against its raw text."
+   },
+   "agreement_date": {
+    "value": "2026-08-06",
+    "source_url": "https://www.sec.gov/Archives/edgar/data/1819928/000110465926111962/tm2621904-12_defm14a.htm",
+    "as_of": "2026-11-03",
+    "verified": false,
+    "note": "Read only through a summarizing fetch of the filing, not checked against its raw text."
+   },
+   "announce_date": {
+    "value": "2026-08-06",
+    "source_url": "https://www.sec.gov/Archives/edgar/data/1819928/000110465926092121/tm2621904d1_8k.htm",
+    "as_of": "2026-11-03",
+    "verified": false,
+    "note": "The 8-K says the press release is dated August 6, 2026; the Providence Equity copy is dated August 7. Read only through a summarizing fetch of the filing, not checked against its raw text."
+   },
+   "announced_after_close": {
+    "value": true,
+    "source_url": "https://finance.yahoo.com/quote/DV/history/",
+    "as_of": "2026-11-03",
+    "verified": false,
+    "note": "Inferred from prices: the August 6 close (11.71) was unaffected and the August 7 close (13.21) jumped to the offer."
+   },
+   "expected_close": {
+    "value": "by the first quarter of 2027",
+    "source_url": "https://www.provequity.com/news/nielsen-acquire-doubleverify",
+    "as_of": "2026-11-03",
+    "verified": true,
+    "by_date": "2027-03-31"
+   },
+   "unaffected_price": {
+    "value": 11.71,
+    "source_url": "https://finance.yahoo.com/quote/DV/history/",
+    "as_of": "2026-11-03",
+    "verified": false,
+    "note": "Close on the announcement day, because the deal was announced after that close (2026-08-06), from Yahoo Finance (yfinance, unadjusted). The number itself is not stated in the sources read.",
+    "date": "2026-08-06"
+   },
+   "steps": [
+    {
+     "name": "Stockholder vote",
+     "status": "done",
+     "source_url": "https://www.sec.gov/Archives/edgar/data/1819928/000110465926120260/tm2627835d3_8k.htm",
+     "as_of": "2026-11-03",
+     "verified": false,
+     "note": "Approved October 29, 2026. Read only through a summarizing fetch of the filing, not checked against its raw text."
+    },
+    {
+     "name": "HSR",
+     "status": "done",
+     "source_url": "https://www.sec.gov/Archives/edgar/data/1819928/000110465926111962/tm2621904-12_defm14a.htm",
+     "as_of": "2026-11-03",
+     "verified": false,
+     "note": "Proxy: the waiting period expired. Read only through a summarizing fetch of the filing, not checked against its raw text."
+    },
+    {
+     "name": "Foreign approvals (Australia, Cyprus, Germany, Morocco)",
+     "status": "open",
+     "source_url": "https://www.sec.gov/Archives/edgar/data/1819928/000110465926111962/tm2621904-12_defm14a.htm",
+     "as_of": "2026-11-03",
+     "verified": false,
+     "note": "Read only through a summarizing fetch of the filing, not checked against its raw text."
+    },
+    {
+     "name": "Financing",
+     "status": "done",
+     "source_url": "https://www.sec.gov/Archives/edgar/data/1819928/000110465926111962/tm2621904-12_defm14a.htm",
+     "as_of": "2026-11-03",
+     "verified": false,
+     "note": "Not a closing condition per the proxy. Read only through a summarizing fetch of the filing, not checked against its raw text."
+    }
+   ],
+   "proxy_url": "https://www.sec.gov/Archives/edgar/data/1819928/000110465926111962/tm2621904-12_defm14a.htm",
+   "calc": {
+    "target_price": 13.56,
+    "acquirer_price": null,
+    "offer_value": 13.6,
+    "spread_usd": 0.04,
+    "spread": 0.00295,
+    "days_to_close": 148,
+    "annualized": 0.007275,
+    "implied_chance": 0.9788,
+    "open_steps": 1,
+    "kind": "cash",
+    "price_date": "2026-11-02"
+   }
+  },
+  {
+   "id": "ITGR",
+   "status": "pending",
+   "acquirer": {
+    "value": "KKR (Armstrong Parent, Inc.)",
+    "source_url": "https://taiwannews.com.tw/en/news/6413726",
+    "as_of": "2026-11-03",
+    "verified": true,
+    "note": "Wire copy of the GlobeNewswire release. Armstrong Parent, Inc. is the buyer entity named in the proxy."
+   },
+   "acquirer_ticker": {
+    "value": null,
+    "source_url": "https://taiwannews.com.tw/en/news/6413726",
+    "as_of": "2026-11-03",
+    "verified": false,
+    "note": "Bought by KKR funds; the buyer entity has no listed ticker."
+   },
+   "target": {
+    "value": "Integer Holdings Corporation",
+    "source_url": "https://taiwannews.com.tw/en/news/6413726",
+    "as_of": "2026-11-03",
+    "verified": true
+   },
+   "target_ticker": {
+    "value": "ITGR",
+    "source_url": "https://taiwannews.com.tw/en/news/6413726",
+    "as_of": "2026-11-03",
+    "verified": true
+   },
+   "cash_per_share": {
+    "value": 127.0,
+    "source_url": "https://taiwannews.com.tw/en/news/6413726",
+    "as_of": "2026-11-03",
+    "verified": true
+   },
+   "exchange_ratio": {
+    "value": null,
+    "source_url": "https://taiwannews.com.tw/en/news/6413726",
+    "as_of": "2026-11-03",
+    "verified": true,
+    "note": "All cash."
+   },
+   "cvr": {
+    "value": null,
+    "source_url": "https://www.sec.gov/Archives/edgar/data/1114483/000114036126036420/ny20080277x2_defm14a.htm",
+    "as_of": "2026-11-03",
+    "verified": false,
+    "note": "No CVR in the proxy. Read only through a summarizing fetch of the filing, not checked against its raw text."
+   },
+   "agreement_date": {
+    "value": "2026-08-02",
+    "source_url": "https://www.sec.gov/Archives/edgar/data/1114483/000114036126036420/ny20080277x2_defm14a.htm",
+    "as_of": "2026-11-03",
+    "verified": false,
+    "note": "Read only through a summarizing fetch of the filing, not checked against its raw text."
+   },
+   "announce_date": {
+    "value": "2026-08-03",
+    "source_url": "https://taiwannews.com.tw/en/news/6413726",
+    "as_of": "2026-11-03",
+    "verified": true,
+    "note": "GlobeNewswire dateline August 3, 2026."
+   },
+   "announced_after_close": {
+    "value": false,
+    "source_url": "https://taiwannews.com.tw/en/news/6413726",
+    "as_of": "2026-11-03",
+    "verified": false,
+    "note": "The wire copy's 18:30 timestamp is the Taiwan site's local time (06:30 ET); the release uses a 30-day VWAP as of July 31, and the August 4 close (125.05) barely moved from August 3 (124.45), so not after the close."
+   },
+   "expected_close": {
+    "value": "by the end of 2026",
+    "source_url": "https://taiwannews.com.tw/en/news/6413726",
+    "as_of": "2026-11-03",
+    "verified": true,
+    "note": "Release (August 2026): expected to close by the end of the year.",
+    "by_date": "2026-12-31"
+   },
+   "unaffected_price": {
+    "value": 121.21,
+    "source_url": "https://finance.yahoo.com/quote/ITGR/history/",
+    "as_of": "2026-11-03",
+    "verified": false,
+    "note": "Close on the last trading day before the announcement (2026-07-31), from Yahoo Finance (yfinance, unadjusted). The number itself is not stated in the sources read. The stock rose from 100.86 on July 30 to 121.21 on July 31 with no reason in the sources read, so this unaffected price may already include deal news. The release measures its 51.8% premium against the April 29 close, before the strategic review was announced.",
+    "date": "2026-07-31"
+   },
+   "steps": [
+    {
+     "name": "Stockholder vote",
+     "status": "done",
+     "source_url": "https://www.sec.gov/Archives/edgar/data/1114483/000095010326015975/dp255254_8k.htm",
+     "as_of": "2026-11-03",
+     "verified": false,
+     "note": "Approved October 21, 2026. Read only through a summarizing fetch of the filing, not checked against its raw text."
+    },
+    {
+     "name": "HSR",
+     "status": "done",
+     "source_url": "https://www.sec.gov/Archives/edgar/data/1114483/000095010326014831/dp254070_8k.htm",
+     "as_of": "2026-11-03",
+     "verified": false,
+     "note": "Early termination received September 30, 2026. Read only through a summarizing fetch of the filing, not checked against its raw text."
+    },
+    {
+     "name": "Other antitrust and foreign investment approvals",
+     "status": "open",
+     "source_url": "https://www.sec.gov/Archives/edgar/data/1114483/000095010326014831/dp254070_8k.htm",
+     "as_of": "2026-11-03",
+     "verified": false,
+     "note": "Read only through a summarizing fetch of the filing, not checked against its raw text."
+    },
+    {
+     "name": "Financing",
+     "status": "done",
+     "source_url": "https://www.sec.gov/Archives/edgar/data/1114483/000114036126036420/ny20080277x2_defm14a.htm",
+     "as_of": "2026-11-03",
+     "verified": false,
+     "note": "Not a closing condition per the proxy. Read only through a summarizing fetch of the filing, not checked against its raw text."
+    }
+   ],
+   "proxy_url": "https://www.sec.gov/Archives/edgar/data/1114483/000114036126036420/ny20080277x2_defm14a.htm",
+   "calc": {
+    "target_price": 126.55,
+    "acquirer_price": null,
+    "offer_value": 127.0,
+    "spread_usd": 0.45,
+    "spread": 0.003556,
+    "days_to_close": 58,
+    "annualized": 0.022378,
+    "implied_chance": 0.9223,
+    "open_steps": 1,
+    "kind": "cash",
+    "price_date": "2026-11-02"
+   }
+  },
+  {
+   "id": "VREX",
+   "status": "pending",
+   "acquirer": {
+    "value": "Teledyne Technologies Incorporated",
+    "source_url": "https://www.vareximaging.com/news/teledyne-to-acquire-varex-imaging-corporation/",
+    "as_of": "2026-11-03",
+    "verified": true
+   },
+   "acquirer_ticker": {
+    "value": "TDY",
+    "source_url": "https://www.vareximaging.com/news/teledyne-to-acquire-varex-imaging-corporation/",
+    "as_of": "2026-11-03",
+    "verified": true
+   },
+   "target": {
+    "value": "Varex Imaging Corporation",
+    "source_url": "https://www.vareximaging.com/news/teledyne-to-acquire-varex-imaging-corporation/",
+    "as_of": "2026-11-03",
+    "verified": true
+   },
+   "target_ticker": {
+    "value": "VREX",
+    "source_url": "https://www.sec.gov/Archives/edgar/data/1681622/000110465926109351/tm2622593-5_defm14a.htm",
+    "as_of": "2026-11-03",
+    "verified": false,
+    "note": "Read only through a summarizing fetch of the filing, not checked against its raw text."
+   },
+   "cash_per_share": {
+    "value": 18.9,
+    "source_url": "https://www.vareximaging.com/news/teledyne-to-acquire-varex-imaging-corporation/",
+    "as_of": "2026-11-03",
+    "verified": true
+   },
+   "exchange_ratio": {
+    "value": null,
+    "source_url": "https://www.vareximaging.com/news/teledyne-to-acquire-varex-imaging-corporation/",
+    "as_of": "2026-11-03",
+    "verified": true,
+    "note": "All cash."
+   },
+   "cvr": {
+    "value": null,
+    "source_url": "https://www.sec.gov/Archives/edgar/data/1681622/000110465926109351/tm2622593-5_defm14a.htm",
+    "as_of": "2026-11-03",
+    "verified": false,
+    "note": "No CVR in the proxy. Read only through a summarizing fetch of the filing, not checked against its raw text."
+   },
+   "agreement_date": {
+    "value": "2026-08-10",
+    "source_url": "https://www.sec.gov/Archives/edgar/data/1681622/000110465926109351/tm2622593-5_defm14a.htm",
+    "as_of": "2026-11-03",
+    "verified": false,
+    "note": "Read only through a summarizing fetch of the filing, not checked against its raw text."
+   },
+   "announce_date": {
+    "value": "2026-08-10",
+    "source_url": "https://www.vareximaging.com/news/teledyne-to-acquire-varex-imaging-corporation/",
+    "as_of": "2026-11-03",
+    "verified": true
+   },
+   "announced_after_close": {
+    "value": false,
+    "source_url": "https://finance.yahoo.com/quote/VREX/history/",
+    "as_of": "2026-11-03",
+    "verified": false,
+    "note": "Inferred from prices: the August 10 close (18.46) had already moved to the offer."
+   },
+   "expected_close": {
+    "value": "early 2027",
+    "source_url": "https://www.vareximaging.com/news/teledyne-to-acquire-varex-imaging-corporation/",
+    "as_of": "2026-11-03",
+    "verified": true,
+    "note": "Date used is the end of the first quarter of 2027.",
+    "by_date": "2027-03-31"
+   },
+   "unaffected_price": {
+    "value": 12.41,
+    "source_url": "https://finance.yahoo.com/quote/VREX/history/",
+    "as_of": "2026-11-03",
+    "verified": false,
+    "note": "Close on the last trading day before the announcement (2026-08-07), from Yahoo Finance (yfinance, unadjusted). The number itself is not stated in the sources read.",
+    "date": "2026-08-07"
+   },
+   "steps": [
+    {
+     "name": "Stockholder vote",
+     "status": "done",
+     "source_url": "https://www.sec.gov/Archives/edgar/data/1681622/000168162226000080/vrex-20261028.htm",
+     "as_of": "2026-11-03",
+     "verified": false,
+     "note": "Approved October 28, 2026 (final results). Read only through a summarizing fetch of the filing, not checked against its raw text."
+    },
+    {
+     "name": "HSR",
+     "status": "open",
+     "source_url": "https://www.sec.gov/Archives/edgar/data/1681622/000110465926117962/tm2628039d1_8k.htm",
+     "as_of": "2026-11-03",
+     "verified": false,
+     "note": "Waiting period to expire November 19, 2026. Read only through a summarizing fetch of the filing, not checked against its raw text."
+    },
+    {
+     "name": "UK National Security and Investment Act",
+     "status": "open",
+     "source_url": "https://www.sec.gov/Archives/edgar/data/1681622/000110465926117962/tm2628039d1_8k.htm",
+     "as_of": "2026-11-03",
+     "verified": false,
+     "note": "Review runs until November 18, 2026. Read only through a summarizing fetch of the filing, not checked against its raw text."
+    },
+    {
+     "name": "Other antitrust (Austria, China, Germany, Japan, Saudi Arabia, Ukraine)",
+     "status": "open",
+     "source_url": "https://www.sec.gov/Archives/edgar/data/1681622/000110465926117962/tm2628039d1_8k.htm",
+     "as_of": "2026-11-03",
+     "verified": false,
+     "note": "Read only through a summarizing fetch of the filing, not checked against its raw text."
+    },
+    {
+     "name": "Financing",
+     "status": "done",
+     "source_url": "https://www.sec.gov/Archives/edgar/data/1681622/000110465926109351/tm2622593-5_defm14a.htm",
+     "as_of": "2026-11-03",
+     "verified": false,
+     "note": "Not a closing condition per the proxy. Read only through a summarizing fetch of the filing, not checked against its raw text."
+    }
+   ],
+   "proxy_url": "https://www.sec.gov/Archives/edgar/data/1681622/000110465926109351/tm2622593-5_defm14a.htm",
+   "calc": {
+    "target_price": 18.46,
+    "acquirer_price": null,
+    "offer_value": 18.9,
+    "spread_usd": 0.44,
+    "spread": 0.023835,
+    "days_to_close": 148,
+    "annualized": 0.058783,
+    "implied_chance": 0.9322,
+    "open_steps": 3,
+    "kind": "cash",
+    "price_date": "2026-11-02"
+   }
+  },
+  {
+   "id": "UTZ",
+   "status": "pending",
+   "acquirer": {
+    "value": "Intersnack Group GmbH & Co. KG",
+    "source_url": "https://s203.q4cdn.com/214926893/files/doc_news/Utz-Brands-Inc--and-Intersnack-Group-GmbH--Co--KG-Announce-Agreement-to-Take-Utz-Private-and-Partnership-with-Founding-Family-2026.pdf",
+    "as_of": "2026-11-03",
+    "verified": true
+   },
+   "acquirer_ticker": {
+    "value": null,
+    "source_url": "https://s203.q4cdn.com/214926893/files/doc_news/Utz-Brands-Inc--and-Intersnack-Group-GmbH--Co--KG-Announce-Agreement-to-Take-Utz-Private-and-Partnership-with-Founding-Family-2026.pdf",
+    "as_of": "2026-11-03",
+    "verified": false,
+    "note": "Private buyer; no listed ticker."
+   },
+   "target": {
+    "value": "Utz Brands, Inc.",
+    "source_url": "https://s203.q4cdn.com/214926893/files/doc_news/Utz-Brands-Inc--and-Intersnack-Group-GmbH--Co--KG-Announce-Agreement-to-Take-Utz-Private-and-Partnership-with-Founding-Family-2026.pdf",
+    "as_of": "2026-11-03",
+    "verified": true
+   },
+   "target_ticker": {
+    "value": "UTZ",
+    "source_url": "https://s203.q4cdn.com/214926893/files/doc_news/Utz-Brands-Inc--and-Intersnack-Group-GmbH--Co--KG-Announce-Agreement-to-Take-Utz-Private-and-Partnership-with-Founding-Family-2026.pdf",
+    "as_of": "2026-11-03",
+    "verified": true
+   },
+   "cash_per_share": {
+    "value": 14.25,
+    "source_url": "https://s203.q4cdn.com/214926893/files/doc_news/Utz-Brands-Inc--and-Intersnack-Group-GmbH--Co--KG-Announce-Agreement-to-Take-Utz-Private-and-Partnership-with-Founding-Family-2026.pdf",
+    "as_of": "2026-11-03",
+    "verified": true,
+    "note": "Release: $14.25 per share in cash for all Class A common stock."
+   },
+   "exchange_ratio": {
+    "value": null,
+    "source_url": "https://s203.q4cdn.com/214926893/files/doc_news/Utz-Brands-Inc--and-Intersnack-Group-GmbH--Co--KG-Announce-Agreement-to-Take-Utz-Private-and-Partnership-with-Founding-Family-2026.pdf",
+    "as_of": "2026-11-03",
+    "verified": true,
+    "note": "All cash for Class A shares."
+   },
+   "cvr": {
+    "value": null,
+    "source_url": "https://www.sec.gov/Archives/edgar/data/1739566/000119312526411198/utz_defm14a.htm",
+    "as_of": "2026-11-03",
+    "verified": false,
+    "note": "No CVR in the proxy. Read only through a summarizing fetch of the filing, not checked against its raw text."
+   },
+   "agreement_date": {
+    "value": "2026-07-20",
+    "source_url": "https://www.sec.gov/Archives/edgar/data/1739566/000119312526411198/utz_defm14a.htm",
+    "as_of": "2026-11-03",
+    "verified": false,
+    "note": "Read only through a summarizing fetch of the filing, not checked against its raw text."
+   },
+   "announce_date": {
+    "value": "2026-07-21",
+    "source_url": "https://s203.q4cdn.com/214926893/files/doc_news/Utz-Brands-Inc--and-Intersnack-Group-GmbH--Co--KG-Announce-Agreement-to-Take-Utz-Private-and-Partnership-with-Founding-Family-2026.pdf",
+    "as_of": "2026-11-03",
+    "verified": true
+   },
+   "announced_after_close": {
+    "value": false,
+    "source_url": "https://s203.q4cdn.com/214926893/files/doc_news/Utz-Brands-Inc--and-Intersnack-Group-GmbH--Co--KG-Announce-Agreement-to-Take-Utz-Private-and-Partnership-with-Founding-Family-2026.pdf",
+    "as_of": "2026-11-03",
+    "verified": false,
+    "note": "The release measures its premium against the July 20 close and the July 21 close (14.06) had already moved to the offer; whether it went out late on July 20 or before the July 21 open, the unaffected session is July 20."
+   },
+   "expected_close": {
+    "value": "fourth quarter of 2026",
+    "source_url": "https://s203.q4cdn.com/214926893/files/doc_news/Utz-Brands-Inc--and-Intersnack-Group-GmbH--Co--KG-Announce-Agreement-to-Take-Utz-Private-and-Partnership-with-Founding-Family-2026.pdf",
+    "as_of": "2026-11-03",
+    "verified": true,
+    "by_date": "2026-12-31"
+   },
+   "unaffected_price": {
+    "value": 7.45,
+    "source_url": "https://finance.yahoo.com/quote/UTZ/history/",
+    "as_of": "2026-11-03",
+    "verified": false,
+    "note": "Close on the last trading day before the announcement (2026-07-20), from Yahoo Finance (yfinance, unadjusted). The number itself is not stated in the sources read. Consistent with the release's 91% premium to the July 20 close.",
+    "date": "2026-07-20"
+   },
+   "steps": [
+    {
+     "name": "Stockholder vote",
+     "status": "open",
+     "source_url": "https://www.sec.gov/Archives/edgar/data/1739566/000119312526411198/utz_defm14a.htm",
+     "as_of": "2026-11-03",
+     "verified": false,
+     "note": "Special meeting November 13, 2026. Read only through a summarizing fetch of the filing, not checked against its raw text."
+    },
+    {
+     "name": "HSR",
+     "status": "done",
+     "source_url": "https://www.sec.gov/Archives/edgar/data/1739566/000119312526411198/utz_defm14a.htm",
+     "as_of": "2026-11-03",
+     "verified": false,
+     "note": "Expired September 9, 2026. Read only through a summarizing fetch of the filing, not checked against its raw text."
+    },
+    {
+     "name": "Ukraine competition clearance",
+     "status": "done",
+     "source_url": "https://www.sec.gov/Archives/edgar/data/1739566/000119312526411198/utz_defm14a.htm",
+     "as_of": "2026-11-03",
+     "verified": false,
+     "note": "Obtained September 17, 2026. Read only through a summarizing fetch of the filing, not checked against its raw text."
+    },
+    {
+     "name": "Financing",
+     "status": "done",
+     "source_url": "https://www.sec.gov/Archives/edgar/data/1739566/000119312526411198/utz_defm14a.htm",
+     "as_of": "2026-11-03",
+     "verified": false,
+     "note": "Not a closing condition per the proxy. Read only through a summarizing fetch of the filing, not checked against its raw text."
+    }
+   ],
+   "proxy_url": "https://www.sec.gov/Archives/edgar/data/1739566/000119312526411198/utz_defm14a.htm",
+   "calc": {
+    "target_price": 14.29,
+    "acquirer_price": null,
+    "offer_value": 14.25,
+    "spread_usd": -0.04,
+    "spread": -0.002799,
+    "days_to_close": 58,
+    "annualized": -0.017615,
+    "implied_chance": 1.0,
+    "open_steps": 1,
+    "kind": "cash",
+    "price_date": "2026-11-02"
+   }
+  },
+  {
+   "id": "SAFT",
+   "status": "pending",
+   "acquirer": {
+    "value": "Mapfre U.S.A. Corporation (MAPFRE S.A.)",
+    "source_url": "https://www.mapfre.com/en/communicate/corporate-communicate/agreement-acquire-safety-usa/",
+    "as_of": "2026-11-03",
+    "verified": true
+   },
+   "acquirer_ticker": {
+    "value": null,
+    "source_url": "https://www.mapfre.com/en/communicate/corporate-communicate/agreement-acquire-safety-usa/",
+    "as_of": "2026-11-03",
+    "verified": false,
+    "note": "The US buyer is unlisted; the parent lists in Spain."
+   },
+   "target": {
+    "value": "Safety Insurance Group, Inc.",
+    "source_url": "https://www.mapfre.com/en/communicate/corporate-communicate/agreement-acquire-safety-usa/",
+    "as_of": "2026-11-03",
+    "verified": true
+   },
+   "target_ticker": {
+    "value": "SAFT",
+    "source_url": "https://www.sec.gov/Archives/edgar/data/1172052/000110465926107503/tm2623530-2_defm14a.htm",
+    "as_of": "2026-11-03",
+    "verified": false,
+    "note": "Read only through a summarizing fetch of the filing, not checked against its raw text."
+   },
+   "cash_per_share": {
+    "value": 105.0,
+    "source_url": "https://www.sec.gov/Archives/edgar/data/1172052/000110465926107503/tm2623530-2_defm14a.htm",
+    "as_of": "2026-11-03",
+    "verified": false,
+    "note": "Mapfre's CNMV notice of July 23, 2026 states 105 US dollars per share; that PDF's URL was not recorded, so the proxy is linked. Read only through a summarizing fetch of the filing, not checked against its raw text."
+   },
+   "exchange_ratio": {
+    "value": null,
+    "source_url": "https://www.sec.gov/Archives/edgar/data/1172052/000110465926107503/tm2623530-2_defm14a.htm",
+    "as_of": "2026-11-03",
+    "verified": false,
+    "note": "All cash. Read only through a summarizing fetch of the filing, not checked against its raw text."
+   },
+   "cvr": {
+    "value": null,
+    "source_url": "https://www.sec.gov/Archives/edgar/data/1172052/000110465926107503/tm2623530-2_defm14a.htm",
+    "as_of": "2026-11-03",
+    "verified": false,
+    "note": "No CVR in the proxy. Read only through a summarizing fetch of the filing, not checked against its raw text."
+   },
+   "agreement_date": {
+    "value": "2026-07-23",
+    "source_url": "https://www.sec.gov/Archives/edgar/data/1172052/000110465926107503/tm2623530-2_defm14a.htm",
+    "as_of": "2026-11-03",
+    "verified": false,
+    "note": "Read only through a summarizing fetch of the filing, not checked against its raw text."
+   },
+   "announce_date": {
+    "value": "2026-07-23",
+    "source_url": "https://www.mapfre.com/en/communicate/corporate-communicate/agreement-acquire-safety-usa/",
+    "as_of": "2026-11-03",
+    "verified": false,
+    "note": "Mapfre's release and CNMV notice are dated July 23, 2026 (Madrid); the page carries no date line in raw text."
+   },
+   "announced_after_close": {
+    "value": true,
+    "source_url": "https://finance.yahoo.com/quote/SAFT/history/",
+    "as_of": "2026-11-03",
+    "verified": false,
+    "note": "Inferred from prices: the July 23 close (72.94) was unaffected and the July 24 close (103.20) jumped to the offer. The proxy measures its 44.8% premium against July 22 instead."
+   },
+   "expected_close": {
+    "value": "first quarter of 2027",
+    "source_url": "https://www.mapfre.com/en/communicate/corporate-communicate/agreement-acquire-safety-usa/",
+    "as_of": "2026-11-03",
+    "verified": true,
+    "by_date": "2027-03-31"
+   },
+   "unaffected_price": {
+    "value": 72.94,
+    "source_url": "https://finance.yahoo.com/quote/SAFT/history/",
+    "as_of": "2026-11-03",
+    "verified": false,
+    "note": "Close on the announcement day, because the deal was announced after that close (2026-07-23), from Yahoo Finance (yfinance, unadjusted). The number itself is not stated in the sources read.",
+    "date": "2026-07-23"
+   },
+   "steps": [
+    {
+     "name": "Stockholder vote",
+     "status": "open",
+     "source_url": "https://www.sec.gov/Archives/edgar/data/1172052/000110465926107503/tm2623530-2_defm14a.htm",
+     "as_of": "2026-11-03",
+     "verified": false,
+     "note": "Special meeting November 3, 2026; result not yet filed. Read only through a summarizing fetch of the filing, not checked against its raw text."
+    },
+    {
+     "name": "HSR",
+     "status": "done",
+     "source_url": "https://www.sec.gov/Archives/edgar/data/1172052/000110465926107960/tm2625481d1_8k.htm",
+     "as_of": "2026-11-03",
+     "verified": false,
+     "note": "Expired September 14, 2026. Read only through a summarizing fetch of the filing, not checked against its raw text."
+    },
+    {
+     "name": "Massachusetts insurance approval (Form A)",
+     "status": "open",
+     "source_url": "https://www.sec.gov/Archives/edgar/data/1172052/000110465926107503/tm2623530-2_defm14a.htm",
+     "as_of": "2026-11-03",
+     "verified": false,
+     "note": "Filed August 25, 2026. Read only through a summarizing fetch of the filing, not checked against its raw text."
+    },
+    {
+     "name": "Financing",
+     "status": "done",
+     "source_url": "https://www.sec.gov/Archives/edgar/data/1172052/000110465926107503/tm2623530-2_defm14a.htm",
+     "as_of": "2026-11-03",
+     "verified": false,
+     "note": "Not a closing condition per the proxy. Read only through a summarizing fetch of the filing, not checked against its raw text."
+    }
+   ],
+   "proxy_url": "https://www.sec.gov/Archives/edgar/data/1172052/000110465926107503/tm2623530-2_defm14a.htm",
+   "calc": {
+    "target_price": 104.24,
+    "acquirer_price": null,
+    "offer_value": 105.0,
+    "spread_usd": 0.76,
+    "spread": 0.007291,
+    "days_to_close": 148,
+    "annualized": 0.017981,
+    "implied_chance": 0.9763,
+    "open_steps": 2,
+    "kind": "cash",
+    "price_date": "2026-11-02"
+   }
+  },
+  {
+   "id": "HZO",
+   "status": "pending",
+   "acquirer": {
+    "value": "Safe Harbor Marinas (Blackstone Infrastructure)",
+    "source_url": "https://www.stblaw.com/about-us/news/view/2026/08/10/safe-harbor-to-acquire-marinemax-in-$1.5-billion-all-cash-transaction",
+    "as_of": "2026-11-03",
+    "verified": true,
+    "note": "Law-firm copy of the release; MarineMax's own release could not be fetched (403). SHM Holdco, LLC is the buyer entity named in the proxy."
+   },
+   "acquirer_ticker": {
+    "value": null,
+    "source_url": "https://www.stblaw.com/about-us/news/view/2026/08/10/safe-harbor-to-acquire-marinemax-in-$1.5-billion-all-cash-transaction",
+    "as_of": "2026-11-03",
+    "verified": false,
+    "note": "Private buyer; no listed ticker."
+   },
+   "target": {
+    "value": "MarineMax, Inc.",
+    "source_url": "https://www.stblaw.com/about-us/news/view/2026/08/10/safe-harbor-to-acquire-marinemax-in-$1.5-billion-all-cash-transaction",
+    "as_of": "2026-11-03",
+    "verified": true
+   },
+   "target_ticker": {
+    "value": "HZO",
+    "source_url": "https://www.sec.gov/Archives/edgar/data/1057060/000119312526412241/d130789ddefm14a.htm",
+    "as_of": "2026-11-03",
+    "verified": false,
+    "note": "Read only through a summarizing fetch of the filing, not checked against its raw text."
+   },
+   "cash_per_share": {
+    "value": 53.0,
+    "source_url": "https://www.stblaw.com/about-us/news/view/2026/08/10/safe-harbor-to-acquire-marinemax-in-$1.5-billion-all-cash-transaction",
+    "as_of": "2026-11-03",
+    "verified": true
+   },
+   "exchange_ratio": {
+    "value": null,
+    "source_url": "https://www.stblaw.com/about-us/news/view/2026/08/10/safe-harbor-to-acquire-marinemax-in-$1.5-billion-all-cash-transaction",
+    "as_of": "2026-11-03",
+    "verified": true,
+    "note": "All cash."
+   },
+   "cvr": {
+    "value": null,
+    "source_url": "https://www.sec.gov/Archives/edgar/data/1057060/000119312526412241/d130789ddefm14a.htm",
+    "as_of": "2026-11-03",
+    "verified": false,
+    "note": "No CVR in the proxy. Read only through a summarizing fetch of the filing, not checked against its raw text."
+   },
+   "agreement_date": {
+    "value": "2026-08-09",
+    "source_url": "https://www.sec.gov/Archives/edgar/data/1057060/000119312526412241/d130789ddefm14a.htm",
+    "as_of": "2026-11-03",
+    "verified": false,
+    "note": "Read only through a summarizing fetch of the filing, not checked against its raw text."
+   },
+   "announce_date": {
+    "value": "2026-08-10",
+    "source_url": "https://www.sec.gov/Archives/edgar/data/1057060/000119312526341302/d135056d8k.htm",
+    "as_of": "2026-11-03",
+    "verified": false,
+    "note": "The 8-K says the joint press release is dated August 10, 2026. Read only through a summarizing fetch of the filing, not checked against its raw text."
+   },
+   "announced_after_close": {
+    "value": false,
+    "source_url": "https://finance.yahoo.com/quote/HZO/history/",
+    "as_of": "2026-11-03",
+    "verified": false,
+    "note": "Inferred from prices: the August 10 close (52.12) had already moved to the offer."
+   },
+   "expected_close": {
+    "value": "by the end of calendar year 2026",
+    "source_url": "https://www.stblaw.com/about-us/news/view/2026/08/10/safe-harbor-to-acquire-marinemax-in-$1.5-billion-all-cash-transaction",
+    "as_of": "2026-11-03",
+    "verified": true,
+    "by_date": "2026-12-31"
+   },
+   "unaffected_price": {
+    "value": 35.68,
+    "source_url": "https://finance.yahoo.com/quote/HZO/history/",
+    "as_of": "2026-11-03",
+    "verified": false,
+    "note": "Close on the last trading day before the announcement (2026-08-07), from Yahoo Finance (yfinance, unadjusted). The number itself is not stated in the sources read.",
+    "date": "2026-08-07"
+   },
+   "steps": [
+    {
+     "name": "Stockholder vote",
+     "status": "open",
+     "source_url": "https://www.sec.gov/Archives/edgar/data/1057060/000119312526412241/d130789ddefm14a.htm",
+     "as_of": "2026-11-03",
+     "verified": false,
+     "note": "Special meeting November 11, 2026. Read only through a summarizing fetch of the filing, not checked against its raw text."
+    },
+    {
+     "name": "HSR",
+     "status": "open",
+     "source_url": "https://www.sec.gov/Archives/edgar/data/1057060/000119312526412241/d130789ddefm14a.htm",
+     "as_of": "2026-11-03",
+     "verified": false,
+     "note": "Proxy: refiled waiting period to expire October 30, 2026. No filing confirms it expired. Read only through a summarizing fetch of the filing, not checked against its raw text."
+    },
+    {
+     "name": "Non-US merger control and foreign investment clearances",
+     "status": "open",
+     "source_url": "https://www.sec.gov/Archives/edgar/data/1057060/000119312526412241/d130789ddefm14a.htm",
+     "as_of": "2026-11-03",
+     "verified": false,
+     "note": "Proxy says these may be required; not named. Read only through a summarizing fetch of the filing, not checked against its raw text."
+    },
+    {
+     "name": "Financing",
+     "status": "done",
+     "source_url": "https://www.sec.gov/Archives/edgar/data/1057060/000119312526412241/d130789ddefm14a.htm",
+     "as_of": "2026-11-03",
+     "verified": false,
+     "note": "Not a closing condition per the proxy. Read only through a summarizing fetch of the filing, not checked against its raw text."
+    }
+   ],
+   "proxy_url": "https://www.sec.gov/Archives/edgar/data/1057060/000119312526412241/d130789ddefm14a.htm",
+   "calc": {
+    "target_price": 52.7,
+    "acquirer_price": null,
+    "offer_value": 53.0,
+    "spread_usd": 0.3,
+    "spread": 0.005693,
+    "days_to_close": 58,
+    "annualized": 0.035824,
+    "implied_chance": 0.9827,
+    "open_steps": 3,
+    "kind": "cash",
+    "price_date": "2026-11-02"
+   }
+  },
+  {
+   "id": "LNTH",
+   "status": "pending",
+   "acquirer": {
+    "value": "Curium US Holdings LLC",
+    "source_url": "https://www.curiumpharma.com/curium-merge-lantheus/",
+    "as_of": "2026-11-03",
+    "verified": true
+   },
+   "acquirer_ticker": {
+    "value": null,
+    "source_url": "https://www.curiumpharma.com/curium-merge-lantheus/",
+    "as_of": "2026-11-03",
+    "verified": false,
+    "note": "Private buyer; no listed ticker."
+   },
+   "target": {
+    "value": "Lantheus Holdings, Inc.",
+    "source_url": "https://www.curiumpharma.com/curium-merge-lantheus/",
+    "as_of": "2026-11-03",
+    "verified": true
+   },
+   "target_ticker": {
+    "value": "LNTH",
+    "source_url": "https://www.curiumpharma.com/curium-merge-lantheus/",
+    "as_of": "2026-11-03",
+    "verified": true
+   },
+   "cash_per_share": {
+    "value": 102.5,
+    "source_url": "https://www.curiumpharma.com/curium-merge-lantheus/",
+    "as_of": "2026-11-03",
+    "verified": true
+   },
+   "exchange_ratio": {
+    "value": null,
+    "source_url": "https://www.curiumpharma.com/curium-merge-lantheus/",
+    "as_of": "2026-11-03",
+    "verified": true,
+    "note": "Cash plus a CVR, no stock."
+   },
+   "cvr": {
+    "value": "One non-transferable CVR per share: up to $12.00 in cash on specified commercial milestones through 2030. Not valued here.",
+    "source_url": "https://www.curiumpharma.com/curium-merge-lantheus/",
+    "as_of": "2026-11-03",
+    "verified": true
+   },
+   "agreement_date": {
+    "value": "2026-08-03",
+    "source_url": "https://www.sec.gov/Archives/edgar/data/1521036/000119312526384284/d180727ddefm14a.htm",
+    "as_of": "2026-11-03",
+    "verified": false,
+    "note": "Read only through a summarizing fetch of the filing, not checked against its raw text."
+   },
+   "announce_date": {
+    "value": "2026-08-03",
+    "source_url": "https://www.curiumpharma.com/curium-merge-lantheus/",
+    "as_of": "2026-11-03",
+    "verified": true
+   },
+   "announced_after_close": {
+    "value": false,
+    "source_url": "https://finance.yahoo.com/quote/LNTH/history/",
+    "as_of": "2026-11-03",
+    "verified": false,
+    "note": "Not material here: the release names May 21, 2026 as the unaffected date."
+   },
+   "expected_close": {
+    "value": "first half of 2027",
+    "source_url": "https://www.curiumpharma.com/curium-merge-lantheus/",
+    "as_of": "2026-11-03",
+    "verified": true,
+    "by_date": "2027-06-30"
+   },
+   "unaffected_price": {
+    "value": 94.47,
+    "source_url": "https://www.curiumpharma.com/curium-merge-lantheus/",
+    "as_of": "2026-11-03",
+    "verified": false,
+    "note": "Close on the unaffected date the release names (2026-05-21), from Yahoo Finance (yfinance, unadjusted). The number itself is not stated in the sources read. The release names May 21, 2026, the last trading day before the first media report of a possible sale, as the unaffected date (21% premium on the total consideration of up to $114.50).",
+    "date": "2026-05-21"
+   },
+   "steps": [
+    {
+     "name": "Stockholder vote",
+     "status": "done",
+     "source_url": "https://www.sec.gov/Archives/edgar/data/1521036/000119312526421732/d183496d8k.htm",
+     "as_of": "2026-11-03",
+     "verified": false,
+     "note": "Approved October 14, 2026. Read only through a summarizing fetch of the filing, not checked against its raw text."
+    },
+    {
+     "name": "HSR",
+     "status": "open",
+     "source_url": "https://www.sec.gov/Archives/edgar/data/1521036/000119312526428324/d19181d8k.htm",
+     "as_of": "2026-11-03",
+     "verified": false,
+     "note": "FTC Second Requests received October 21, 2026. Read only through a summarizing fetch of the filing, not checked against its raw text."
+    },
+    {
+     "name": "Other competition and foreign investment approvals",
+     "status": "open",
+     "source_url": "https://www.sec.gov/Archives/edgar/data/1521036/000119312526384284/d180727ddefm14a.htm",
+     "as_of": "2026-11-03",
+     "verified": false,
+     "note": "Read only through a summarizing fetch of the filing, not checked against its raw text."
+    },
+    {
+     "name": "Financing",
+     "status": "done",
+     "source_url": "https://www.sec.gov/Archives/edgar/data/1521036/000119312526384284/d180727ddefm14a.htm",
+     "as_of": "2026-11-03",
+     "verified": false,
+     "note": "Not a closing condition per the proxy. Read only through a summarizing fetch of the filing, not checked against its raw text."
+    }
+   ],
+   "proxy_url": "https://www.sec.gov/Archives/edgar/data/1521036/000119312526384284/d180727ddefm14a.htm",
+   "calc": {
+    "target_price": 100.31,
+    "acquirer_price": null,
+    "offer_value": 102.5,
+    "spread_usd": 2.19,
+    "spread": 0.021832,
+    "days_to_close": 239,
+    "annualized": 0.033342,
+    "implied_chance": 0.7273,
+    "open_steps": 2,
+    "kind": "cash",
+    "price_date": "2026-11-02"
+   }
+  },
+  {
+   "id": "CSR",
+   "status": "pending",
+   "acquirer": {
+    "value": "Independence Realty Trust, Inc.",
+    "source_url": "https://channelchek.com/independence-realty-trust-and-centerspace-to-merge-in-8-1-billion-apartment-reit-combination/",
+    "as_of": "2026-11-03",
+    "verified": true
+   },
+   "acquirer_ticker": {
+    "value": "IRT",
+    "source_url": "https://channelchek.com/independence-realty-trust-and-centerspace-to-merge-in-8-1-billion-apartment-reit-combination/",
+    "as_of": "2026-11-03",
+    "verified": true
+   },
+   "target": {
+    "value": "Centerspace",
+    "source_url": "https://channelchek.com/independence-realty-trust-and-centerspace-to-merge-in-8-1-billion-apartment-reit-combination/",
+    "as_of": "2026-11-03",
+    "verified": true
+   },
+   "target_ticker": {
+    "value": "CSR",
+    "source_url": "https://channelchek.com/independence-realty-trust-and-centerspace-to-merge-in-8-1-billion-apartment-reit-combination/",
+    "as_of": "2026-11-03",
+    "verified": true
+   },
+   "cash_per_share": {
+    "value": null,
+    "source_url": "https://channelchek.com/independence-realty-trust-and-centerspace-to-merge-in-8-1-billion-apartment-reit-combination/",
+    "as_of": "2026-11-03",
+    "verified": true,
+    "note": "All stock (cash only in lieu of fractional shares)."
+   },
+   "exchange_ratio": {
+    "value": 3.8,
+    "source_url": "https://channelchek.com/independence-realty-trust-and-centerspace-to-merge-in-8-1-billion-apartment-reit-combination/",
+    "as_of": "2026-11-03",
+    "verified": true,
+    "note": "News copy of the joint release. IRT's October 29, 2026 release (filed as a 425) restates the same 3.800 ratio, so the negative spread since late October is the market price, not changed terms."
+   },
+   "cvr": {
+    "value": null,
+    "source_url": "https://www.sec.gov/Archives/edgar/data/798359/000114036126038922/ny20083034x1_defm14a.htm",
+    "as_of": "2026-11-03",
+    "verified": false,
+    "note": "No CVR in the proxy. Read only through a summarizing fetch of the filing, not checked against its raw text."
+   },
+   "agreement_date": {
+    "value": "2026-09-08",
+    "source_url": "https://www.sec.gov/Archives/edgar/data/798359/000114036126038922/ny20083034x1_defm14a.htm",
+    "as_of": "2026-11-03",
+    "verified": false,
+    "note": "Amended September 22, 2026. Read only through a summarizing fetch of the filing, not checked against its raw text."
+   },
+   "announce_date": {
+    "value": "2026-09-09",
+    "source_url": "https://channelchek.com/independence-realty-trust-and-centerspace-to-merge-in-8-1-billion-apartment-reit-combination/",
+    "as_of": "2026-11-03",
+    "verified": true,
+    "note": "Channelchek: announced Wednesday, September 9, 2026."
+   },
+   "announced_after_close": {
+    "value": false,
+    "source_url": "https://finance.yahoo.com/quote/CSR/history/",
+    "as_of": "2026-11-03",
+    "verified": false,
+    "note": "Inferred from prices: the September 9 close (57.36) had already moved to the offer."
+   },
+   "expected_close": {
+    "value": "as early as the end of the fourth quarter of 2026",
+    "source_url": "https://channelchek.com/independence-realty-trust-and-centerspace-to-merge-in-8-1-billion-apartment-reit-combination/",
+    "as_of": "2026-11-03",
+    "verified": true,
+    "by_date": "2026-12-31"
+   },
+   "unaffected_price": {
+    "value": 52.71,
+    "source_url": "https://finance.yahoo.com/quote/CSR/history/",
+    "as_of": "2026-11-03",
+    "verified": false,
+    "note": "Close on the last trading day before the announcement (2026-09-08), from Yahoo Finance (yfinance, unadjusted). The number itself is not stated in the sources read. Matches the proxy's $52.71 close on September 8, 2026 (read through the summarizing fetch).",
+    "date": "2026-09-08"
+   },
+   "steps": [
+    {
+     "name": "Centerspace shareholder vote",
+     "status": "open",
+     "source_url": "https://www.sec.gov/Archives/edgar/data/798359/000143774926034436/irt20261029_425.htm",
+     "as_of": "2026-11-03",
+     "verified": false,
+     "note": "Special meeting November 10, 2026. Read only through a summarizing fetch of the filing, not checked against its raw text."
+    },
+    {
+     "name": "IRT stockholder vote",
+     "status": "open",
+     "source_url": "https://www.sec.gov/Archives/edgar/data/798359/000143774926034436/irt20261029_425.htm",
+     "as_of": "2026-11-03",
+     "verified": false,
+     "note": "Special meeting November 10, 2026. Read only through a summarizing fetch of the filing, not checked against its raw text."
+    },
+    {
+     "name": "Regulatory approvals",
+     "status": "done",
+     "source_url": "https://www.sec.gov/Archives/edgar/data/798359/000114036126038922/ny20083034x1_defm14a.htm",
+     "as_of": "2026-11-03",
+     "verified": false,
+     "note": "Proxy: not aware of any material federal or state regulatory approvals required. Read only through a summarizing fetch of the filing, not checked against its raw text."
+    },
+    {
+     "name": "Lender consents",
+     "status": "open",
+     "source_url": "https://channelchek.com/independence-realty-trust-and-centerspace-to-merge-in-8-1-billion-apartment-reit-combination/",
+     "as_of": "2026-11-03",
+     "verified": true,
+     "note": "Named as a closing condition; status not stated. "
+    },
+    {
+     "name": "Financing",
+     "status": "done",
+     "source_url": "https://www.sec.gov/Archives/edgar/data/798359/000114036126038922/ny20083034x1_defm14a.htm",
+     "as_of": "2026-11-03",
+     "verified": false,
+     "note": "Not a closing condition per the proxy. Read only through a summarizing fetch of the filing, not checked against its raw text."
+    }
+   ],
+   "proxy_url": "https://www.sec.gov/Archives/edgar/data/798359/000114036126038922/ny20083034x1_defm14a.htm",
+   "calc": {
+    "target_price": 59.17,
+    "acquirer_price": 14.94,
+    "offer_value": 56.772,
+    "spread_usd": -2.398,
+    "spread": -0.040527,
+    "days_to_close": 58,
+    "annualized": -0.255042,
+    "implied_chance": 1.0,
+    "open_steps": 3,
+    "kind": "stock",
+    "price_date": "2026-11-02"
+   }
+  },
+  {
+   "id": "MG",
+   "status": "pending",
+   "acquirer": {
+    "value": "H.I.G. Capital (Athena Purchaser, LLC)",
+    "source_url": "https://www.mistrasgroup.com/resources/newsroom/2026/09/18/mistras-group-inc-enters-definitive-agreement-be-acquired-hig/",
+    "as_of": "2026-11-03",
+    "verified": true,
+    "note": "Athena Purchaser, LLC is the buyer entity named in the proxy."
+   },
+   "acquirer_ticker": {
+    "value": null,
+    "source_url": "https://www.mistrasgroup.com/resources/newsroom/2026/09/18/mistras-group-inc-enters-definitive-agreement-be-acquired-hig/",
+    "as_of": "2026-11-03",
+    "verified": false,
+    "note": "Private buyer; no listed ticker."
+   },
+   "target": {
+    "value": "Mistras Group, Inc.",
+    "source_url": "https://www.mistrasgroup.com/resources/newsroom/2026/09/18/mistras-group-inc-enters-definitive-agreement-be-acquired-hig/",
+    "as_of": "2026-11-03",
+    "verified": true
+   },
+   "target_ticker": {
+    "value": "MG",
+    "source_url": "https://www.mistrasgroup.com/resources/newsroom/2026/09/18/mistras-group-inc-enters-definitive-agreement-be-acquired-hig/",
+    "as_of": "2026-11-03",
+    "verified": true
+   },
+   "cash_per_share": {
+    "value": 20.35,
+    "source_url": "https://www.mistrasgroup.com/resources/newsroom/2026/09/18/mistras-group-inc-enters-definitive-agreement-be-acquired-hig/",
+    "as_of": "2026-11-03",
+    "verified": true
+   },
+   "exchange_ratio": {
+    "value": null,
+    "source_url": "https://www.mistrasgroup.com/resources/newsroom/2026/09/18/mistras-group-inc-enters-definitive-agreement-be-acquired-hig/",
+    "as_of": "2026-11-03",
+    "verified": true,
+    "note": "All cash."
+   },
+   "cvr": {
+    "value": null,
+    "source_url": "https://www.sec.gov/Archives/edgar/data/1436126/000114036126040834/ny20083637x2_defm14a.htm",
+    "as_of": "2026-11-03",
+    "verified": false,
+    "note": "No CVR in the proxy. Read only through a summarizing fetch of the filing, not checked against its raw text."
+   },
+   "agreement_date": {
+    "value": "2026-09-17",
+    "source_url": "https://www.sec.gov/Archives/edgar/data/1436126/000114036126040834/ny20083637x2_defm14a.htm",
+    "as_of": "2026-11-03",
+    "verified": false,
+    "note": "Read only through a summarizing fetch of the filing, not checked against its raw text."
+   },
+   "announce_date": {
+    "value": "2026-09-18",
+    "source_url": "https://www.mistrasgroup.com/resources/newsroom/2026/09/18/mistras-group-inc-enters-definitive-agreement-be-acquired-hig/",
+    "as_of": "2026-11-03",
+    "verified": true
+   },
+   "announced_after_close": {
+    "value": false,
+    "source_url": "https://www.mistrasgroup.com/resources/newsroom/2026/09/18/mistras-group-inc-enters-definitive-agreement-be-acquired-hig/",
+    "as_of": "2026-11-03",
+    "verified": false,
+    "note": "The release measures VWAPs for the period ended September 17 and the September 18 close (20.75) moved toward the offer; release time not stated."
+   },
+   "expected_close": {
+    "value": "late 2026 or early 2027",
+    "source_url": "https://www.mistrasgroup.com/resources/newsroom/2026/09/18/mistras-group-inc-enters-definitive-agreement-be-acquired-hig/",
+    "as_of": "2026-11-03",
+    "verified": true,
+    "note": "Date used is the end of the first quarter of 2027.",
+    "by_date": "2027-03-31"
+   },
+   "unaffected_price": {
+    "value": 19.84,
+    "source_url": "https://finance.yahoo.com/quote/MG/history/",
+    "as_of": "2026-11-03",
+    "verified": false,
+    "note": "Close on the last trading day before the announcement (2026-09-17), from Yahoo Finance (yfinance, unadjusted). The number itself is not stated in the sources read.",
+    "date": "2026-09-17"
+   },
+   "steps": [
+    {
+     "name": "Stockholder vote",
+     "status": "open",
+     "source_url": "https://www.sec.gov/Archives/edgar/data/1436126/000114036126040834/ny20083637x2_defm14a.htm",
+     "as_of": "2026-11-03",
+     "verified": false,
+     "note": "Special meeting November 24, 2026; voting agreements cover about 31% of shares. Read only through a summarizing fetch of the filing, not checked against its raw text."
+    },
+    {
+     "name": "HSR",
+     "status": "done",
+     "source_url": "https://www.sec.gov/Archives/edgar/data/1436126/000114036126040834/ny20083637x2_defm14a.htm",
+     "as_of": "2026-11-03",
+     "verified": false,
+     "note": "FTC granted early termination October 22, 2026. Read only through a summarizing fetch of the filing, not checked against its raw text."
+    },
+    {
+     "name": "Other competition laws and Nuclear Regulatory Commission filings",
+     "status": "open",
+     "source_url": "https://www.sec.gov/Archives/edgar/data/1436126/000114036126040834/ny20083637x2_defm14a.htm",
+     "as_of": "2026-11-03",
+     "verified": false,
+     "note": "Read only through a summarizing fetch of the filing, not checked against its raw text."
+    },
+    {
+     "name": "Go-shop period",
+     "status": "done",
+     "source_url": "https://www.mistrasgroup.com/resources/newsroom/2026/09/18/mistras-group-inc-enters-definitive-agreement-be-acquired-hig/",
+     "as_of": "2026-11-03",
+     "verified": true,
+     "note": "40-day go-shop expired October 27, 2026. "
+    },
+    {
+     "name": "Financing",
+     "status": "done",
+     "source_url": "https://www.sec.gov/Archives/edgar/data/1436126/000114036126040834/ny20083637x2_defm14a.htm",
+     "as_of": "2026-11-03",
+     "verified": false,
+     "note": "Not a closing condition per the proxy. Read only through a summarizing fetch of the filing, not checked against its raw text."
+    }
+   ],
+   "proxy_url": "https://www.sec.gov/Archives/edgar/data/1436126/000114036126040834/ny20083637x2_defm14a.htm",
+   "calc": {
+    "target_price": 20.15,
+    "acquirer_price": null,
+    "offer_value": 20.35,
+    "spread_usd": 0.2,
+    "spread": 0.009926,
+    "days_to_close": 148,
+    "annualized": 0.024479,
+    "implied_chance": 0.6078,
+    "open_steps": 2,
+    "kind": "cash",
+    "price_date": "2026-11-02"
+   }
+  },
+  {
+   "id": "BWMN",
+   "status": "pending",
+   "acquirer": {
+    "value": "Prive Parent, Inc. (Bernhard Capital Partners)",
+    "source_url": "https://www.sec.gov/Archives/edgar/data/1847590/000114036126038492/ny20081613x2_defm14a.htm",
+    "as_of": "2026-11-03",
+    "verified": false,
+    "note": "Read only through a summarizing fetch of the filing, not checked against its raw text."
+   },
+   "acquirer_ticker": {
+    "value": null,
+    "source_url": "https://www.sec.gov/Archives/edgar/data/1847590/000114036126038492/ny20081613x2_defm14a.htm",
+    "as_of": "2026-11-03",
+    "verified": false,
+    "note": "Private buyer; no listed ticker. Read only through a summarizing fetch of the filing, not checked against its raw text."
+   },
+   "target": {
+    "value": "Bowman Consulting Group Ltd.",
+    "source_url": "https://www.sec.gov/Archives/edgar/data/1847590/000114036126038492/ny20081613x2_defm14a.htm",
+    "as_of": "2026-11-03",
+    "verified": false,
+    "note": "Read only through a summarizing fetch of the filing, not checked against its raw text."
+   },
+   "target_ticker": {
+    "value": "BWMN",
+    "source_url": "https://www.sec.gov/Archives/edgar/data/1847590/000114036126038492/ny20081613x2_defm14a.htm",
+    "as_of": "2026-11-03",
+    "verified": false,
+    "note": "Read only through a summarizing fetch of the filing, not checked against its raw text."
+   },
+   "cash_per_share": {
+    "value": 43.0,
+    "source_url": "https://www.globenewswire.com/news-release/2026/08/10/3341715/0/en/bowman-consulting-group-enters-into-definitive-agreement-to-be-acquired-by-bernhard-capital-partners-for-43-00-per-share-in-cash.html",
+    "as_of": "2026-11-03",
+    "verified": false,
+    "note": "The release headline URL says $43.00 per share in cash, but its text could not be read (403); the proxy states $43.00 (read only through a summarizing fetch)."
+   },
+   "exchange_ratio": {
+    "value": null,
+    "source_url": "https://www.sec.gov/Archives/edgar/data/1847590/000114036126038492/ny20081613x2_defm14a.htm",
+    "as_of": "2026-11-03",
+    "verified": false,
+    "note": "All cash. Read only through a summarizing fetch of the filing, not checked against its raw text."
+   },
+   "cvr": {
+    "value": null,
+    "source_url": "https://www.sec.gov/Archives/edgar/data/1847590/000114036126038492/ny20081613x2_defm14a.htm",
+    "as_of": "2026-11-03",
+    "verified": false,
+    "note": "No CVR in the proxy. Read only through a summarizing fetch of the filing, not checked against its raw text."
+   },
+   "agreement_date": {
+    "value": "2026-08-10",
+    "source_url": "https://www.sec.gov/Archives/edgar/data/1847590/000114036126038492/ny20081613x2_defm14a.htm",
+    "as_of": "2026-11-03",
+    "verified": false,
+    "note": "Read only through a summarizing fetch of the filing, not checked against its raw text."
+   },
+   "announce_date": {
+    "value": "2026-08-10",
+    "source_url": "https://www.globenewswire.com/news-release/2026/08/10/3341715/0/en/bowman-consulting-group-enters-into-definitive-agreement-to-be-acquired-by-bernhard-capital-partners-for-43-00-per-share-in-cash.html",
+    "as_of": "2026-11-03",
+    "verified": false,
+    "note": "GlobeNewswire URL dated August 10, 2026; text not readable (403)."
+   },
+   "announced_after_close": {
+    "value": false,
+    "source_url": "https://finance.yahoo.com/quote/BWMN/history/",
+    "as_of": "2026-11-03",
+    "verified": false,
+    "note": "Inferred from prices: the August 10 close (42.42) had already moved to the offer."
+   },
+   "expected_close": {
+    "value": "fourth quarter of 2026 or first quarter of 2027",
+    "source_url": "https://www.globenewswire.com/news-release/2026/08/10/3341715/0/en/bowman-consulting-group-enters-into-definitive-agreement-to-be-acquired-by-bernhard-capital-partners-for-43-00-per-share-in-cash.html",
+    "as_of": "2026-11-03",
+    "verified": false,
+    "note": "From search result snippets of the release only; its text could not be read (403). Date used is the end of the first quarter of 2027.",
+    "by_date": "2027-03-31"
+   },
+   "unaffected_price": {
+    "value": 27.23,
+    "source_url": "https://finance.yahoo.com/quote/BWMN/history/",
+    "as_of": "2026-11-03",
+    "verified": false,
+    "note": "Close on the last trading day before the announcement (2026-08-07), from Yahoo Finance (yfinance, unadjusted). The number itself is not stated in the sources read. Matches the proxy's $27.23 close on August 7, 2026 (read through the summarizing fetch).",
+    "date": "2026-08-07"
+   },
+   "steps": [
+    {
+     "name": "Stockholder vote",
+     "status": "open",
+     "source_url": "https://www.sec.gov/Archives/edgar/data/1847590/000114036126038492/ny20081613x2_defm14a.htm",
+     "as_of": "2026-11-03",
+     "verified": false,
+     "note": "Special meeting November 4, 2026. Read only through a summarizing fetch of the filing, not checked against its raw text."
+    },
+    {
+     "name": "HSR",
+     "status": "done",
+     "source_url": "https://www.sec.gov/Archives/edgar/data/1847590/000114036126038492/ny20081613x2_defm14a.htm",
+     "as_of": "2026-11-03",
+     "verified": false,
+     "note": "FTC early termination September 21, 2026. Read only through a summarizing fetch of the filing, not checked against its raw text."
+    },
+    {
+     "name": "Foreign investment approvals, if any",
+     "status": "open",
+     "source_url": "https://www.sec.gov/Archives/edgar/data/1847590/000114036126038492/ny20081613x2_defm14a.htm",
+     "as_of": "2026-11-03",
+     "verified": false,
+     "note": "Proxy refers to FDI laws without naming any jurisdiction. Read only through a summarizing fetch of the filing, not checked against its raw text."
+    },
+    {
+     "name": "Financing",
+     "status": "done",
+     "source_url": "https://www.sec.gov/Archives/edgar/data/1847590/000114036126038492/ny20081613x2_defm14a.htm",
+     "as_of": "2026-11-03",
+     "verified": false,
+     "note": "Not a closing condition per the proxy. Read only through a summarizing fetch of the filing, not checked against its raw text."
+    }
+   ],
+   "proxy_url": "https://www.sec.gov/Archives/edgar/data/1847590/000114036126038492/ny20081613x2_defm14a.htm",
+   "calc": {
+    "target_price": 42.89,
+    "acquirer_price": null,
+    "offer_value": 43.0,
+    "spread_usd": 0.11,
+    "spread": 0.002565,
+    "days_to_close": 148,
+    "annualized": 0.006325,
+    "implied_chance": 0.993,
+    "open_steps": 2,
+    "kind": "cash",
+    "price_date": "2026-11-02"
+   }
+  },
+  {
+   "id": "BOW",
+   "status": "pending",
+   "acquirer": {
+    "value": "American Family Mutual Insurance Company, S.I.",
+    "source_url": "https://newsroom.amfam.com/american-family-to-acquire-bowhead-specialty/",
+    "as_of": "2026-11-03",
+    "verified": true
+   },
+   "acquirer_ticker": {
+    "value": null,
+    "source_url": "https://newsroom.amfam.com/american-family-to-acquire-bowhead-specialty/",
+    "as_of": "2026-11-03",
+    "verified": false,
+    "note": "Mutual insurer, no listed ticker."
+   },
+   "target": {
+    "value": "Bowhead Specialty Holdings Inc.",
+    "source_url": "https://newsroom.amfam.com/american-family-to-acquire-bowhead-specialty/",
+    "as_of": "2026-11-03",
+    "verified": true
+   },
+   "target_ticker": {
+    "value": "BOW",
+    "source_url": "https://newsroom.amfam.com/american-family-to-acquire-bowhead-specialty/",
+    "as_of": "2026-11-03",
+    "verified": true
+   },
+   "cash_per_share": {
+    "value": 34.0,
+    "source_url": "https://newsroom.amfam.com/american-family-to-acquire-bowhead-specialty/",
+    "as_of": "2026-11-03",
+    "verified": true
+   },
+   "exchange_ratio": {
+    "value": null,
+    "source_url": "https://newsroom.amfam.com/american-family-to-acquire-bowhead-specialty/",
+    "as_of": "2026-11-03",
+    "verified": true,
+    "note": "All cash."
+   },
+   "cvr": {
+    "value": null,
+    "source_url": "https://www.sec.gov/Archives/edgar/data/2002473/000114036126039513/ny20080231x9_defm14a.htm",
+    "as_of": "2026-11-03",
+    "verified": false,
+    "note": "No CVR in the proxy. Read only through a summarizing fetch of the filing, not checked against its raw text."
+   },
+   "agreement_date": {
+    "value": "2026-08-02",
+    "source_url": "https://www.sec.gov/Archives/edgar/data/2002473/000114036126039513/ny20080231x9_defm14a.htm",
+    "as_of": "2026-11-03",
+    "verified": false,
+    "note": "Read only through a summarizing fetch of the filing, not checked against its raw text."
+   },
+   "announce_date": {
+    "value": "2026-08-03",
+    "source_url": "https://newsroom.amfam.com/american-family-to-acquire-bowhead-specialty/",
+    "as_of": "2026-11-03",
+    "verified": true,
+    "note": "Released 07:01 a.m. Central, August 3, 2026."
+   },
+   "announced_after_close": {
+    "value": false,
+    "source_url": "https://newsroom.amfam.com/american-family-to-acquire-bowhead-specialty/",
+    "as_of": "2026-11-03",
+    "verified": false,
+    "note": "Release time not stated on the release page; treated as before the August 3 open because the Aug 3 close moved to the offer."
+   },
+   "expected_close": {
+    "value": "prior to the end of 2026",
+    "source_url": "https://newsroom.amfam.com/american-family-to-acquire-bowhead-specialty/",
+    "as_of": "2026-11-03",
+    "verified": true,
+    "by_date": "2026-12-31"
+   },
+   "unaffected_price": {
+    "value": 30.59,
+    "source_url": "https://finance.yahoo.com/quote/BOW/history/",
+    "as_of": "2026-11-03",
+    "verified": false,
+    "note": "Close on the last trading day before the announcement (2026-07-31), from Yahoo Finance (yfinance, unadjusted). The number itself is not stated in the sources read. Matches the proxy's $30.59 unaffected close on July 31, 2026 (read through the summarizing fetch).",
+    "date": "2026-07-31"
+   },
+   "steps": [
+    {
+     "name": "Stockholder vote",
+     "status": "open",
+     "source_url": "https://www.sec.gov/Archives/edgar/data/2002473/000114036126039513/ny20080231x9_defm14a.htm",
+     "as_of": "2026-11-03",
+     "verified": false,
+     "note": "Special meeting November 13, 2026. Read only through a summarizing fetch of the filing, not checked against its raw text."
+    },
+    {
+     "name": "HSR",
+     "status": "done",
+     "source_url": "https://www.sec.gov/Archives/edgar/data/2002473/000114036126039513/ny20080231x9_defm14a.htm",
+     "as_of": "2026-11-03",
+     "verified": false,
+     "note": "Expired September 28, 2026. Read only through a summarizing fetch of the filing, not checked against its raw text."
+    },
+    {
+     "name": "Texas Department of Insurance",
+     "status": "done",
+     "source_url": "https://www.sec.gov/Archives/edgar/data/2002473/000114036126039513/ny20080231x9_defm14a.htm",
+     "as_of": "2026-11-03",
+     "verified": false,
+     "note": "Non-objection letter September 15, 2026. Read only through a summarizing fetch of the filing, not checked against its raw text."
+    },
+    {
+     "name": "Wisconsin Office of the Commissioner of Insurance",
+     "status": "open",
+     "source_url": "https://www.sec.gov/Archives/edgar/data/2002473/000114036126039513/ny20080231x9_defm14a.htm",
+     "as_of": "2026-11-03",
+     "verified": false,
+     "note": "Filed August 28, 2026; outcome not stated in the proxy. Read only through a summarizing fetch of the filing, not checked against its raw text."
+    },
+    {
+     "name": "Financing",
+     "status": "done",
+     "source_url": "https://www.sec.gov/Archives/edgar/data/2002473/000114036126039513/ny20080231x9_defm14a.htm",
+     "as_of": "2026-11-03",
+     "verified": false,
+     "note": "Not a closing condition per the proxy. Read only through a summarizing fetch of the filing, not checked against its raw text."
+    }
+   ],
+   "proxy_url": "https://www.sec.gov/Archives/edgar/data/2002473/000114036126039513/ny20080231x9_defm14a.htm",
+   "calc": {
+    "target_price": 33.95,
+    "acquirer_price": null,
+    "offer_value": 34.0,
+    "spread_usd": 0.05,
+    "spread": 0.001473,
+    "days_to_close": 58,
+    "annualized": 0.009268,
+    "implied_chance": 0.9853,
+    "open_steps": 2,
+    "kind": "cash",
+    "price_date": "2026-11-02"
+   }
+  }
+ ]
+}
