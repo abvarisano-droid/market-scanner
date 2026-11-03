@@ -617,6 +617,9 @@ h1{font-size:clamp(32px,4.4vw,54px);line-height:1.06}
     font:500 10.5px/1.1 var(--v8-sans);letter-spacing:0;text-transform:none;text-align:center;color:rgba(255,255,255,.66)}
   .top nav a.on{color:#fff;background:rgba(255,255,255,.11)}
   .top nav a.on .ic{color:var(--hi)}
+  /* six tabs share the bar: long labels wrap onto two lines instead of running into the next tab */
+  .top nav a,.top nav a:hover{white-space:normal}
+  .top nav a span{max-width:100%;overflow-wrap:break-word;hyphens:manual}
 }
 
 /* the replay is the hero widget: one cyan gradient card, dark ink, the replay instrument sunk into it */

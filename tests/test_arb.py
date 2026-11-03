@@ -254,3 +254,16 @@ def test_arb_page_basics():
         t = (ROOT / "site" / f).read_text()
         assert not re.search(r"\b(buy|sell|price target)\b", t, re.I), f
         assert "\u2014" not in t and "\u2013" not in t, f
+
+
+def test_refresh_rejects_nan_zero_prices_and_writes_atomically(tmp_path, capsys):
+    out = tmp_path / "arb.json"
+    out.write_text('{"old": true}')
+    for bad in (float("nan"), float("inf"), 0.0, -1.0):
+        f = lambda t, bad=bad: {k: (d, bad if k == "MKTX" else p) for k, (d, p) in _closes(t).items()}
+        assert ra.main(fetch=f, out=out) == 1
+        assert "bad price for MKTX" in capsys.readouterr().err
+        assert json.loads(out.read_text()) == {"old": True}
+    assert ra.main(fetch=_closes, out=out) == 0
+    assert not (tmp_path / "arb.json.tmp").exists()
+    assert "NaN" not in out.read_text()

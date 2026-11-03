@@ -12,7 +12,7 @@
       return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c];
     });
   }
-  function pct(x, d) { return x == null ? "n/a" : (x * 100).toFixed(d == null ? 2 : d) + "%"; }
+  function pct(x, d) { return x == null ? "Unknown" : (x * 100).toFixed(d == null ? 2 : d) + "%"; }
   function usd(x) { return x == null ? "Unknown" : "$" + Number(x).toFixed(2); }
   function v(d, k) { return d[k] ? d[k].value : null; }
   function terms(d) {

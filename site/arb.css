@@ -67,6 +67,7 @@
 .arb .chip.neutral{color:var(--muted)}
 .arb .arb-panel a{font:12px var(--tm-mono)}
 .arb .arb-src{display:block;margin-top:2px}
+.arb .arb-src a{display:inline-flex;align-items:center;min-height:24px;min-width:24px}
 @media(min-width:760px) and (max-width:1499px){.arb .arb-facts{grid-template-columns:1fr 1fr;column-gap:24px}.arb .arb-stats{grid-template-columns:repeat(4,1fr)}}
 
 @media(min-width:1500px){

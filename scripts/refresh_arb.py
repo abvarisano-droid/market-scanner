@@ -11,6 +11,8 @@ Not investment advice.
 from __future__ import annotations
 
 import json
+import math
+import os
 import sys
 from datetime import date, datetime, timezone
 from pathlib import Path
@@ -76,6 +78,10 @@ def build(book: dict, closes: dict[str, tuple[str, float]], today: date, now: da
         a = d["acquirer_ticker"]["value"] if d["exchange_ratio"]["value"] else None
         if a and a not in closes:
             raise RefreshError(f"no price for acquirer {a} ({t} is a stock deal)")
+        for tk in (t, a) if a else (t,):
+            px = closes[tk][1]
+            if not isinstance(px, (int, float)) or not math.isfinite(px) or px <= 0:
+                raise RefreshError(f"bad price for {tk}: {px!r}")
         dates.append(closes[t][0])
         row = public_deal(d)
         row["calc"] = arb.compute(d, closes[t][1], closes[a][1] if a else None, today)
@@ -99,7 +105,10 @@ def main(argv=None, fetch=yahoo_closes, out: Path = OUT, deals: Path = DEALS) ->
         print(f"Arb refresh failed: {e}. site/data/arb.json was not changed.", file=sys.stderr)
         return 1
     out.parent.mkdir(parents=True, exist_ok=True)
-    out.write_text(json.dumps(page, indent=1) + "\n")
+    text = json.dumps(page, indent=1, allow_nan=False) + "\n"
+    tmp = out.with_suffix(".json.tmp")
+    tmp.write_text(text)
+    os.replace(tmp, out)  # atomic: a crash never leaves a half-written arb.json
     print(f"arb.json: {len(page['deals'])} deals, prices as of {page['as_of']}")
     return 0
 

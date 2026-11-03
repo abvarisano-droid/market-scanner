@@ -79,7 +79,7 @@
     "source_url": "https://finance.yahoo.com/quote/MKTX/history/",
     "as_of": "2026-11-03",
     "verified": false,
-    "note": "Close on the last trading day before the announcement date, from Yahoo Finance (yfinance, unadjusted). Not stated in a filing I read. Consistent with the 33% premium in the press release."
+    "note": "Close on the last trading day before the announcement date, from Yahoo Finance (yfinance, unadjusted). Not stated in the filings reviewed. Consistent with the 33% premium in the press release."
    },
    "steps": [
     {
@@ -202,7 +202,7 @@
     "source_url": "https://finance.yahoo.com/quote/DV/history/",
     "as_of": "2026-11-03",
     "verified": false,
-    "note": "Close on the last trading day before the announcement date, from Yahoo Finance (yfinance, unadjusted). Not stated in a filing I read. The August 6 close was 11.71, so the timing of the release within the day is unconfirmed."
+    "note": "Close on the last trading day before the announcement date, from Yahoo Finance (yfinance, unadjusted). Not stated in the filings reviewed. The August 6 close was 11.71, so the timing of the release within the day is unconfirmed."
    },
    "steps": [
     {
@@ -324,7 +324,7 @@
     "source_url": "https://finance.yahoo.com/quote/ITGR/history/",
     "as_of": "2026-11-03",
     "verified": false,
-    "note": "Close on the last trading day before the announcement date, from Yahoo Finance (yfinance, unadjusted). Not stated in a filing I read."
+    "note": "Close on the last trading day before the announcement date, from Yahoo Finance (yfinance, unadjusted). Not stated in the filings reviewed."
    },
    "steps": [
     {
@@ -446,7 +446,7 @@
     "source_url": "https://finance.yahoo.com/quote/VREX/history/",
     "as_of": "2026-11-03",
     "verified": false,
-    "note": "Close on the last trading day before the announcement date, from Yahoo Finance (yfinance, unadjusted). Not stated in a filing I read."
+    "note": "Close on the last trading day before the announcement date, from Yahoo Finance (yfinance, unadjusted). Not stated in the filings reviewed."
    },
    "steps": [
     {
@@ -576,7 +576,7 @@
     "source_url": "https://finance.yahoo.com/quote/UTZ/history/",
     "as_of": "2026-11-03",
     "verified": false,
-    "note": "Close on the last trading day before the announcement date, from Yahoo Finance (yfinance, unadjusted). Not stated in a filing I read. Consistent with the proxy's 91% premium to the July 20 close."
+    "note": "Close on the last trading day before the announcement date, from Yahoo Finance (yfinance, unadjusted). Not stated in the filings reviewed. Consistent with the proxy's 91% premium to the July 20 close."
    },
    "steps": [
     {
@@ -700,7 +700,7 @@
     "source_url": "https://finance.yahoo.com/quote/SAFT/history/",
     "as_of": "2026-11-03",
     "verified": false,
-    "note": "Close on the last trading day before the announcement date, from Yahoo Finance (yfinance, unadjusted). Not stated in a filing I read. Consistent with the proxy's 44.8% premium to the July 22 close."
+    "note": "Close on the last trading day before the announcement date, from Yahoo Finance (yfinance, unadjusted). Not stated in the filings reviewed. Consistent with the proxy's 44.8% premium to the July 22 close."
    },
    "steps": [
     {
@@ -824,7 +824,7 @@
     "source_url": "https://finance.yahoo.com/quote/HZO/history/",
     "as_of": "2026-11-03",
     "verified": false,
-    "note": "Close on the last trading day before the announcement date, from Yahoo Finance (yfinance, unadjusted). Not stated in a filing I read."
+    "note": "Close on the last trading day before the announcement date, from Yahoo Finance (yfinance, unadjusted). Not stated in the filings reviewed."
    },
    "steps": [
     {
@@ -946,7 +946,7 @@
     "source_url": "https://finance.yahoo.com/quote/LNTH/history/",
     "as_of": "2026-11-03",
     "verified": false,
-    "note": "Close on the last trading day before the announcement date, from Yahoo Finance (yfinance, unadjusted). Not stated in a filing I read."
+    "note": "Close on the last trading day before the announcement date, from Yahoo Finance (yfinance, unadjusted). Not stated in the filings reviewed."
    },
    "steps": [
     {
@@ -1201,7 +1201,7 @@
     "source_url": "https://finance.yahoo.com/quote/MG/history/",
     "as_of": "2026-11-03",
     "verified": false,
-    "note": "Close on the last trading day before the announcement date, from Yahoo Finance (yfinance, unadjusted). Not stated in a filing I read."
+    "note": "Close on the last trading day before the announcement date, from Yahoo Finance (yfinance, unadjusted). Not stated in the filings reviewed."
    },
    "steps": [
     {
