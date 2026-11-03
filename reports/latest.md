@@ -1,161 +1,161 @@
-# Market Scan, 2026-10-30
+# Market Scan, 2026-11-02
 
 ## Global indexes
 
 | Index | Level | 1D | 1M | 3M | From 52w high |
 |---|---|---|---|---|---|
-| S&P 500 | 7,580 | -1.8% | -1.1% | -0.3% | -3.1% |
-| Nasdaq 100 | 28,385 | -3.5% | -6.9% | -1.4% | -9.1% |
-| Dow Jones | 51,770 | -1.1% | +1.7% | -2.6% | -4.7% |
-| Russell 2000 | 2,812 | -1.7% | +0.2% | -5.7% | -8.4% |
-| FTSE 100 (UK) | 10,730 | +0.1% | +2.9% | -1.2% | -1.7% |
-| DAX (Germany) | 25,818 | -0.9% | +3.5% | -1.5% | -2.8% |
-| CAC 40 (France) | 7,969 | -0.0% | +1.7% | -8.0% | -8.7% |
-| Euro Stoxx 50 | 6,131 | -1.2% | -0.7% | -5.5% | -6.4% |
-| Nikkei 225 (Japan) | 63,290 | -2.1% | -5.2% | +1.5% | -12.5% |
-| Hang Seng (HK) | 23,294 | +1.5% | -5.0% | -10.0% | -16.7% |
-| Shanghai Composite | 3,599 | -1.4% | -8.6% | -6.7% | -15.2% |
-| Sensex (India) | 74,460 | +0.4% | +2.7% | -4.5% | -13.2% |
-| ASX 200 (Australia) | 8,908 | +0.2% | +3.4% | -2.6% | -3.9% |
-| TSX (Canada) | 35,620 | -1.7% | +1.1% | +0.3% | -3.6% |
+| S&P 500 | 7,541 | -0.5% | -2.3% | -2.5% | -3.5% |
+| Nasdaq 100 | 27,990 | -1.4% | -9.1% | -5.9% | -10.4% |
+| Dow Jones | 51,984 | +0.4% | +1.6% | -3.9% | -4.4% |
+| Russell 2000 | 2,806 | -0.2% | -1.0% | -7.6% | -8.6% |
+| FTSE 100 (UK) | 10,761 | +0.3% | +2.9% | -1.1% | -1.4% |
+| DAX (Germany) | 25,981 | +0.6% | +3.0% | -0.6% | -2.2% |
+| CAC 40 (France) | 8,048 | +1.0% | +1.9% | -7.2% | -7.8% |
+| Euro Stoxx 50 | 6,176 | +0.7% | -1.0% | -4.6% | -5.7% |
+| Nikkei 225 (Japan) | 63,082 | -0.3% | -8.5% | +2.7% | -12.8% |
+| Hang Seng (HK) | 23,393 | +0.4% | -5.0% | -10.1% | -16.4% |
+| Shanghai Composite | 3,638 | +1.1% | -6.4% | -4.6% | -14.2% |
+| Sensex (India) | 75,693 | +1.7% | +4.4% | -3.1% | -11.7% |
+| ASX 200 (Australia) | 8,856 | -0.6% | +2.0% | -4.0% | -4.5% |
+| TSX (Canada) | 35,801 | +0.5% | +1.8% | +1.6% | -3.1% |
 | Bovespa (Brazil) | 167,922 | -0.7% | -9.9% | -5.7% | -19.7% |
-| KOSPI (Korea) | 5,731 | -3.5% | -16.6% | -4.9% | -37.1% |
+| KOSPI (Korea) | 5,859 | +2.2% | -14.3% | +3.5% | -35.7% |
 
 ## Top calls
 
-### BKNG (Booking Holdings Inc. Common St): **Bullish** (confidence 68, mispricing +71)
-*S&P 500, Consumer Cyclical, price 148.13*
+### BKNG (Booking Holdings Inc. Common St): **Bullish** (confidence 67, mispricing +69)
+*S&P 500, Consumer Cyclical, price 153.75*
 
-Above-peer quality (ROE, margins, growth); Analyst consensus sits +57% from the last close (35 analysts); Down 23% in 3 months
+Above-peer quality (ROE, margins, growth); Analyst consensus sits +51% from the last close (35 analysts); Down 21% in 3 months
 
-### FSLR (First Solar, Inc.): **Bullish** (confidence 79, mispricing +65)
-*S&P 500, Technology, price 174.40*
+### FIX (Comfort Systems USA, Inc.): **Bullish** (confidence 77, mispricing +62)
+*S&P 500, Industrials, price 1,200.14*
 
-forward P/E 7.5x is cheap vs Technology peers; FCF yield 8.5% is cheap vs Technology peers; Analyst consensus sits +57% from the last close (30 analysts); Down 25% in 3 months
-
-### LVS (Las Vegas Sands Corp.): **Bullish** (confidence 70, mispricing +65)
-*S&P 500, Consumer Cyclical, price 36.97*
-
-EV/EBITDA 8.1x is cheap vs Consumer Cyclical peers; FCF yield 8.8% is cheap vs Consumer Cyclical peers; Above-peer quality (ROE, margins, growth); Analyst consensus sits +34% from the last close (19 analysts); Down 21% in 3 months
-
-### MU (Micron Technology, Inc.): **Bullish** (confidence 77, mispricing +63)
-*S&P 500, Technology, price 884.74*
-
-forward P/E 4.3x is cheap vs Technology peers; Above-peer quality (ROE, margins, growth); Analyst consensus sits +77% from the last close (45 analysts)
-
-### WDC (Western Digital Corporation): **Bullish** (confidence 77, mispricing +63)
-*S&P 500, Technology, price 366.11*
-
-Above-peer quality (ROE, margins, growth); Analyst consensus sits +68% from the last close (24 analysts); Down 31% in 3 months
-
-### PCAR (PACCAR Inc.): **Bullish** (confidence 76, mispricing +60)
-*S&P 500, Industrials, price 101.91*
-
-FCF yield 44.5% is cheap vs Industrials peers; Analyst consensus sits +26% from the last close (16 analysts); Down 23% in 3 months
+P/B 12.6x is rich vs Industrials peers; Above-peer quality (ROE, margins, growth); Analyst consensus sits +60% from the last close (8 analysts); Down 32% in 3 months
 
 ### DG.PA (VINCI): **Bullish** (confidence 76, mispricing +60)
 *CAC 40 (France), Industrials, price 108.60*
 
-forward P/E 11.0x is cheap vs Industrials peers; trailing P/E 12.1x is cheap vs Industrials peers; EV/EBITDA 7.0x is cheap vs Industrials peers; FCF yield 13.5% is cheap vs Industrials peers; Analyst consensus sits +30% from the last close (20 analysts)
-
-### FIX (Comfort Systems USA, Inc.): **Bullish** (confidence 75, mispricing +59)
-*S&P 500, Industrials, price 1,232.66*
-
-P/B 12.9x is rich vs Industrials peers; Above-peer quality (ROE, margins, growth); Analyst consensus sits +56% from the last close (8 analysts); Down 30% in 3 months
+forward P/E 11.1x is cheap vs Industrials peers; trailing P/E 12.2x is cheap vs Industrials peers; EV/EBITDA 7.1x is cheap vs Industrials peers; FCF yield 13.3% is cheap vs Industrials peers; Analyst consensus sits +29% from the last close (20 analysts)
 
 ### BNP.PA (BNP PARIBAS ACT.A): **Bullish** (confidence 63, mispricing +59)
 *CAC 40 (France), Financial Services, price 85.65*
 
 Analyst consensus sits +40% from the last close (19 analysts); Down 21% in 3 months
 
-### BBDC4.SA (BRADESCO    PN  EJ  N1): **Bullish** (confidence 63, mispricing +59)
+### BBDC4.SA (BRADESCO    PN      N1): **Bullish** (confidence 63, mispricing +59)
 *Bovespa (Brazil), Financial Services, price 13.86*
 
 Analyst consensus sits +52% from the last close (12 analysts); Down 23% in 3 months
 
-### GOOG (Alphabet Inc.): **Bullish** (confidence 74, mispricing +57)
-*S&P 500, Communication Services, price 278.22*
+### LVS (Las Vegas Sands Corp.): **Bullish** (confidence 67, mispricing +58)
+*S&P 500, Consumer Cyclical, price 38.20*
 
-Above-peer quality (ROE, margins, growth); Analyst consensus sits +45% from the last close (15 analysts); Down 25% in 3 months
+FCF yield 8.5% is cheap vs Consumer Cyclical peers; Above-peer quality (ROE, margins, growth); Analyst consensus sits +30% from the last close (19 analysts)
 
-### PCG (Pacific Gas & Electric Co.): **Bullish** (confidence 74, mispricing +57)
-*S&P 500, Utilities, price 13.18*
+### FSLR (First Solar, Inc.): **Bullish** (confidence 74, mispricing +57)
+*S&P 500, Technology, price 182.05*
 
-forward P/E 7.3x is cheap vs Utilities peers; trailing P/E 9.8x is cheap vs Utilities peers; EV/EBITDA 8.9x is cheap vs Utilities peers; P/B 0.9x is cheap vs Utilities peers; FCF yield -16.4% is rich vs Utilities peers; Analyst consensus sits +34% from the last close (17 analysts); Down 24% in 3 months
+Analyst consensus sits +51% from the last close (30 analysts); Down 25% in 3 months
 
-### TSLA (Tesla, Inc.): **Bearish** (confidence 70, mispricing -50)
-*S&P 500, Consumer Cyclical, price 399.81*
+### RDDT (Reddit, Inc.): **Bullish** (confidence 74, mispricing +57)
+*S&P 500, Communication Services, price 90.97*
 
-forward P/E 185.5x is rich vs Consumer Cyclical peers; trailing P/E 439.4x is rich vs Consumer Cyclical peers; EV/EBITDA 157.8x is rich vs Consumer Cyclical peers; P/B 17.7x is rich vs Consumer Cyclical peers; Up 24% in 3 months
+Above-peer quality (ROE, margins, growth); Analyst consensus sits +75% from the last close (30 analysts); Down 43% in 3 months
 
-### TRGP (Targa Resources, Inc.): **Bearish** (confidence 70, mispricing -51)
-*S&P 500, Energy, price 314.99*
+### GOOGL (Alphabet Inc.): **Bullish** (confidence 73, mispricing +56)
+*S&P 500, Communication Services, price 278.99*
 
-forward P/E 26.0x is rich vs Energy peers; trailing P/E 30.1x is rich vs Energy peers; EV/EBITDA 15.8x is rich vs Energy peers; P/B 18.5x is rich vs Energy peers; FCF yield 0.1% is rich vs Energy peers
+Above-peer quality (ROE, margins, growth); Analyst consensus sits +44% from the last close (53 analysts); Down 26% in 3 months
 
-### CRL (Charles River Laboratories Inte): **Bearish** (confidence 68, mispricing -53)
-*S&P 500, Healthcare, price 359.41*
+### GOOG (Alphabet Inc.): **Bullish** (confidence 73, mispricing +56)
+*S&P 500, Communication Services, price 278.04*
 
-forward P/E 28.2x is rich vs Healthcare peers; Below-peer quality, could be a value trap; Up 56% in 3 months
+Above-peer quality (ROE, margins, growth); Analyst consensus sits +46% from the last close (15 analysts); Down 26% in 3 months
 
-### MTD (Mettler-Toledo International, I): **Bearish** (confidence 68, mispricing -54)
-*S&P 500, Healthcare, price 1,674.81*
+### PCG (Pacific Gas & Electric Co.): **Bullish** (confidence 73, mispricing +56)
+*S&P 500, Utilities, price 13.28*
 
-forward P/E 32.4x is rich vs Healthcare peers; EV/EBITDA 27.9x is rich vs Healthcare peers; P/B 2616.9x is rich vs Healthcare peers
+forward P/E 7.4x is cheap vs Utilities peers; trailing P/E 9.8x is cheap vs Utilities peers; EV/EBITDA 9.0x is cheap vs Utilities peers; FCF yield -16.3% is rich vs Utilities peers; Analyst consensus sits +33% from the last close (17 analysts); Down 24% in 3 months
 
-### CRWD (CrowdStrike Holdings, Inc.): **Bearish** (confidence 76, mispricing -60)
-*S&P 500, Technology, price 250.43*
+### WYNN (Wynn Resorts, Limited): **Bullish** (confidence 61, mispricing +54)
+*S&P 500, Consumer Cyclical, price 77.67*
 
-forward P/E 155.4x is rich vs Technology peers; trailing P/E 4173.8x is rich vs Technology peers; EV/EBITDA 2360.7x is rich vs Technology peers; P/B 50.3x is rich vs Technology peers; Up 24% in 3 months
+Analyst consensus sits +57% from the last close (20 analysts); Down 20% in 3 months
 
-### MRNA (Moderna, Inc.): **Bearish** (confidence 71, mispricing -78)
-*S&P 500, Healthcare, price 221.72*
+### SHOP.TO (SHOPIFY INC): **Bearish** (confidence 68, mispricing -47)
+*TSX (Canada), Technology, price 217.64*
 
-P/B 13.1x is rich vs Healthcare peers; Analyst consensus sits -38% from the last close (19 analysts); Up 302% in 3 months
+forward P/E 63.1x is rich vs Technology peers; trailing P/E 106.2x is rich vs Technology peers; EV/EBITDA 114.9x is rich vs Technology peers; Up 33% in 3 months
+
+### MTD (Mettler-Toledo International, I): **Bearish** (confidence 67, mispricing -51)
+*S&P 500, Healthcare, price 1,678.19*
+
+forward P/E 32.4x is rich vs Healthcare peers; EV/EBITDA 28.0x is rich vs Healthcare peers; P/B 2622.2x is rich vs Healthcare peers
+
+### TSLA (Tesla, Inc.): **Bearish** (confidence 70, mispricing -51)
+*S&P 500, Consumer Cyclical, price 403.82*
+
+forward P/E 187.0x is rich vs Consumer Cyclical peers; trailing P/E 443.8x is rich vs Consumer Cyclical peers; EV/EBITDA 159.4x is rich vs Consumer Cyclical peers; P/B 17.9x is rich vs Consumer Cyclical peers; Up 23% in 3 months
+
+### ARES (Ares Management Corporation): **Bearish** (confidence 61, mispricing -54)
+*S&P 500, Financial Services, price 132.96*
+
+forward P/E 19.1x is rich vs Financial Services peers; trailing P/E 61.3x is rich vs Financial Services peers; P/B 12.1x is rich vs Financial Services peers; Below-peer quality, could be a value trap
+
+### CRWD (CrowdStrike Holdings, Inc.): **Bearish** (confidence 73, mispricing -55)
+*S&P 500, Technology, price 241.81*
+
+forward P/E 150.1x is rich vs Technology peers; trailing P/E 4836.2x is rich vs Technology peers; EV/EBITDA 2278.1x is rich vs Technology peers; P/B 48.5x is rich vs Technology peers
+
+### MRNA (Moderna, Inc.): **Bearish** (confidence 70, mispricing -75)
+*S&P 500, Healthcare, price 220.83*
+
+P/B 13.0x is rich vs Healthcare peers; Below-peer quality, could be a value trap; Analyst consensus sits -37% from the last close (19 analysts); Up 287% in 3 months
 
 ## Short-term technical signals
 
-- **EXC** Bullish (100): Price is 6.8% above its 20-day average; Momentum: +3.9% over 5 days, +6.1% over 10 days; RSI(14) is 74 (stretched)
-- **GPN** Bullish (100): Price is 15.7% above its 20-day average; Momentum: +16.9% over 5 days, +15.7% over 10 days; RSI(14) is 72 (stretched)
-- **LLY** Bullish (100): Price is 13.8% above its 20-day average; Momentum: +11.3% over 5 days, +12.8% over 10 days; RSI(14) is 78 (stretched)
-- **LNT** Bullish (100): Price is 6.3% above its 20-day average; Momentum: +3.6% over 5 days, +5.7% over 10 days; RSI(14) is 70 (stretched)
-- **REGN** Bullish (100): Price is 17.6% above its 20-day average; Momentum: +15.3% over 5 days, +17.3% over 10 days; RSI(14) is 79 (stretched)
-- **000270.KS** Bearish (0): Price is 12.1% below its 20-day average; Momentum: -10.6% over 5 days, -13.2% over 10 days; RSI(14) is 28 (washed out)
-- **APP** Bearish (0): Price is 14.6% below its 20-day average; Momentum: -12.2% over 5 days, -14.1% over 10 days; RSI(14) is 25 (washed out)
-- **FFIV** Bearish (0): Price is 24.0% below its 20-day average; Momentum: -25.7% over 5 days, -23.5% over 10 days; RSI(14) is 23 (washed out)
-- **GOOG** Bearish (0): Price is 15.8% below its 20-day average; Momentum: -12.3% over 5 days, -17.4% over 10 days; RSI(14) is 21 (washed out)
-- **INTC** Bearish (0): Price is 31.8% below its 20-day average; Momentum: -24.4% over 5 days, -26.8% over 10 days; RSI(14) is 25 (washed out)
+- **600519.SS** Bullish (100): Price is 9.2% above its 20-day average; Momentum: +6.6% over 5 days, +8.6% over 10 days; RSI(14) is 75 (stretched)
+- **ADUS** Bullish (100): Price is 6.1% above its 20-day average; Momentum: +3.8% over 5 days, +9.2% over 10 days; RSI(14) is 73 (stretched)
+- **AIN** Bullish (100): Price is 17.2% above its 20-day average; Momentum: +16.3% over 5 days, +20.5% over 10 days; RSI(14) is 79 (stretched)
+- **ASUR** Bullish (100): Price is 31.9% above its 20-day average; Momentum: +35.2% over 5 days, +40.6% over 10 days; RSI(14) is 81 (stretched)
+- **CPRI** Bullish (100): Price is 26.3% above its 20-day average; Momentum: +28.8% over 5 days, +24.1% over 10 days; RSI(14) is 78 (stretched)
+- **ADAM** Bearish (0): Price is 20.8% below its 20-day average; Momentum: -24.0% over 5 days, -19.5% over 10 days; RSI(14) is 20 (washed out)
+- **BLZE** Bearish (0): Price is 26.7% below its 20-day average; Momentum: -13.9% over 5 days, -20.3% over 10 days; RSI(14) is 27 (washed out)
+- **CRMD** Bearish (0): Price is 27.1% below its 20-day average; Momentum: -32.1% over 5 days, -27.0% over 10 days; RSI(14) is 23 (washed out)
+- **DRUG** Bearish (0): Price is 49.2% below its 20-day average; Momentum: -48.7% over 5 days, -51.3% over 10 days; RSI(14) is 23 (washed out)
+- **FLNC** Bearish (0): Price is 17.7% below its 20-day average; Momentum: -5.3% over 5 days, -11.1% over 10 days; RSI(14) is 29 (washed out)
 
 ## Swing technical signals
 
-- **6098.T** Bullish (100): 3-month return is 51.1 points ahead of the S&P 500; Price is 11.5% above its 50-day average; Price is 70.6% above its 200-day average
-- **APA** Bullish (100): 3-month return is 44.0 points ahead of the S&P 500; Price is 16.4% above its 50-day average; Price is 41.5% above its 200-day average
-- **BIIB** Bullish (100): 3-month return is 25.7 points ahead of the S&P 500; Price is 11.7% above its 50-day average; Price is 26.1% above its 200-day average
-- **CNQ.TO** Bullish (100): 3-month return is 17.3 points ahead of the S&P 500; Price is 10.5% above its 50-day average; Price is 24.9% above its 200-day average
-- **COP** Bullish (100): 3-month return is 30.1 points ahead of the S&P 500; Price is 13.2% above its 50-day average; Price is 28.0% above its 200-day average
-- **9988.HK** Bearish (0): 3-month return is 15.3 points behind the S&P 500; Price is 10.0% below its 50-day average; Price is 21.9% below its 200-day average
-- **ALB** Bearish (0): 3-month return is 23.1 points behind the S&P 500; Price is 18.5% below its 50-day average; Price is 39.0% below its 200-day average
-- **APP** Bearish (0): 3-month return is 43.7 points behind the S&P 500; Price is 22.3% below its 50-day average; Price is 45.0% below its 200-day average
-- **BKNG** Bearish (0): 3-month return is 22.9 points behind the S&P 500; Price is 13.4% below its 50-day average; Price is 15.9% below its 200-day average
-- **CHTR** Bearish (0): 3-month return is 22.6 points behind the S&P 500; Price is 10.2% below its 50-day average; Price is 32.4% below its 200-day average
+- **AII** Bullish (100): 3-month return is 43.3 points ahead of the S&P 500; Price is 10.3% above its 50-day average; Price is 42.3% above its 200-day average
+- **CFFI** Bullish (100): 3-month return is 35.2 points ahead of the S&P 500; Price is 13.1% above its 50-day average; Price is 36.2% above its 200-day average
+- **IBTA** Bullish (100): 3-month return is 36.3 points ahead of the S&P 500; Price is 17.9% above its 50-day average; Price is 51.8% above its 200-day average
+- **PCRX** Bullish (100): 3-month return is 34.0 points ahead of the S&P 500; Price is 24.2% above its 50-day average; Price is 46.1% above its 200-day average
+- **PRTH** Bullish (100): 3-month return is 20.1 points ahead of the S&P 500; Price is 13.3% above its 50-day average; Price is 29.8% above its 200-day average
+- **ABAT** Bearish (0): 3-month return is 40.4 points behind the S&P 500; Price is 36.8% below its 50-day average; Price is 54.3% below its 200-day average
+- **ABR** Bearish (0): 3-month return is 60.1 points behind the S&P 500; Price is 50.8% below its 50-day average; Price is 66.2% below its 200-day average
+- **ACH** Bearish (0): 3-month return is 88.9 points behind the S&P 500; Price is 62.4% below its 50-day average; Price is 88.3% below its 200-day average
+- **ACHR** Bearish (0): 3-month return is 19.2 points behind the S&P 500; Price is 16.8% below its 50-day average; Price is 27.9% below its 200-day average
+- **AIRO** Bearish (0): 3-month return is 28.6 points behind the S&P 500; Price is 20.4% below its 50-day average; Price is 35.5% below its 200-day average
 
 ## Unusual movers
 
-- **RDDT** -29.2%: Unusual volume 6.8x, Gap down -22.6%, At 52-week low, Oversold RSI 12, Big move -29.2%
-- **INTC** -28.6%: Unusual volume 4.6x, Gap down -25.8%, Oversold RSI 23, Big move -28.6%
-- **ILMN** -18.6%: Unusual volume 2.3x, Gap down -11.8%, Big move -18.6%
-- **TWLO** -15.2%: Gap down -22.9%, Oversold RSI 24, Big move -15.2%
-- **SNDK** -13.5%: Unusual volume 2.1x, Gap down -8.6%, Oversold RSI 30, Big move -13.5%
-- **REGN** +13.3%: Unusual volume 4.5x, Gap up +6.2%, At 52-week high, Overbought RSI 83, Big move +13.3%
-- **GPN** +13.0%: Unusual volume 8.7x, At 52-week high, Overbought RSI 75, Big move +13.0%
-- **000270.KS** -11.7%: Unusual volume 2.8x, At 52-week low, Big move -11.7%
-- **DDOG** -11.5%: Unusual volume 2.2x, Gap down -4.6%, Big move -11.5%
-- **COHR** -11.3%: Gap down -8.5%, Oversold RSI 25, Big move -11.3%
-- **QCOM** -11.1%: Unusual volume 2.4x, Gap down -5.7%, Big move -11.1%
-- **AMD** -10.9%: Unusual volume 2.0x, Gap down -10.2%, Big move -10.9%
-- **DELL** -10.8%: Gap down -11.9%, Oversold RSI 26, Big move -10.8%
-- **GDDY** +10.7%: Unusual volume 2.3x, Overbought RSI 70, Big move +10.7%
-- **COIN** -10.6%: Unusual volume 2.7x, Gap down -7.7%, Oversold RSI 28, Big move -10.6%
+- **KPTI** -83.1%: Unusual volume 9.5x, Gap down -76.9%, At 52-week low, Big move -83.1%
+- **DRUG** -52.3%: Unusual volume 12.8x, Gap down -46.9%, At 52-week low, Oversold RSI 27, Big move -52.3%
+- **EVGO** +46.8%: Unusual volume 23.5x, Gap up +44.4%, Overbought RSI 83, Big move +46.8%
+- **XMAX** -37.5%: Unusual volume 5.2x, At 52-week low, Oversold RSI 13, Big move -37.5%
+- **ULH** +26.3%: Unusual volume 2.9x, At 52-week high, Overbought RSI 84, Big move +26.3%
+- **PGEN** -25.9%: Unusual volume 4.2x, Gap down -22.8%, Oversold RSI 27, Big move -25.9%
+- **IDXX** +21.8%: Unusual volume 3.5x, Gap up +13.4%, Overbought RSI 80, Big move +21.8%
+- **LITE** -18.6%: Unusual volume 2.9x, Gap down -4.5%, Oversold RSI 29, Big move -18.6%
+- **NSSC** -18.4%: Unusual volume 7.9x, Gap down -20.3%, At 52-week low, Big move -18.4%
+- **NN** -16.5%: Big move -16.5%
+- **OPTX** -16.2%: Unusual volume 2.4x, Gap up +4.6%, Oversold RSI 27, Big move -16.2%
+- **TWST** -15.5%: Big move -15.5%
+- **MDXG** -15.5%: Oversold RSI 16, Big move -15.5%
+- **ULCC** +15.2%: Unusual volume 2.1x, Big move +15.2%
+- **NWL** +15.1%: Unusual volume 3.1x, Big move +15.1%
 
 ## Track record
 
@@ -163,19 +163,19 @@ Not investment advice. Calls are graded from the next trading day's close.
 
 ```
 {
-  "total_picks": 78,
-  "trading_days": 0,
+  "total_picks": 156,
+  "trading_days": 1,
   "status": "still noise",
-  "note": "Only 0 trading days of calls so far (need 21). Treat results as noise.",
+  "note": "Only 1 trading day of calls so far (need 60). Treat results as noise.",
   "by_lens": {
     "mispricing": {
-      "calls": 18
+      "calls": 36
     },
     "short_term": {
-      "calls": 30
+      "calls": 60
     },
     "swing": {
-      "calls": 30
+      "calls": 60
     }
   }
 }

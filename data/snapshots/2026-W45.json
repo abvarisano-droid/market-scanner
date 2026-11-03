@@ -1,0 +1,101 @@
+{
+ "by_lens": {
+  "mispricing": {
+   "calls": 36,
+   "windows": {
+    "20": {
+     "avg_excess_pct": null,
+     "ci_high_pct": null,
+     "ci_low_pct": null,
+     "graded": 0,
+     "hit_rate_pct": null,
+     "hits": 0
+    },
+    "5": {
+     "avg_excess_pct": null,
+     "ci_high_pct": null,
+     "ci_low_pct": null,
+     "graded": 0,
+     "hit_rate_pct": null,
+     "hits": 0
+    },
+    "60": {
+     "avg_excess_pct": null,
+     "ci_high_pct": null,
+     "ci_low_pct": null,
+     "graded": 0,
+     "hit_rate_pct": null,
+     "hits": 0
+    }
+   }
+  },
+  "short_term": {
+   "calls": 60,
+   "windows": {
+    "20": {
+     "avg_excess_pct": null,
+     "ci_high_pct": null,
+     "ci_low_pct": null,
+     "graded": 0,
+     "hit_rate_pct": null,
+     "hits": 0
+    },
+    "5": {
+     "avg_excess_pct": null,
+     "ci_high_pct": null,
+     "ci_low_pct": null,
+     "graded": 0,
+     "hit_rate_pct": null,
+     "hits": 0
+    },
+    "60": {
+     "avg_excess_pct": null,
+     "ci_high_pct": null,
+     "ci_low_pct": null,
+     "graded": 0,
+     "hit_rate_pct": null,
+     "hits": 0
+    }
+   }
+  },
+  "swing": {
+   "calls": 60,
+   "windows": {
+    "20": {
+     "avg_excess_pct": null,
+     "ci_high_pct": null,
+     "ci_low_pct": null,
+     "graded": 0,
+     "hit_rate_pct": null,
+     "hits": 0
+    },
+    "5": {
+     "avg_excess_pct": null,
+     "ci_high_pct": null,
+     "ci_low_pct": null,
+     "graded": 0,
+     "hit_rate_pct": null,
+     "hits": 0
+    },
+    "60": {
+     "avg_excess_pct": null,
+     "ci_high_pct": null,
+     "ci_low_pct": null,
+     "graded": 0,
+     "hit_rate_pct": null,
+     "hits": 0
+    }
+   }
+  }
+ },
+ "first_logged": "2026-10-30",
+ "head": "aaec419c24dbcf4c53fa2f003ce0c47e3e5786c39b1ebbde006e5d12d45499d2",
+ "min_days": 60,
+ "note": "Not investment advice. Calls are mechanical and graded versus SPY; nothing here is edited after the fact.",
+ "rows": 78,
+ "scan_asof": "2026-11-02",
+ "status": "still noise",
+ "taken": "2026-11-03",
+ "trading_days": 1,
+ "week": "2026-W45"
+}

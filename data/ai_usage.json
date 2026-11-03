@@ -1,0 +1,31 @@
+{
+ "model": "claude-sonnet-5-5",
+ "prices_per_mtok": {
+  "input": 2.0,
+  "output": 10.0,
+  "cache_read": 0.2,
+  "cache_write_5m": 2.5
+ },
+ "proposed_cap_usd_per_run": 0.5,
+ "cap_enabled": false,
+ "note": "Estimated from response usage and list prices; the Claude Console bill is the source of truth.",
+ "runs": [
+  {
+   "date": "2026-11-02",
+   "run_id": "41572573799",
+   "model": "claude-sonnet-5-5",
+   "key_present": false,
+   "calls": 0,
+   "ok": 0,
+   "skipped": 0,
+   "errors": {},
+   "input_tokens": 0,
+   "output_tokens": 0,
+   "cache_read_input_tokens": 0,
+   "cache_creation_input_tokens": 0,
+   "cap_usd": null,
+   "stopped": null,
+   "cost_usd": 0.0
+  }
+ ]
+}
