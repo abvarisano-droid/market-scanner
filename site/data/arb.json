@@ -1,0 +1,1521 @@
+{
+ "as_of": "2026-11-02",
+ "generated_at": "2026-11-03T04:09:07Z",
+ "deals_as_of": "2026-11-03",
+ "about": "Pending US public-company acquisitions. Terms come only from SEC filings and the companies' press releases. verified is true only where the number or date was read in the linked source; anything else is marked Unverified with a note. Pending means no completion (Item 2.01) or termination (Item 1.02) 8-K was found on EDGAR as of as_of. Not investment advice.",
+ "close_date_rule": "When a filing states a period instead of a date, by_date is the last day of that period (for example first half of 2027 is 2027-06-30).",
+ "unaffected_rule": "Target close on the trading day before the announcement date.",
+ "disclaimer": "Not investment advice. Spreads and the implied chance are mechanical arithmetic on public prices and filed terms, not forecasts or recommendations. Prices can be delayed or wrong.",
+ "deals": [
+  {
+   "id": "MKTX",
+   "status": "pending",
+   "acquirer": {
+    "value": "Intercontinental Exchange, Inc.",
+    "source_url": "https://www.sec.gov/Archives/edgar/data/1278021/000119312526395678/d171374ddefm14a.htm",
+    "as_of": "2026-11-03",
+    "verified": true
+   },
+   "acquirer_ticker": {
+    "value": "ICE",
+    "source_url": "https://www.sec.gov/Archives/edgar/data/1278021/000119312526395678/d171374ddefm14a.htm",
+    "as_of": "2026-11-03",
+    "verified": true
+   },
+   "target": {
+    "value": "MarketAxess Holdings Inc.",
+    "source_url": "https://www.sec.gov/Archives/edgar/data/1278021/000119312526395678/d171374ddefm14a.htm",
+    "as_of": "2026-11-03",
+    "verified": true
+   },
+   "target_ticker": {
+    "value": "MKTX",
+    "source_url": "https://www.sec.gov/Archives/edgar/data/1278021/000119312526395678/d171374ddefm14a.htm",
+    "as_of": "2026-11-03",
+    "verified": true
+   },
+   "cash_per_share": {
+    "value": 167.0,
+    "source_url": "https://www.sec.gov/Archives/edgar/data/1278021/000119312526395678/d171374ddefm14a.htm",
+    "as_of": "2026-11-03",
+    "verified": true
+   },
+   "exchange_ratio": {
+    "value": null,
+    "source_url": "https://www.sec.gov/Archives/edgar/data/1278021/000119312526395678/d171374ddefm14a.htm",
+    "as_of": "2026-11-03",
+    "verified": true,
+    "note": "All cash, no stock component."
+   },
+   "cvr": {
+    "value": null,
+    "source_url": "https://www.sec.gov/Archives/edgar/data/1278021/000119312526395678/d171374ddefm14a.htm",
+    "as_of": "2026-11-03",
+    "verified": true,
+    "note": "No CVR."
+   },
+   "agreement_date": {
+    "value": "2026-07-29",
+    "source_url": "https://www.sec.gov/Archives/edgar/data/1278021/000119312526395678/d171374ddefm14a.htm",
+    "as_of": "2026-11-03",
+    "verified": true
+   },
+   "announce_date": {
+    "value": "2026-07-30",
+    "source_url": "https://www.sec.gov/Archives/edgar/data/1278021/000119312526324933/d159148dex991.htm",
+    "as_of": "2026-11-03",
+    "verified": false,
+    "note": "The release is undated; it cites the July 29 close and a July 30 call, and the 8-K was filed July 30."
+   },
+   "expected_close": {
+    "value": "first quarter of 2027",
+    "source_url": "https://www.sec.gov/Archives/edgar/data/1278021/000119312526437772/mktx-20261029.htm",
+    "as_of": "2026-11-03",
+    "verified": true,
+    "by_date": "2027-03-31"
+   },
+   "unaffected_price": {
+    "value": 125.73,
+    "source_url": "https://finance.yahoo.com/quote/MKTX/history/",
+    "as_of": "2026-11-03",
+    "verified": false,
+    "note": "Close on the last trading day before the announcement date, from Yahoo Finance (yfinance, unadjusted). Not stated in a filing I read. Consistent with the 33% premium in the press release."
+   },
+   "steps": [
+    {
+     "name": "Stockholder vote",
+     "status": "done",
+     "source_url": "https://www.sec.gov/Archives/edgar/data/1278021/000119312526437772/mktx-20261029.htm",
+     "as_of": "2026-11-03",
+     "verified": true,
+     "note": "Approved October 29, 2026."
+    },
+    {
+     "name": "HSR",
+     "status": "open",
+     "source_url": "https://www.sec.gov/Archives/edgar/data/1278021/000119312526407834/d142535d8k.htm",
+     "as_of": "2026-11-03",
+     "verified": true,
+     "note": "Refiled September 29, 2026; scheduled to expire October 29, 2026. No filing read yet confirms it expired."
+    },
+    {
+     "name": "Other regulators (FINRA, CIRO, OSC, Dutch central bank, AFM, UK FCA, MAS)",
+     "status": "open",
+     "source_url": "https://www.sec.gov/Archives/edgar/data/1278021/000119312526395678/d171374ddefm14a.htm",
+     "as_of": "2026-11-03",
+     "verified": true
+    },
+    {
+     "name": "Financing",
+     "status": "done",
+     "source_url": "https://www.sec.gov/Archives/edgar/data/1278021/000119312526395678/d171374ddefm14a.htm",
+     "as_of": "2026-11-03",
+     "verified": true,
+     "note": "Not a closing condition (stated in the proxy)."
+    }
+   ],
+   "proxy_url": "https://www.sec.gov/Archives/edgar/data/1278021/000119312526395678/d171374ddefm14a.htm",
+   "calc": {
+    "target_price": 165.48,
+    "acquirer_price": null,
+    "offer_value": 167.0,
+    "spread_usd": 1.52,
+    "spread": 0.009185,
+    "days_to_close": 148,
+    "annualized": 0.022653,
+    "implied_chance": 0.9632,
+    "open_steps": 2,
+    "kind": "cash",
+    "price_date": "2026-11-02"
+   }
+  },
+  {
+   "id": "DV",
+   "status": "pending",
+   "acquirer": {
+    "value": "Neptune BidCo US Inc. (parent of The Nielsen Company (US); Elliott and Brookfield affiliates)",
+    "source_url": "https://www.sec.gov/Archives/edgar/data/1819928/000110465926111962/tm2621904-12_defm14a.htm",
+    "as_of": "2026-11-03",
+    "verified": true
+   },
+   "acquirer_ticker": {
+    "value": null,
+    "source_url": "https://www.sec.gov/Archives/edgar/data/1819928/000110465926111962/tm2621904-12_defm14a.htm",
+    "as_of": "2026-11-03",
+    "verified": true,
+    "note": "Private buyer, no listed ticker."
+   },
+   "target": {
+    "value": "DoubleVerify Holdings, Inc.",
+    "source_url": "https://www.sec.gov/Archives/edgar/data/1819928/000110465926111962/tm2621904-12_defm14a.htm",
+    "as_of": "2026-11-03",
+    "verified": true
+   },
+   "target_ticker": {
+    "value": "DV",
+    "source_url": "https://www.sec.gov/Archives/edgar/data/1819928/000110465926111962/tm2621904-12_defm14a.htm",
+    "as_of": "2026-11-03",
+    "verified": true
+   },
+   "cash_per_share": {
+    "value": 13.6,
+    "source_url": "https://www.sec.gov/Archives/edgar/data/1819928/000110465926111962/tm2621904-12_defm14a.htm",
+    "as_of": "2026-11-03",
+    "verified": true
+   },
+   "exchange_ratio": {
+    "value": null,
+    "source_url": "https://www.sec.gov/Archives/edgar/data/1819928/000110465926111962/tm2621904-12_defm14a.htm",
+    "as_of": "2026-11-03",
+    "verified": true,
+    "note": "All cash."
+   },
+   "cvr": {
+    "value": null,
+    "source_url": "https://www.sec.gov/Archives/edgar/data/1819928/000110465926111962/tm2621904-12_defm14a.htm",
+    "as_of": "2026-11-03",
+    "verified": true,
+    "note": "No CVR."
+   },
+   "agreement_date": {
+    "value": "2026-08-06",
+    "source_url": "https://www.sec.gov/Archives/edgar/data/1819928/000110465926111962/tm2621904-12_defm14a.htm",
+    "as_of": "2026-11-03",
+    "verified": true
+   },
+   "announce_date": {
+    "value": "2026-08-06",
+    "source_url": "https://www.sec.gov/Archives/edgar/data/1819928/000110465926092121/tm2621904d1_8k.htm",
+    "as_of": "2026-11-03",
+    "verified": true
+   },
+   "expected_close": {
+    "value": null,
+    "source_url": "https://www.sec.gov/Archives/edgar/data/1819928/000110465926111962/tm2621904-12_defm14a.htm",
+    "as_of": "2026-11-03",
+    "verified": false,
+    "note": "No expected closing date in the proxy sections read.",
+    "by_date": null
+   },
+   "unaffected_price": {
+    "value": 11.99,
+    "source_url": "https://finance.yahoo.com/quote/DV/history/",
+    "as_of": "2026-11-03",
+    "verified": false,
+    "note": "Close on the last trading day before the announcement date, from Yahoo Finance (yfinance, unadjusted). Not stated in a filing I read. The August 6 close was 11.71, so the timing of the release within the day is unconfirmed."
+   },
+   "steps": [
+    {
+     "name": "Stockholder vote",
+     "status": "done",
+     "source_url": "https://www.sec.gov/Archives/edgar/data/1819928/000110465926120260/tm2627835d3_8k.htm",
+     "as_of": "2026-11-03",
+     "verified": true,
+     "note": "Approved October 29, 2026."
+    },
+    {
+     "name": "HSR",
+     "status": "done",
+     "source_url": "https://www.sec.gov/Archives/edgar/data/1819928/000110465926111962/tm2621904-12_defm14a.htm",
+     "as_of": "2026-11-03",
+     "verified": true,
+     "note": "Proxy: the waiting period expired."
+    },
+    {
+     "name": "Foreign approvals (Australia, Cyprus, Germany, Morocco)",
+     "status": "open",
+     "source_url": "https://www.sec.gov/Archives/edgar/data/1819928/000110465926111962/tm2621904-12_defm14a.htm",
+     "as_of": "2026-11-03",
+     "verified": true
+    },
+    {
+     "name": "Financing",
+     "status": "done",
+     "source_url": "https://www.sec.gov/Archives/edgar/data/1819928/000110465926111962/tm2621904-12_defm14a.htm",
+     "as_of": "2026-11-03",
+     "verified": true,
+     "note": "Not a closing condition (stated in the proxy)."
+    }
+   ],
+   "proxy_url": "https://www.sec.gov/Archives/edgar/data/1819928/000110465926111962/tm2621904-12_defm14a.htm",
+   "calc": {
+    "target_price": 13.56,
+    "acquirer_price": null,
+    "offer_value": 13.6,
+    "spread_usd": 0.04,
+    "spread": 0.00295,
+    "days_to_close": null,
+    "annualized": null,
+    "implied_chance": 0.9752,
+    "open_steps": 1,
+    "kind": "cash",
+    "price_date": "2026-11-02"
+   }
+  },
+  {
+   "id": "ITGR",
+   "status": "pending",
+   "acquirer": {
+    "value": "Armstrong Parent, Inc. (KKR funds)",
+    "source_url": "https://www.sec.gov/Archives/edgar/data/1114483/000114036126036420/ny20080277x2_defm14a.htm",
+    "as_of": "2026-11-03",
+    "verified": true
+   },
+   "acquirer_ticker": {
+    "value": null,
+    "source_url": "https://www.sec.gov/Archives/edgar/data/1114483/000114036126036420/ny20080277x2_defm14a.htm",
+    "as_of": "2026-11-03",
+    "verified": true,
+    "note": "Private buyer, no listed ticker."
+   },
+   "target": {
+    "value": "Integer Holdings Corporation",
+    "source_url": "https://www.sec.gov/Archives/edgar/data/1114483/000114036126036420/ny20080277x2_defm14a.htm",
+    "as_of": "2026-11-03",
+    "verified": true
+   },
+   "target_ticker": {
+    "value": "ITGR",
+    "source_url": "https://www.sec.gov/Archives/edgar/data/1114483/000114036126036420/ny20080277x2_defm14a.htm",
+    "as_of": "2026-11-03",
+    "verified": true
+   },
+   "cash_per_share": {
+    "value": 127.0,
+    "source_url": "https://www.sec.gov/Archives/edgar/data/1114483/000114036126036420/ny20080277x2_defm14a.htm",
+    "as_of": "2026-11-03",
+    "verified": true
+   },
+   "exchange_ratio": {
+    "value": null,
+    "source_url": "https://www.sec.gov/Archives/edgar/data/1114483/000114036126036420/ny20080277x2_defm14a.htm",
+    "as_of": "2026-11-03",
+    "verified": true,
+    "note": "All cash."
+   },
+   "cvr": {
+    "value": null,
+    "source_url": "https://www.sec.gov/Archives/edgar/data/1114483/000114036126036420/ny20080277x2_defm14a.htm",
+    "as_of": "2026-11-03",
+    "verified": true,
+    "note": "No CVR."
+   },
+   "agreement_date": {
+    "value": "2026-08-02",
+    "source_url": "https://www.sec.gov/Archives/edgar/data/1114483/000114036126036420/ny20080277x2_defm14a.htm",
+    "as_of": "2026-11-03",
+    "verified": true
+   },
+   "announce_date": {
+    "value": "2026-08-03",
+    "source_url": "https://www.sec.gov/Archives/edgar/data/1114483/000095010326011683/dp251107_8k.htm",
+    "as_of": "2026-11-03",
+    "verified": true
+   },
+   "expected_close": {
+    "value": "by the end of 2026",
+    "source_url": "https://www.sec.gov/Archives/edgar/data/1114483/000095010326015975/dp255254_8k.htm",
+    "as_of": "2026-11-03",
+    "verified": true,
+    "by_date": "2026-12-31"
+   },
+   "unaffected_price": {
+    "value": 121.21,
+    "source_url": "https://finance.yahoo.com/quote/ITGR/history/",
+    "as_of": "2026-11-03",
+    "verified": false,
+    "note": "Close on the last trading day before the announcement date, from Yahoo Finance (yfinance, unadjusted). Not stated in a filing I read."
+   },
+   "steps": [
+    {
+     "name": "Stockholder vote",
+     "status": "done",
+     "source_url": "https://www.sec.gov/Archives/edgar/data/1114483/000095010326015975/dp255254_8k.htm",
+     "as_of": "2026-11-03",
+     "verified": true,
+     "note": "Approved October 21, 2026."
+    },
+    {
+     "name": "HSR",
+     "status": "done",
+     "source_url": "https://www.sec.gov/Archives/edgar/data/1114483/000095010326014831/dp254070_8k.htm",
+     "as_of": "2026-11-03",
+     "verified": true,
+     "note": "Early termination received September 30, 2026."
+    },
+    {
+     "name": "Other antitrust and foreign investment approvals",
+     "status": "open",
+     "source_url": "https://www.sec.gov/Archives/edgar/data/1114483/000095010326014831/dp254070_8k.htm",
+     "as_of": "2026-11-03",
+     "verified": true
+    },
+    {
+     "name": "Financing",
+     "status": "done",
+     "source_url": "https://www.sec.gov/Archives/edgar/data/1114483/000114036126036420/ny20080277x2_defm14a.htm",
+     "as_of": "2026-11-03",
+     "verified": true,
+     "note": "Not a closing condition (stated in the proxy)."
+    }
+   ],
+   "proxy_url": "https://www.sec.gov/Archives/edgar/data/1114483/000114036126036420/ny20080277x2_defm14a.htm",
+   "calc": {
+    "target_price": 126.55,
+    "acquirer_price": null,
+    "offer_value": 127.0,
+    "spread_usd": 0.45,
+    "spread": 0.003556,
+    "days_to_close": 58,
+    "annualized": 0.022378,
+    "implied_chance": 0.9223,
+    "open_steps": 1,
+    "kind": "cash",
+    "price_date": "2026-11-02"
+   }
+  },
+  {
+   "id": "VREX",
+   "status": "pending",
+   "acquirer": {
+    "value": "Teledyne Technologies Incorporated",
+    "source_url": "https://www.sec.gov/Archives/edgar/data/1681622/000110465926109351/tm2622593-5_defm14a.htm",
+    "as_of": "2026-11-03",
+    "verified": true
+   },
+   "acquirer_ticker": {
+    "value": "TDY",
+    "source_url": "https://www.sec.gov/Archives/edgar/data/1681622/000110465926109351/tm2622593-5_defm14a.htm",
+    "as_of": "2026-11-03",
+    "verified": true
+   },
+   "target": {
+    "value": "Varex Imaging Corporation",
+    "source_url": "https://www.sec.gov/Archives/edgar/data/1681622/000110465926109351/tm2622593-5_defm14a.htm",
+    "as_of": "2026-11-03",
+    "verified": true
+   },
+   "target_ticker": {
+    "value": "VREX",
+    "source_url": "https://www.sec.gov/Archives/edgar/data/1681622/000110465926109351/tm2622593-5_defm14a.htm",
+    "as_of": "2026-11-03",
+    "verified": true
+   },
+   "cash_per_share": {
+    "value": 18.9,
+    "source_url": "https://www.sec.gov/Archives/edgar/data/1681622/000110465926109351/tm2622593-5_defm14a.htm",
+    "as_of": "2026-11-03",
+    "verified": true
+   },
+   "exchange_ratio": {
+    "value": null,
+    "source_url": "https://www.sec.gov/Archives/edgar/data/1681622/000110465926109351/tm2622593-5_defm14a.htm",
+    "as_of": "2026-11-03",
+    "verified": true,
+    "note": "All cash."
+   },
+   "cvr": {
+    "value": null,
+    "source_url": "https://www.sec.gov/Archives/edgar/data/1681622/000110465926109351/tm2622593-5_defm14a.htm",
+    "as_of": "2026-11-03",
+    "verified": true,
+    "note": "No CVR."
+   },
+   "agreement_date": {
+    "value": "2026-08-10",
+    "source_url": "https://www.sec.gov/Archives/edgar/data/1681622/000110465926109351/tm2622593-5_defm14a.htm",
+    "as_of": "2026-11-03",
+    "verified": true
+   },
+   "announce_date": {
+    "value": "2026-08-10",
+    "source_url": "https://www.sec.gov/Archives/edgar/data/1681622/000110465926093349/tm2622593d1_8k.htm",
+    "as_of": "2026-11-03",
+    "verified": true
+   },
+   "expected_close": {
+    "value": "early 2027",
+    "source_url": "https://www.sec.gov/Archives/edgar/data/1681622/000110465926093349/tm2622593d1_8k.htm",
+    "as_of": "2026-11-03",
+    "verified": true,
+    "note": "Date used is the end of the first quarter of 2027.",
+    "by_date": "2027-03-31"
+   },
+   "unaffected_price": {
+    "value": 12.41,
+    "source_url": "https://finance.yahoo.com/quote/VREX/history/",
+    "as_of": "2026-11-03",
+    "verified": false,
+    "note": "Close on the last trading day before the announcement date, from Yahoo Finance (yfinance, unadjusted). Not stated in a filing I read."
+   },
+   "steps": [
+    {
+     "name": "Stockholder vote",
+     "status": "done",
+     "source_url": "https://www.sec.gov/Archives/edgar/data/1681622/000168162226000080/vrex-20261028.htm",
+     "as_of": "2026-11-03",
+     "verified": true,
+     "note": "Approved October 28, 2026 (final results)."
+    },
+    {
+     "name": "HSR",
+     "status": "open",
+     "source_url": "https://www.sec.gov/Archives/edgar/data/1681622/000110465926117962/tm2628039d1_8k.htm",
+     "as_of": "2026-11-03",
+     "verified": true,
+     "note": "Waiting period to expire November 19, 2026."
+    },
+    {
+     "name": "UK National Security and Investment Act",
+     "status": "open",
+     "source_url": "https://www.sec.gov/Archives/edgar/data/1681622/000110465926117962/tm2628039d1_8k.htm",
+     "as_of": "2026-11-03",
+     "verified": true,
+     "note": "Review runs until November 18, 2026."
+    },
+    {
+     "name": "Other antitrust (Austria, China, Germany, Japan, Saudi Arabia, Ukraine)",
+     "status": "open",
+     "source_url": "https://www.sec.gov/Archives/edgar/data/1681622/000110465926117962/tm2628039d1_8k.htm",
+     "as_of": "2026-11-03",
+     "verified": true
+    },
+    {
+     "name": "Financing",
+     "status": "done",
+     "source_url": "https://www.sec.gov/Archives/edgar/data/1681622/000110465926109351/tm2622593-5_defm14a.htm",
+     "as_of": "2026-11-03",
+     "verified": true,
+     "note": "Not a closing condition (stated in the proxy)."
+    }
+   ],
+   "proxy_url": "https://www.sec.gov/Archives/edgar/data/1681622/000110465926109351/tm2622593-5_defm14a.htm",
+   "calc": {
+    "target_price": 18.46,
+    "acquirer_price": null,
+    "offer_value": 18.9,
+    "spread_usd": 0.44,
+    "spread": 0.023835,
+    "days_to_close": 148,
+    "annualized": 0.058783,
+    "implied_chance": 0.9322,
+    "open_steps": 3,
+    "kind": "cash",
+    "price_date": "2026-11-02"
+   }
+  },
+  {
+   "id": "UTZ",
+   "status": "pending",
+   "acquirer": {
+    "value": "Intersnack Group GmbH & Co. KG (through Idaho USA, Inc.)",
+    "source_url": "https://www.sec.gov/Archives/edgar/data/1739566/000119312526411198/utz_defm14a.htm",
+    "as_of": "2026-11-03",
+    "verified": true
+   },
+   "acquirer_ticker": {
+    "value": null,
+    "source_url": "https://www.sec.gov/Archives/edgar/data/1739566/000119312526411198/utz_defm14a.htm",
+    "as_of": "2026-11-03",
+    "verified": true,
+    "note": "Private buyer, no listed ticker."
+   },
+   "target": {
+    "value": "Utz Brands, Inc.",
+    "source_url": "https://www.sec.gov/Archives/edgar/data/1739566/000119312526411198/utz_defm14a.htm",
+    "as_of": "2026-11-03",
+    "verified": true
+   },
+   "target_ticker": {
+    "value": "UTZ",
+    "source_url": "https://www.sec.gov/Archives/edgar/data/1739566/000119312526411198/utz_defm14a.htm",
+    "as_of": "2026-11-03",
+    "verified": true
+   },
+   "cash_per_share": {
+    "value": 14.25,
+    "source_url": "https://www.sec.gov/Archives/edgar/data/1739566/000119312526411198/utz_defm14a.htm",
+    "as_of": "2026-11-03",
+    "verified": true
+   },
+   "exchange_ratio": {
+    "value": null,
+    "source_url": "https://www.sec.gov/Archives/edgar/data/1739566/000119312526411198/utz_defm14a.htm",
+    "as_of": "2026-11-03",
+    "verified": true,
+    "note": "All cash for Class A shares."
+   },
+   "cvr": {
+    "value": null,
+    "source_url": "https://www.sec.gov/Archives/edgar/data/1739566/000119312526411198/utz_defm14a.htm",
+    "as_of": "2026-11-03",
+    "verified": true,
+    "note": "No CVR."
+   },
+   "agreement_date": {
+    "value": "2026-07-20",
+    "source_url": "https://www.sec.gov/Archives/edgar/data/1739566/000119312526411198/utz_defm14a.htm",
+    "as_of": "2026-11-03",
+    "verified": true
+   },
+   "announce_date": {
+    "value": "2026-07-21",
+    "source_url": "https://www.sec.gov/Archives/edgar/data/1739566/000119312526309592/d157266d8k.htm",
+    "as_of": "2026-11-03",
+    "verified": true
+   },
+   "expected_close": {
+    "value": "fourth quarter of 2026",
+    "source_url": "https://www.sec.gov/Archives/edgar/data/1739566/000119312526411198/utz_defm14a.htm",
+    "as_of": "2026-11-03",
+    "verified": true,
+    "by_date": "2026-12-31"
+   },
+   "unaffected_price": {
+    "value": 7.45,
+    "source_url": "https://finance.yahoo.com/quote/UTZ/history/",
+    "as_of": "2026-11-03",
+    "verified": false,
+    "note": "Close on the last trading day before the announcement date, from Yahoo Finance (yfinance, unadjusted). Not stated in a filing I read. Consistent with the proxy's 91% premium to the July 20 close."
+   },
+   "steps": [
+    {
+     "name": "Stockholder vote",
+     "status": "open",
+     "source_url": "https://www.sec.gov/Archives/edgar/data/1739566/000119312526411198/utz_defm14a.htm",
+     "as_of": "2026-11-03",
+     "verified": true,
+     "note": "Special meeting November 13, 2026."
+    },
+    {
+     "name": "HSR",
+     "status": "done",
+     "source_url": "https://www.sec.gov/Archives/edgar/data/1739566/000119312526411198/utz_defm14a.htm",
+     "as_of": "2026-11-03",
+     "verified": true,
+     "note": "Expired September 9, 2026."
+    },
+    {
+     "name": "Ukraine competition clearance",
+     "status": "done",
+     "source_url": "https://www.sec.gov/Archives/edgar/data/1739566/000119312526411198/utz_defm14a.htm",
+     "as_of": "2026-11-03",
+     "verified": true,
+     "note": "Obtained September 17, 2026."
+    },
+    {
+     "name": "Financing",
+     "status": "done",
+     "source_url": "https://www.sec.gov/Archives/edgar/data/1739566/000119312526411198/utz_defm14a.htm",
+     "as_of": "2026-11-03",
+     "verified": true,
+     "note": "Not a closing condition (stated in the proxy)."
+    }
+   ],
+   "proxy_url": "https://www.sec.gov/Archives/edgar/data/1739566/000119312526411198/utz_defm14a.htm",
+   "calc": {
+    "target_price": 14.29,
+    "acquirer_price": null,
+    "offer_value": 14.25,
+    "spread_usd": -0.04,
+    "spread": -0.002799,
+    "days_to_close": 58,
+    "annualized": -0.017615,
+    "implied_chance": 1.0,
+    "open_steps": 1,
+    "kind": "cash",
+    "price_date": "2026-11-02"
+   }
+  },
+  {
+   "id": "SAFT",
+   "status": "pending",
+   "acquirer": {
+    "value": "MAPFRE U.S.A. Corp. (MAPFRE S.A.)",
+    "source_url": "https://www.sec.gov/Archives/edgar/data/1172052/000110465926107503/tm2623530-2_defm14a.htm",
+    "as_of": "2026-11-03",
+    "verified": true
+   },
+   "acquirer_ticker": {
+    "value": null,
+    "source_url": "https://www.sec.gov/Archives/edgar/data/1172052/000110465926107503/tm2623530-2_defm14a.htm",
+    "as_of": "2026-11-03",
+    "verified": true,
+    "note": "US buyer is unlisted; the parent lists outside the US."
+   },
+   "target": {
+    "value": "Safety Insurance Group, Inc.",
+    "source_url": "https://www.sec.gov/Archives/edgar/data/1172052/000110465926107503/tm2623530-2_defm14a.htm",
+    "as_of": "2026-11-03",
+    "verified": true
+   },
+   "target_ticker": {
+    "value": "SAFT",
+    "source_url": "https://www.sec.gov/Archives/edgar/data/1172052/000110465926107503/tm2623530-2_defm14a.htm",
+    "as_of": "2026-11-03",
+    "verified": true
+   },
+   "cash_per_share": {
+    "value": 105.0,
+    "source_url": "https://www.sec.gov/Archives/edgar/data/1172052/000110465926107503/tm2623530-2_defm14a.htm",
+    "as_of": "2026-11-03",
+    "verified": true
+   },
+   "exchange_ratio": {
+    "value": null,
+    "source_url": "https://www.sec.gov/Archives/edgar/data/1172052/000110465926107503/tm2623530-2_defm14a.htm",
+    "as_of": "2026-11-03",
+    "verified": true,
+    "note": "All cash."
+   },
+   "cvr": {
+    "value": null,
+    "source_url": "https://www.sec.gov/Archives/edgar/data/1172052/000110465926107503/tm2623530-2_defm14a.htm",
+    "as_of": "2026-11-03",
+    "verified": true,
+    "note": "No CVR."
+   },
+   "agreement_date": {
+    "value": "2026-07-23",
+    "source_url": "https://www.sec.gov/Archives/edgar/data/1172052/000110465926107503/tm2623530-2_defm14a.htm",
+    "as_of": "2026-11-03",
+    "verified": true
+   },
+   "announce_date": {
+    "value": "2026-07-23",
+    "source_url": "https://www.sec.gov/Archives/edgar/data/1172052/000110465926086331/tm2621207d3_8k.htm",
+    "as_of": "2026-11-03",
+    "verified": false,
+    "note": "The proxy calls July 22 the day prior to the announcement; the Item 7.01 8-K was filed July 23."
+   },
+   "expected_close": {
+    "value": "first quarter of 2027",
+    "source_url": "https://www.sec.gov/Archives/edgar/data/1172052/000110465926107503/tm2623530-2_defm14a.htm",
+    "as_of": "2026-11-03",
+    "verified": true,
+    "by_date": "2027-03-31"
+   },
+   "unaffected_price": {
+    "value": 72.5,
+    "source_url": "https://finance.yahoo.com/quote/SAFT/history/",
+    "as_of": "2026-11-03",
+    "verified": false,
+    "note": "Close on the last trading day before the announcement date, from Yahoo Finance (yfinance, unadjusted). Not stated in a filing I read. Consistent with the proxy's 44.8% premium to the July 22 close."
+   },
+   "steps": [
+    {
+     "name": "Stockholder vote",
+     "status": "open",
+     "source_url": "https://www.sec.gov/Archives/edgar/data/1172052/000110465926107503/tm2623530-2_defm14a.htm",
+     "as_of": "2026-11-03",
+     "verified": true,
+     "note": "Special meeting November 3, 2026; result not yet filed."
+    },
+    {
+     "name": "HSR",
+     "status": "done",
+     "source_url": "https://www.sec.gov/Archives/edgar/data/1172052/000110465926107960/tm2625481d1_8k.htm",
+     "as_of": "2026-11-03",
+     "verified": true,
+     "note": "Expired September 14, 2026."
+    },
+    {
+     "name": "Massachusetts insurance approval (Form A)",
+     "status": "open",
+     "source_url": "https://www.sec.gov/Archives/edgar/data/1172052/000110465926107503/tm2623530-2_defm14a.htm",
+     "as_of": "2026-11-03",
+     "verified": true,
+     "note": "Filed August 25, 2026."
+    },
+    {
+     "name": "Financing",
+     "status": "done",
+     "source_url": "https://www.sec.gov/Archives/edgar/data/1172052/000110465926107503/tm2623530-2_defm14a.htm",
+     "as_of": "2026-11-03",
+     "verified": true,
+     "note": "Not a closing condition (stated in the proxy)."
+    }
+   ],
+   "proxy_url": "https://www.sec.gov/Archives/edgar/data/1172052/000110465926107503/tm2623530-2_defm14a.htm",
+   "calc": {
+    "target_price": 104.24,
+    "acquirer_price": null,
+    "offer_value": 105.0,
+    "spread_usd": 0.76,
+    "spread": 0.007291,
+    "days_to_close": 148,
+    "annualized": 0.017981,
+    "implied_chance": 0.9766,
+    "open_steps": 2,
+    "kind": "cash",
+    "price_date": "2026-11-02"
+   }
+  },
+  {
+   "id": "HZO",
+   "status": "pending",
+   "acquirer": {
+    "value": "SHM Holdco, LLC (Safe Harbor Marinas, Blackstone Infrastructure)",
+    "source_url": "https://www.sec.gov/Archives/edgar/data/1057060/000119312526412241/d130789ddefm14a.htm",
+    "as_of": "2026-11-03",
+    "verified": true
+   },
+   "acquirer_ticker": {
+    "value": null,
+    "source_url": "https://www.sec.gov/Archives/edgar/data/1057060/000119312526412241/d130789ddefm14a.htm",
+    "as_of": "2026-11-03",
+    "verified": true,
+    "note": "Private buyer, no listed ticker."
+   },
+   "target": {
+    "value": "MarineMax, Inc.",
+    "source_url": "https://www.sec.gov/Archives/edgar/data/1057060/000119312526412241/d130789ddefm14a.htm",
+    "as_of": "2026-11-03",
+    "verified": true
+   },
+   "target_ticker": {
+    "value": "HZO",
+    "source_url": "https://www.sec.gov/Archives/edgar/data/1057060/000119312526412241/d130789ddefm14a.htm",
+    "as_of": "2026-11-03",
+    "verified": true
+   },
+   "cash_per_share": {
+    "value": 53.0,
+    "source_url": "https://www.sec.gov/Archives/edgar/data/1057060/000119312526412241/d130789ddefm14a.htm",
+    "as_of": "2026-11-03",
+    "verified": true
+   },
+   "exchange_ratio": {
+    "value": null,
+    "source_url": "https://www.sec.gov/Archives/edgar/data/1057060/000119312526412241/d130789ddefm14a.htm",
+    "as_of": "2026-11-03",
+    "verified": true,
+    "note": "All cash."
+   },
+   "cvr": {
+    "value": null,
+    "source_url": "https://www.sec.gov/Archives/edgar/data/1057060/000119312526412241/d130789ddefm14a.htm",
+    "as_of": "2026-11-03",
+    "verified": true,
+    "note": "No CVR."
+   },
+   "agreement_date": {
+    "value": "2026-08-09",
+    "source_url": "https://www.sec.gov/Archives/edgar/data/1057060/000119312526412241/d130789ddefm14a.htm",
+    "as_of": "2026-11-03",
+    "verified": true
+   },
+   "announce_date": {
+    "value": "2026-08-10",
+    "source_url": "https://www.sec.gov/Archives/edgar/data/1057060/000119312526341302/d135056d8k.htm",
+    "as_of": "2026-11-03",
+    "verified": true
+   },
+   "expected_close": {
+    "value": null,
+    "source_url": "https://www.sec.gov/Archives/edgar/data/1057060/000119312526412241/d130789ddefm14a.htm",
+    "as_of": "2026-11-03",
+    "verified": false,
+    "note": "No expected closing date in the proxy sections read; outside date May 9, 2027.",
+    "by_date": null
+   },
+   "unaffected_price": {
+    "value": 35.68,
+    "source_url": "https://finance.yahoo.com/quote/HZO/history/",
+    "as_of": "2026-11-03",
+    "verified": false,
+    "note": "Close on the last trading day before the announcement date, from Yahoo Finance (yfinance, unadjusted). Not stated in a filing I read."
+   },
+   "steps": [
+    {
+     "name": "Stockholder vote",
+     "status": "open",
+     "source_url": "https://www.sec.gov/Archives/edgar/data/1057060/000119312526412241/d130789ddefm14a.htm",
+     "as_of": "2026-11-03",
+     "verified": true,
+     "note": "Special meeting November 11, 2026."
+    },
+    {
+     "name": "HSR",
+     "status": "open",
+     "source_url": "https://www.sec.gov/Archives/edgar/data/1057060/000119312526412241/d130789ddefm14a.htm",
+     "as_of": "2026-11-03",
+     "verified": false,
+     "note": "Proxy: refiled waiting period to expire October 30, 2026. No filing read yet confirms it expired."
+    },
+    {
+     "name": "Non-US merger control and foreign investment clearances",
+     "status": "open",
+     "source_url": "https://www.sec.gov/Archives/edgar/data/1057060/000119312526412241/d130789ddefm14a.htm",
+     "as_of": "2026-11-03",
+     "verified": false,
+     "note": "Proxy says these may be required; not named."
+    },
+    {
+     "name": "Financing",
+     "status": "done",
+     "source_url": "https://www.sec.gov/Archives/edgar/data/1057060/000119312526412241/d130789ddefm14a.htm",
+     "as_of": "2026-11-03",
+     "verified": true,
+     "note": "Not a closing condition (stated in the proxy)."
+    }
+   ],
+   "proxy_url": "https://www.sec.gov/Archives/edgar/data/1057060/000119312526412241/d130789ddefm14a.htm",
+   "calc": {
+    "target_price": 52.7,
+    "acquirer_price": null,
+    "offer_value": 53.0,
+    "spread_usd": 0.3,
+    "spread": 0.005693,
+    "days_to_close": null,
+    "annualized": null,
+    "implied_chance": 0.9827,
+    "open_steps": 3,
+    "kind": "cash",
+    "price_date": "2026-11-02"
+   }
+  },
+  {
+   "id": "LNTH",
+   "status": "pending",
+   "acquirer": {
+    "value": "Curium US Holdings LLC",
+    "source_url": "https://www.sec.gov/Archives/edgar/data/1521036/000119312526384284/d180727ddefm14a.htm",
+    "as_of": "2026-11-03",
+    "verified": true
+   },
+   "acquirer_ticker": {
+    "value": null,
+    "source_url": "https://www.sec.gov/Archives/edgar/data/1521036/000119312526384284/d180727ddefm14a.htm",
+    "as_of": "2026-11-03",
+    "verified": true,
+    "note": "Private buyer, no listed ticker."
+   },
+   "target": {
+    "value": "Lantheus Holdings, Inc.",
+    "source_url": "https://www.sec.gov/Archives/edgar/data/1521036/000119312526384284/d180727ddefm14a.htm",
+    "as_of": "2026-11-03",
+    "verified": true
+   },
+   "target_ticker": {
+    "value": "LNTH",
+    "source_url": "https://www.sec.gov/Archives/edgar/data/1521036/000119312526384284/d180727ddefm14a.htm",
+    "as_of": "2026-11-03",
+    "verified": true
+   },
+   "cash_per_share": {
+    "value": 102.5,
+    "source_url": "https://www.sec.gov/Archives/edgar/data/1521036/000119312526384284/d180727ddefm14a.htm",
+    "as_of": "2026-11-03",
+    "verified": true
+   },
+   "exchange_ratio": {
+    "value": null,
+    "source_url": "https://www.sec.gov/Archives/edgar/data/1521036/000119312526384284/d180727ddefm14a.htm",
+    "as_of": "2026-11-03",
+    "verified": true,
+    "note": "Cash plus a CVR, no stock."
+   },
+   "cvr": {
+    "value": "One CVR per share: up to $12.00 in cash on specified commercial milestones. Not valued here.",
+    "source_url": "https://www.sec.gov/Archives/edgar/data/1521036/000119312526384284/d180727ddefm14a.htm",
+    "as_of": "2026-11-03",
+    "verified": true
+   },
+   "agreement_date": {
+    "value": "2026-08-03",
+    "source_url": "https://www.sec.gov/Archives/edgar/data/1521036/000119312526384284/d180727ddefm14a.htm",
+    "as_of": "2026-11-03",
+    "verified": true
+   },
+   "announce_date": {
+    "value": "2026-08-03",
+    "source_url": "https://www.sec.gov/Archives/edgar/data/1521036/000119312526329622/d148563d8k.htm",
+    "as_of": "2026-11-03",
+    "verified": true
+   },
+   "expected_close": {
+    "value": "first half of 2027",
+    "source_url": "https://www.sec.gov/Archives/edgar/data/1521036/000119312526428324/d19181d8k.htm",
+    "as_of": "2026-11-03",
+    "verified": true,
+    "by_date": "2027-06-30"
+   },
+   "unaffected_price": {
+    "value": 99.64,
+    "source_url": "https://finance.yahoo.com/quote/LNTH/history/",
+    "as_of": "2026-11-03",
+    "verified": false,
+    "note": "Close on the last trading day before the announcement date, from Yahoo Finance (yfinance, unadjusted). Not stated in a filing I read."
+   },
+   "steps": [
+    {
+     "name": "Stockholder vote",
+     "status": "done",
+     "source_url": "https://www.sec.gov/Archives/edgar/data/1521036/000119312526421732/d183496d8k.htm",
+     "as_of": "2026-11-03",
+     "verified": true,
+     "note": "Approved October 14, 2026."
+    },
+    {
+     "name": "HSR",
+     "status": "open",
+     "source_url": "https://www.sec.gov/Archives/edgar/data/1521036/000119312526428324/d19181d8k.htm",
+     "as_of": "2026-11-03",
+     "verified": true,
+     "note": "FTC Second Requests received October 21, 2026."
+    },
+    {
+     "name": "Other competition and foreign investment approvals",
+     "status": "open",
+     "source_url": "https://www.sec.gov/Archives/edgar/data/1521036/000119312526384284/d180727ddefm14a.htm",
+     "as_of": "2026-11-03",
+     "verified": true
+    },
+    {
+     "name": "Financing",
+     "status": "done",
+     "source_url": "https://www.sec.gov/Archives/edgar/data/1521036/000119312526384284/d180727ddefm14a.htm",
+     "as_of": "2026-11-03",
+     "verified": true,
+     "note": "Not a closing condition (stated in the proxy)."
+    }
+   ],
+   "proxy_url": "https://www.sec.gov/Archives/edgar/data/1521036/000119312526384284/d180727ddefm14a.htm",
+   "calc": {
+    "target_price": 100.31,
+    "acquirer_price": null,
+    "offer_value": 102.5,
+    "spread_usd": 2.19,
+    "spread": 0.021832,
+    "days_to_close": 239,
+    "annualized": 0.033342,
+    "implied_chance": 0.2343,
+    "open_steps": 2,
+    "kind": "cash",
+    "price_date": "2026-11-02"
+   }
+  },
+  {
+   "id": "CSR",
+   "status": "pending",
+   "acquirer": {
+    "value": "Independence Realty Trust, Inc.",
+    "source_url": "https://www.sec.gov/Archives/edgar/data/798359/000114036126038922/ny20083034x1_defm14a.htm",
+    "as_of": "2026-11-03",
+    "verified": true
+   },
+   "acquirer_ticker": {
+    "value": "IRT",
+    "source_url": "https://www.sec.gov/Archives/edgar/data/798359/000114036126038922/ny20083034x1_defm14a.htm",
+    "as_of": "2026-11-03",
+    "verified": true
+   },
+   "target": {
+    "value": "Centerspace",
+    "source_url": "https://www.sec.gov/Archives/edgar/data/798359/000114036126038922/ny20083034x1_defm14a.htm",
+    "as_of": "2026-11-03",
+    "verified": true
+   },
+   "target_ticker": {
+    "value": "CSR",
+    "source_url": "https://www.sec.gov/Archives/edgar/data/798359/000114036126038922/ny20083034x1_defm14a.htm",
+    "as_of": "2026-11-03",
+    "verified": true
+   },
+   "cash_per_share": {
+    "value": null,
+    "source_url": "https://www.sec.gov/Archives/edgar/data/798359/000114036126038922/ny20083034x1_defm14a.htm",
+    "as_of": "2026-11-03",
+    "verified": true,
+    "note": "All stock (cash only in lieu of fractional shares)."
+   },
+   "exchange_ratio": {
+    "value": 3.8,
+    "source_url": "https://www.sec.gov/Archives/edgar/data/798359/000114036126038922/ny20083034x1_defm14a.htm",
+    "as_of": "2026-11-03",
+    "verified": true
+   },
+   "cvr": {
+    "value": null,
+    "source_url": "https://www.sec.gov/Archives/edgar/data/798359/000114036126038922/ny20083034x1_defm14a.htm",
+    "as_of": "2026-11-03",
+    "verified": true,
+    "note": "No CVR."
+   },
+   "agreement_date": {
+    "value": "2026-09-08",
+    "source_url": "https://www.sec.gov/Archives/edgar/data/798359/000114036126038922/ny20083034x1_defm14a.htm",
+    "as_of": "2026-11-03",
+    "verified": true,
+    "note": "Amended September 22, 2026."
+   },
+   "announce_date": {
+    "value": "2026-09-09",
+    "source_url": "https://www.sec.gov/Archives/edgar/data/798359/000114036126035986/ef20081761_8k.htm",
+    "as_of": "2026-11-03",
+    "verified": false,
+    "note": "The proxy calls September 8 the last trading day before public announcement; the 8-K was filed September 9."
+   },
+   "expected_close": {
+    "value": "as early as the end of the fourth quarter of 2026",
+    "source_url": "https://www.sec.gov/Archives/edgar/data/798359/000114036126038922/ny20083034x1_defm14a.htm",
+    "as_of": "2026-11-03",
+    "verified": true,
+    "by_date": "2026-12-31"
+   },
+   "unaffected_price": {
+    "value": 52.71,
+    "source_url": "https://www.sec.gov/Archives/edgar/data/798359/000114036126038922/ny20083034x1_defm14a.htm",
+    "as_of": "2026-11-03",
+    "verified": true,
+    "note": "Proxy: CSR closed at $52.71 on September 8, 2026."
+   },
+   "steps": [
+    {
+     "name": "Centerspace shareholder vote",
+     "status": "open",
+     "source_url": "https://www.sec.gov/Archives/edgar/data/798359/000114036126038922/ny20083034x1_defm14a.htm",
+     "as_of": "2026-11-03",
+     "verified": true,
+     "note": "Special meeting November 10, 2026."
+    },
+    {
+     "name": "IRT stockholder vote",
+     "status": "open",
+     "source_url": "https://www.sec.gov/Archives/edgar/data/798359/000114036126038922/ny20083034x1_defm14a.htm",
+     "as_of": "2026-11-03",
+     "verified": true,
+     "note": "Special meeting November 10, 2026."
+    },
+    {
+     "name": "Regulatory approvals",
+     "status": "done",
+     "source_url": "https://www.sec.gov/Archives/edgar/data/798359/000114036126038922/ny20083034x1_defm14a.htm",
+     "as_of": "2026-11-03",
+     "verified": true,
+     "note": "Proxy: not aware of any material federal or state regulatory approvals required."
+    },
+    {
+     "name": "Lender consents",
+     "status": "open",
+     "source_url": "https://www.sec.gov/Archives/edgar/data/798359/000114036126038922/ny20083034x1_defm14a.htm",
+     "as_of": "2026-11-03",
+     "verified": false,
+     "note": "Proxy ties closing timing to lender consents; status not stated."
+    },
+    {
+     "name": "Financing",
+     "status": "done",
+     "source_url": "https://www.sec.gov/Archives/edgar/data/798359/000114036126038922/ny20083034x1_defm14a.htm",
+     "as_of": "2026-11-03",
+     "verified": true,
+     "note": "Not a closing condition (stated in the proxy)."
+    }
+   ],
+   "proxy_url": "https://www.sec.gov/Archives/edgar/data/798359/000114036126038922/ny20083034x1_defm14a.htm",
+   "calc": {
+    "target_price": 59.17,
+    "acquirer_price": 14.94,
+    "offer_value": 56.772,
+    "spread_usd": -2.398,
+    "spread": -0.040527,
+    "days_to_close": 58,
+    "annualized": -0.255042,
+    "implied_chance": 1.0,
+    "open_steps": 3,
+    "kind": "stock",
+    "price_date": "2026-11-02"
+   }
+  },
+  {
+   "id": "MG",
+   "status": "pending",
+   "acquirer": {
+    "value": "Athena Purchaser, LLC (H.I.G. Capital funds)",
+    "source_url": "https://www.sec.gov/Archives/edgar/data/1436126/000114036126040834/ny20083637x2_defm14a.htm",
+    "as_of": "2026-11-03",
+    "verified": true
+   },
+   "acquirer_ticker": {
+    "value": null,
+    "source_url": "https://www.sec.gov/Archives/edgar/data/1436126/000114036126040834/ny20083637x2_defm14a.htm",
+    "as_of": "2026-11-03",
+    "verified": true,
+    "note": "Private buyer, no listed ticker."
+   },
+   "target": {
+    "value": "Mistras Group, Inc.",
+    "source_url": "https://www.sec.gov/Archives/edgar/data/1436126/000114036126040834/ny20083637x2_defm14a.htm",
+    "as_of": "2026-11-03",
+    "verified": true
+   },
+   "target_ticker": {
+    "value": "MG",
+    "source_url": "https://www.sec.gov/Archives/edgar/data/1436126/000114036126040834/ny20083637x2_defm14a.htm",
+    "as_of": "2026-11-03",
+    "verified": true
+   },
+   "cash_per_share": {
+    "value": 20.35,
+    "source_url": "https://www.sec.gov/Archives/edgar/data/1436126/000114036126040834/ny20083637x2_defm14a.htm",
+    "as_of": "2026-11-03",
+    "verified": true
+   },
+   "exchange_ratio": {
+    "value": null,
+    "source_url": "https://www.sec.gov/Archives/edgar/data/1436126/000114036126040834/ny20083637x2_defm14a.htm",
+    "as_of": "2026-11-03",
+    "verified": true,
+    "note": "All cash."
+   },
+   "cvr": {
+    "value": null,
+    "source_url": "https://www.sec.gov/Archives/edgar/data/1436126/000114036126040834/ny20083637x2_defm14a.htm",
+    "as_of": "2026-11-03",
+    "verified": true,
+    "note": "No CVR."
+   },
+   "agreement_date": {
+    "value": "2026-09-17",
+    "source_url": "https://www.sec.gov/Archives/edgar/data/1436126/000114036126040834/ny20083637x2_defm14a.htm",
+    "as_of": "2026-11-03",
+    "verified": true
+   },
+   "announce_date": {
+    "value": "2026-09-18",
+    "source_url": "https://www.sec.gov/Archives/edgar/data/1436126/000114036126037107/ef20082419_8k.htm",
+    "as_of": "2026-11-03",
+    "verified": true
+   },
+   "expected_close": {
+    "value": "late 2026 or early 2027",
+    "source_url": "https://www.sec.gov/Archives/edgar/data/1436126/000114036126040834/ny20083637x2_defm14a.htm",
+    "as_of": "2026-11-03",
+    "verified": true,
+    "note": "Date used is the end of the first quarter of 2027.",
+    "by_date": "2027-03-31"
+   },
+   "unaffected_price": {
+    "value": 19.84,
+    "source_url": "https://finance.yahoo.com/quote/MG/history/",
+    "as_of": "2026-11-03",
+    "verified": false,
+    "note": "Close on the last trading day before the announcement date, from Yahoo Finance (yfinance, unadjusted). Not stated in a filing I read."
+   },
+   "steps": [
+    {
+     "name": "Stockholder vote",
+     "status": "open",
+     "source_url": "https://www.sec.gov/Archives/edgar/data/1436126/000114036126040834/ny20083637x2_defm14a.htm",
+     "as_of": "2026-11-03",
+     "verified": true,
+     "note": "Special meeting November 24, 2026; voting agreements cover about 31% of shares."
+    },
+    {
+     "name": "HSR",
+     "status": "done",
+     "source_url": "https://www.sec.gov/Archives/edgar/data/1436126/000114036126040834/ny20083637x2_defm14a.htm",
+     "as_of": "2026-11-03",
+     "verified": true,
+     "note": "FTC granted early termination October 22, 2026."
+    },
+    {
+     "name": "Other competition laws and Nuclear Regulatory Commission filings",
+     "status": "open",
+     "source_url": "https://www.sec.gov/Archives/edgar/data/1436126/000114036126040834/ny20083637x2_defm14a.htm",
+     "as_of": "2026-11-03",
+     "verified": true
+    },
+    {
+     "name": "Go-shop period",
+     "status": "done",
+     "source_url": "https://www.sec.gov/Archives/edgar/data/1436126/000114036126041054/ef20084511_8k.htm",
+     "as_of": "2026-11-03",
+     "verified": true,
+     "note": "Expired; reported October 28, 2026."
+    },
+    {
+     "name": "Financing",
+     "status": "done",
+     "source_url": "https://www.sec.gov/Archives/edgar/data/1436126/000114036126040834/ny20083637x2_defm14a.htm",
+     "as_of": "2026-11-03",
+     "verified": true,
+     "note": "Not a closing condition (stated in the proxy)."
+    }
+   ],
+   "proxy_url": "https://www.sec.gov/Archives/edgar/data/1436126/000114036126040834/ny20083637x2_defm14a.htm",
+   "calc": {
+    "target_price": 20.15,
+    "acquirer_price": null,
+    "offer_value": 20.35,
+    "spread_usd": 0.2,
+    "spread": 0.009926,
+    "days_to_close": 148,
+    "annualized": 0.024479,
+    "implied_chance": 0.6078,
+    "open_steps": 2,
+    "kind": "cash",
+    "price_date": "2026-11-02"
+   }
+  },
+  {
+   "id": "BWMN",
+   "status": "pending",
+   "acquirer": {
+    "value": "Prive Parent, Inc. (Bernhard Capital Partners)",
+    "source_url": "https://www.sec.gov/Archives/edgar/data/1847590/000114036126038492/ny20081613x2_defm14a.htm",
+    "as_of": "2026-11-03",
+    "verified": true
+   },
+   "acquirer_ticker": {
+    "value": null,
+    "source_url": "https://www.sec.gov/Archives/edgar/data/1847590/000114036126038492/ny20081613x2_defm14a.htm",
+    "as_of": "2026-11-03",
+    "verified": true,
+    "note": "Private buyer, no listed ticker."
+   },
+   "target": {
+    "value": "Bowman Consulting Group Ltd.",
+    "source_url": "https://www.sec.gov/Archives/edgar/data/1847590/000114036126038492/ny20081613x2_defm14a.htm",
+    "as_of": "2026-11-03",
+    "verified": true
+   },
+   "target_ticker": {
+    "value": "BWMN",
+    "source_url": "https://www.sec.gov/Archives/edgar/data/1847590/000114036126038492/ny20081613x2_defm14a.htm",
+    "as_of": "2026-11-03",
+    "verified": true
+   },
+   "cash_per_share": {
+    "value": 43.0,
+    "source_url": "https://www.sec.gov/Archives/edgar/data/1847590/000114036126038492/ny20081613x2_defm14a.htm",
+    "as_of": "2026-11-03",
+    "verified": true
+   },
+   "exchange_ratio": {
+    "value": null,
+    "source_url": "https://www.sec.gov/Archives/edgar/data/1847590/000114036126038492/ny20081613x2_defm14a.htm",
+    "as_of": "2026-11-03",
+    "verified": true,
+    "note": "All cash."
+   },
+   "cvr": {
+    "value": null,
+    "source_url": "https://www.sec.gov/Archives/edgar/data/1847590/000114036126038492/ny20081613x2_defm14a.htm",
+    "as_of": "2026-11-03",
+    "verified": true,
+    "note": "No CVR."
+   },
+   "agreement_date": {
+    "value": "2026-08-10",
+    "source_url": "https://www.sec.gov/Archives/edgar/data/1847590/000114036126038492/ny20081613x2_defm14a.htm",
+    "as_of": "2026-11-03",
+    "verified": true
+   },
+   "announce_date": {
+    "value": "2026-08-10",
+    "source_url": "https://www.sec.gov/Archives/edgar/data/1847590/000119312526341431/d69901d8k.htm",
+    "as_of": "2026-11-03",
+    "verified": false,
+    "note": "The proxy calls August 7 the last trading day before public announcement; the 8-K was filed August 10."
+   },
+   "expected_close": {
+    "value": null,
+    "source_url": "https://www.sec.gov/Archives/edgar/data/1847590/000114036126038492/ny20081613x2_defm14a.htm",
+    "as_of": "2026-11-03",
+    "verified": false,
+    "note": "No expected closing date in the proxy sections read; termination date February 9, 2027.",
+    "by_date": null
+   },
+   "unaffected_price": {
+    "value": 27.23,
+    "source_url": "https://www.sec.gov/Archives/edgar/data/1847590/000114036126038492/ny20081613x2_defm14a.htm",
+    "as_of": "2026-11-03",
+    "verified": true,
+    "note": "Proxy: $27.23 close on August 7, 2026."
+   },
+   "steps": [
+    {
+     "name": "Stockholder vote",
+     "status": "open",
+     "source_url": "https://www.sec.gov/Archives/edgar/data/1847590/000114036126038492/ny20081613x2_defm14a.htm",
+     "as_of": "2026-11-03",
+     "verified": true,
+     "note": "Special meeting November 4, 2026."
+    },
+    {
+     "name": "HSR",
+     "status": "done",
+     "source_url": "https://www.sec.gov/Archives/edgar/data/1847590/000114036126038492/ny20081613x2_defm14a.htm",
+     "as_of": "2026-11-03",
+     "verified": true,
+     "note": "FTC early termination September 21, 2026."
+    },
+    {
+     "name": "Foreign investment approvals, if any",
+     "status": "open",
+     "source_url": "https://www.sec.gov/Archives/edgar/data/1847590/000114036126038492/ny20081613x2_defm14a.htm",
+     "as_of": "2026-11-03",
+     "verified": false,
+     "note": "Proxy refers to FDI laws without naming any jurisdiction."
+    },
+    {
+     "name": "Financing",
+     "status": "done",
+     "source_url": "https://www.sec.gov/Archives/edgar/data/1847590/000114036126038492/ny20081613x2_defm14a.htm",
+     "as_of": "2026-11-03",
+     "verified": true,
+     "note": "Not a closing condition (stated in the proxy)."
+    }
+   ],
+   "proxy_url": "https://www.sec.gov/Archives/edgar/data/1847590/000114036126038492/ny20081613x2_defm14a.htm",
+   "calc": {
+    "target_price": 42.89,
+    "acquirer_price": null,
+    "offer_value": 43.0,
+    "spread_usd": 0.11,
+    "spread": 0.002565,
+    "days_to_close": null,
+    "annualized": null,
+    "implied_chance": 0.993,
+    "open_steps": 2,
+    "kind": "cash",
+    "price_date": "2026-11-02"
+   }
+  },
+  {
+   "id": "BOW",
+   "status": "pending",
+   "acquirer": {
+    "value": "American Family Mutual Insurance Company, S.I.",
+    "source_url": "https://www.sec.gov/Archives/edgar/data/2002473/000114036126039513/ny20080231x9_defm14a.htm",
+    "as_of": "2026-11-03",
+    "verified": true
+   },
+   "acquirer_ticker": {
+    "value": null,
+    "source_url": "https://www.sec.gov/Archives/edgar/data/2002473/000114036126039513/ny20080231x9_defm14a.htm",
+    "as_of": "2026-11-03",
+    "verified": true,
+    "note": "Mutual insurer, no listed ticker."
+   },
+   "target": {
+    "value": "Bowhead Specialty Holdings Inc.",
+    "source_url": "https://www.sec.gov/Archives/edgar/data/2002473/000114036126039513/ny20080231x9_defm14a.htm",
+    "as_of": "2026-11-03",
+    "verified": true
+   },
+   "target_ticker": {
+    "value": "BOW",
+    "source_url": "https://www.sec.gov/Archives/edgar/data/2002473/000162828026051540/bow-20260802.htm",
+    "as_of": "2026-11-03",
+    "verified": true,
+    "note": "Ticker from the EDGAR company record on the 8-K."
+   },
+   "cash_per_share": {
+    "value": 34.0,
+    "source_url": "https://www.sec.gov/Archives/edgar/data/2002473/000114036126039513/ny20080231x9_defm14a.htm",
+    "as_of": "2026-11-03",
+    "verified": true
+   },
+   "exchange_ratio": {
+    "value": null,
+    "source_url": "https://www.sec.gov/Archives/edgar/data/2002473/000114036126039513/ny20080231x9_defm14a.htm",
+    "as_of": "2026-11-03",
+    "verified": true,
+    "note": "All cash."
+   },
+   "cvr": {
+    "value": null,
+    "source_url": "https://www.sec.gov/Archives/edgar/data/2002473/000114036126039513/ny20080231x9_defm14a.htm",
+    "as_of": "2026-11-03",
+    "verified": true,
+    "note": "No CVR."
+   },
+   "agreement_date": {
+    "value": "2026-08-02",
+    "source_url": "https://www.sec.gov/Archives/edgar/data/2002473/000114036126039513/ny20080231x9_defm14a.htm",
+    "as_of": "2026-11-03",
+    "verified": true
+   },
+   "announce_date": {
+    "value": "2026-08-03",
+    "source_url": "https://www.sec.gov/Archives/edgar/data/2002473/000162828026051540/bow-20260802.htm",
+    "as_of": "2026-11-03",
+    "verified": false,
+    "note": "The proxy uses the July 31 close as the unaffected price; the 8-K was filed August 3."
+   },
+   "expected_close": {
+    "value": "prior to the end of 2026",
+    "source_url": "https://www.sec.gov/Archives/edgar/data/2002473/000114036126039513/ny20080231x9_defm14a.htm",
+    "as_of": "2026-11-03",
+    "verified": true,
+    "by_date": "2026-12-31"
+   },
+   "unaffected_price": {
+    "value": 30.59,
+    "source_url": "https://www.sec.gov/Archives/edgar/data/2002473/000114036126039513/ny20080231x9_defm14a.htm",
+    "as_of": "2026-11-03",
+    "verified": true,
+    "note": "Proxy: $30.59 close on July 31, 2026, the unaffected share price."
+   },
+   "steps": [
+    {
+     "name": "Stockholder vote",
+     "status": "open",
+     "source_url": "https://www.sec.gov/Archives/edgar/data/2002473/000114036126039513/ny20080231x9_defm14a.htm",
+     "as_of": "2026-11-03",
+     "verified": true,
+     "note": "Special meeting November 13, 2026."
+    },
+    {
+     "name": "HSR",
+     "status": "done",
+     "source_url": "https://www.sec.gov/Archives/edgar/data/2002473/000114036126039513/ny20080231x9_defm14a.htm",
+     "as_of": "2026-11-03",
+     "verified": true,
+     "note": "Expired September 28, 2026."
+    },
+    {
+     "name": "Texas Department of Insurance",
+     "status": "done",
+     "source_url": "https://www.sec.gov/Archives/edgar/data/2002473/000114036126039513/ny20080231x9_defm14a.htm",
+     "as_of": "2026-11-03",
+     "verified": true,
+     "note": "Non-objection letter September 15, 2026."
+    },
+    {
+     "name": "Wisconsin Office of the Commissioner of Insurance",
+     "status": "open",
+     "source_url": "https://www.sec.gov/Archives/edgar/data/2002473/000114036126039513/ny20080231x9_defm14a.htm",
+     "as_of": "2026-11-03",
+     "verified": false,
+     "note": "Filed August 28, 2026; outcome not stated in the proxy."
+    },
+    {
+     "name": "Financing",
+     "status": "done",
+     "source_url": "https://www.sec.gov/Archives/edgar/data/2002473/000114036126039513/ny20080231x9_defm14a.htm",
+     "as_of": "2026-11-03",
+     "verified": true,
+     "note": "Not a closing condition (stated in the proxy)."
+    }
+   ],
+   "proxy_url": "https://www.sec.gov/Archives/edgar/data/2002473/000114036126039513/ny20080231x9_defm14a.htm",
+   "calc": {
+    "target_price": 33.95,
+    "acquirer_price": null,
+    "offer_value": 34.0,
+    "spread_usd": 0.05,
+    "spread": 0.001473,
+    "days_to_close": 58,
+    "annualized": 0.009268,
+    "implied_chance": 0.9853,
+    "open_steps": 2,
+    "kind": "cash",
+    "price_date": "2026-11-02"
+   }
+  }
+ ]
+}

@@ -133,16 +133,28 @@ def scan_dates_from_git(repo: Path = ROOT) -> list[date]:
     return sorted({date.fromisoformat(m) for m in re.findall(r"^Daily scan (\d{4}-\d{2}-\d{2})", log, re.M)})
 
 
-def build_report(scan_dates, now: datetime) -> dict:
+def arb_freshness(arb_as_of: str | None, now: datetime) -> dict:
+    """Merger arb prices (site/data/arb.json as_of) are stale when they lag the newest closed US session by more than
+    one trading day (the refresh runs after the scan, so one session of slack covers a late start)."""
+    prev = market_date(now) - timedelta(days=1)
+    while not is_trading_day(prev):
+        prev -= timedelta(days=1)
+    return {"as_of": arb_as_of, "stale": arb_as_of is None or date.fromisoformat(arb_as_of) < prev}
+
+
+def build_report(scan_dates, now: datetime, arb_as_of: str | None = None) -> dict:
     """{checked_at, missed, status, market_date, last_scan, catch_up}. The site reads `missed`; the Brain can read
     `status` and `last_scan`. catch_up is true when the newest closed session has no scan, so the workflow asks
     for one (the scan's own gate makes a duplicate request a no-op)."""
     now = now.astimezone(timezone.utc) if now.tzinfo else now.replace(tzinfo=timezone.utc)
     missed = missed_weekdays(scan_dates, now)
     have = sorted(set(scan_dates))
-    return {"checked_at": now.strftime("%Y-%m-%dT%H:%M:%SZ"), "missed": [d.isoformat() for d in missed],
-            "status": "missed" if missed else "ok", "market_date": market_date(now).isoformat(),
-            "last_scan": have[-1].isoformat() if have else None, "catch_up": bool(have) and need_scan(have, now)}
+    rep = {"checked_at": now.strftime("%Y-%m-%dT%H:%M:%SZ"), "missed": [d.isoformat() for d in missed],
+           "status": "missed" if missed else "ok", "market_date": market_date(now).isoformat(),
+           "last_scan": have[-1].isoformat() if have else None, "catch_up": bool(have) and need_scan(have, now)}
+    if arb_as_of is not None:
+        rep["arb"] = arb_freshness(arb_as_of, now)
+    return rep
 
 
 def _gh_output(line: str) -> None:
@@ -163,7 +175,12 @@ def main(argv=None) -> int:
               f"{dates[-1].isoformat() if dates else 'none'})")
         _gh_output(line)
         return 0
-    rep = build_report(dates, now)
+    arb_file = ROOT / "site" / "data" / "arb.json"
+    arb_as_of = json.loads(arb_file.read_text()).get("as_of") if arb_file.exists() else None
+    rep = build_report(dates, now, arb_as_of)
+    if rep.get("arb", {}).get("stale"):
+        # reported, not fatal: the arb refresh step fails its own job when it breaks
+        print(f"Arb prices stale: site/data/arb.json as of {rep['arb']['as_of']}.", file=sys.stderr)
     _gh_output(f"catch_up={'true' if rep['catch_up'] else 'false'}")
     out = ROOT / "site" / "data" / "watchdog.json"
     out.write_text(json.dumps(rep, indent=1) + "\n")

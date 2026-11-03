@@ -1,0 +1,93 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Merger Arb Desk | Market Scanner</title>
+<meta name="description" content="Pending US public-company acquisitions with terms from SEC filings, the live spread, the annualized spread to the stated close, a rough implied chance of closing and the steps left. Not investment advice.">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Market Scanner">
+<meta property="og:title" content="Merger Arb Desk">
+<meta property="og:description" content="Pending US deals, terms from SEC filings, spreads and the steps left. Not investment advice.">
+<meta property="og:image" content="https://abvarisano-droid.github.io/market-scanner/og.png">
+<meta name="theme-color" content="#050a10">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' fill='%23050505'/%3E%3Ccircle cx='16' cy='16' r='6' fill='%2334e0d6'/%3E%3C/svg%3E">
+<link rel="preload" href="data/arb.json" as="fetch" crossorigin>
+<link rel="stylesheet" href="style.css?v=18">
+<link rel="stylesheet" href="lg8.css?v=2">
+<link rel="stylesheet" href="terminal.css?v=5">
+<link rel="stylesheet" href="arb.css?v=1">
+</head>
+<body>
+<div class="v8shell">
+<header class="top">
+  <a class="brand" href="./#/"><span class="dot"></span>Market Scanner</a>
+  <nav aria-label="Main">
+    <a href="./#/" data-nav="home" class="v8home"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 17l5-6 4 3 5-8 4 5"/><path d="M3 21h18"/></svg><span>Replay</span></a>
+    <a href="./#/scan" data-nav="scan"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="6"/><path d="M20 20l-4.5-4.5"/></svg><span>Scan</span></a>
+    <a href="./#/lookup" data-nav="lookup"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 6h16M4 12h10M4 18h7"/></svg><span>Lookup</span></a>
+    <a href="./#/longterm" data-nav="longterm"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><rect x="4" y="12" width="3" height="8"/><rect x="10.5" y="8" width="3" height="12"/><rect x="17" y="4" width="3" height="16"/></svg><span>Long-term</span></a>
+    <a href="arb.html" data-nav="arb" class="on" aria-current="page"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 8h12l-3-3M20 16H8l3 3"/></svg><span>Arb desk</span></a>
+    <a href="./#/how" data-nav="how"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 11v6M12 7.5v.5"/></svg><span>How it works</span></a>
+    <a href="./#/track" data-nav="track"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7"/></svg><span>Track record</span></a>
+  </nav>
+  <p class="v8foot label">Not investment advice</p>
+</header>
+<div class="v8canvas">
+<main id="app" class="arb">
+  <section class="hero">
+    <span class="label">Merger arb desk</span>
+    <h1>Pending deals, <em>priced daily.</em></h1>
+    <p class="lede">Every pending US public-company acquisition we track: offer terms from the SEC filings, today's spread to the offer, the annualized spread to the stated close, a rough implied chance of closing and the steps still open.</p>
+    <p class="arb-nia"><strong>Not investment advice.</strong> Arithmetic on public prices and filed terms. No calls to trade.</p>
+  </section>
+
+  <section class="arb-how" aria-labelledby="arb-how-h">
+    <h2 id="arb-how-h">How to read this</h2>
+    <dl>
+      <div><dt>Offer value</dt><dd>Cash per share plus the exchange ratio times the acquirer's price. Stock deals move with the acquirer. A CVR is noted, never valued.</dd></div>
+      <div><dt>Spread</dt><dd>(Offer value minus target price) divided by target price. What is left on the table if the deal closes on its terms. Negative means the stock trades above the offer.</dd></div>
+      <div><dt>Annualized</dt><dd>Spread times 365, divided by days to the stated expected close. Simple, not compounded. Blank when the filings give no close date. When they give a period, we use its last day.</dd></div>
+      <div><dt>Implied chance (rough)</dt><dd>(Price minus unaffected price) divided by (offer value minus unaffected price), clipped to 0 to 100%. It assumes the stock falls back to its unaffected price if the deal breaks, and ignores time value and the chance of a higher bid.</dd></div>
+    </dl>
+  </section>
+
+  <section class="arb-desk" aria-labelledby="arb-list-h">
+    <div class="listhead"><h2 id="arb-list-h">Deals</h2><span class="label" id="arb-asof">Loading prices</span></div>
+    <div class="arb-grid">
+      <div class="arb-tablebox">
+        <div class="tw" tabindex="0" role="region" aria-label="Pending deals table, scrolls sideways">
+          <table id="arb-table">
+            <caption class="sr">Pending deals. Column buttons sort the table.</caption>
+            <colgroup><col style="width:170px"><col style="width:176px"><col style="width:150px"><col style="width:80px"><col style="width:96px"><col style="width:66px"><col style="width:130px"><col style="width:84px"></colgroup>
+            <thead><tr>
+              <th scope="col" aria-sort="ascending"><button type="button" data-k="target">Target</button></th>
+              <th scope="col"><button type="button" data-k="acquirer">Acquirer</button></th>
+              <th scope="col"><button type="button" data-k="terms">Terms</button></th>
+              <th scope="col" class="r"><button type="button" data-k="spread">Spread</button></th>
+              <th scope="col" class="r"><button type="button" data-k="annualized">Annualized</button></th>
+              <th scope="col" class="r"><button type="button" data-k="days">Days</button></th>
+              <th scope="col"><button type="button" data-k="chance">Implied chance</button></th>
+              <th scope="col" class="r"><button type="button" data-k="open">Open steps</button></th>
+            </tr></thead>
+            <tbody id="arb-rows"></tbody>
+          </table>
+        </div>
+        <p class="arb-legend label">U: uses an unverified input, see the deal panel. Days: to the stated expected close.</p>
+      </div>
+      <aside class="arb-panel" id="arb-panel" aria-labelledby="arb-panel-h" tabindex="-1">
+        <h2 id="arb-panel-h">Deal detail</h2>
+        <p class="lede">Pick a deal in the table to see every term with its source.</p>
+      </aside>
+    </div>
+  </section>
+</main>
+<footer>
+  <p class="disc"><strong>Not investment advice.</strong> Spreads and the implied chance are mechanical arithmetic on public prices and filed terms, not forecasts or recommendations. Deals can break, change terms or close late. Prices may be delayed or wrong.</p>
+  <p class="label">Terms from SEC EDGAR filings and company press releases &middot; Prices refreshed every weekday after the US close <span id="asof"></span></p>
+</footer>
+</div>
+</div>
+<script src="arb.js?v=1" defer></script>
+</body>
+</html>
