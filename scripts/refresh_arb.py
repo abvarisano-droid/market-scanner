@@ -82,6 +82,9 @@ def build(book: dict, closes: dict[str, tuple[str, float]], today: date, now: da
             px = closes[tk][1]
             if not isinstance(px, (int, float)) or not math.isfinite(px) or px <= 0:
                 raise RefreshError(f"bad price for {tk}: {px!r}")
+        if a and closes[a][0] != closes[t][0]:
+            # a stock deal's offer value must use the acquirer's close from the same session as the target's
+            raise RefreshError(f"price dates differ for {t} ({closes[t][0]}) and acquirer {a} ({closes[a][0]})")
         dates.append(closes[t][0])
         row = public_deal(d)
         row["calc"] = arb.compute(d, closes[t][1], closes[a][1] if a else None, today)

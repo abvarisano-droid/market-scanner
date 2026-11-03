@@ -16,10 +16,22 @@ from datetime import date
 
 # Every deal term in data/arb/deals.json is a "fact": {value, source_url, as_of, verified, note?}.
 TERM_FIELDS = ("acquirer", "acquirer_ticker", "target", "target_ticker", "cash_per_share", "exchange_ratio",
-               "cvr", "agreement_date", "announce_date", "expected_close", "unaffected_price")
+               "cvr", "agreement_date", "announce_date", "announced_after_close", "expected_close", "unaffected_price")
 STEP_STATUS = ("open", "done")
 DEAL_STATUS = ("pending",)
 _ISO = re.compile(r"^\d{4}-\d{2}-\d{2}$")
+
+
+def unaffected_date(announce: date | str, after_close: bool, trading_days) -> date:
+    """The session whose close is the unaffected price: the announcement day itself when the deal was announced after
+    that day's close, otherwise the last trading day before the announcement. `trading_days` is any iterable of dates
+    with a close (for example the target's price history index)."""
+    if isinstance(announce, str):
+        announce = date.fromisoformat(announce)
+    days = sorted(d for d in trading_days if (d <= announce if after_close else d < announce))
+    if not days:
+        raise ValueError(f"no trading day on or before {announce}")
+    return days[-1]
 
 
 def offer_value(cash: float | None, ratio: float | None, acquirer_price: float | None) -> float | None:
@@ -96,6 +108,11 @@ def validate_deal(d: dict) -> list[str]:
         errs.append(f"{name}: needs cash_per_share or exchange_ratio (use a verified false fact with a note if unknown)")
     if ratio and not (d.get("acquirer_ticker") or {}).get("value"):
         errs.append(f"{name}: a stock deal needs the acquirer ticker for pricing")
+    if not isinstance((d.get("announced_after_close") or {}).get("value"), bool):
+        errs.append(f"{name}.announced_after_close must be true or false")
+    ud = (d.get("unaffected_price") or {}).get("date")
+    if not (isinstance(ud, str) and _ISO.match(ud)):
+        errs.append(f"{name}.unaffected_price.date must be YYYY-MM-DD")
     ec = d.get("expected_close") or {}
     if ec.get("by_date") is not None and not (isinstance(ec["by_date"], str) and _ISO.match(ec["by_date"])):
         errs.append(f"{name}.expected_close.by_date must be YYYY-MM-DD or null")

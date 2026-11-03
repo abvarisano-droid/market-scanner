@@ -100,8 +100,9 @@
         fact("Acquirer ticker", d.acquirer_ticker, v(d, "acquirer_ticker") || "Not listed") +
         fact("Agreement date", d.agreement_date) +
         fact("Announced", d.announce_date) +
+        fact("Announced after the close", d.announced_after_close, v(d, "announced_after_close") ? "Yes" : "No") +
         fact("Expected close", d.expected_close, close) +
-        fact("Unaffected price", d.unaffected_price, usd(v(d, "unaffected_price"))) +
+        fact("Unaffected price", d.unaffected_price, usd(v(d, "unaffected_price")) + (d.unaffected_price && d.unaffected_price.date ? " (close " + d.unaffected_price.date + ")" : "")) +
       "</dl>" +
       "<h3>Steps</h3><ul class=\"arb-steps\">" + (d.steps || []).map(function (s) {
         return '<li><span class="chip' + (s.status === "open" ? " bear" : "") + '">' + esc(s.status === "open" ? "Open" : "Done") + "</span> <b>" + esc(s.name) + "</b> " +
@@ -137,8 +138,8 @@
     return r.json();
   }).then(function (data) {
     S.deals = data.deals || [];
-    document.getElementById("arb-asof").textContent = S.deals.length + " deals, prices as of " + (data.as_of || "unknown");
-    document.getElementById("asof").textContent = "(last refresh " + (data.as_of || "unknown") + ")";
+    document.getElementById("arb-asof").textContent = S.deals.length + " deals \u00b7 prices as of " + (data.as_of || "unknown") + " \u00b7 terms as of " + (data.deals_as_of || "unknown");
+    document.getElementById("asof").textContent = "(prices as of " + (data.as_of || "unknown") + ", terms as of " + (data.deals_as_of || "unknown") + ")";
     var want = decodeURIComponent(location.hash.replace(/^#/, ""));
     var ids = S.deals.map(function (d) { return d.id; });
     S.sel = ids.indexOf(want) >= 0 ? want : (sorted()[0] || {}).id;

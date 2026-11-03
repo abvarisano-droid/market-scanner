@@ -65,6 +65,25 @@ def test_implied_chance_clipped_and_undefined():
     assert arb.implied_close_chance(45.0, None, 40.0) is None and arb.implied_close_chance(45.0, 50.0, None) is None
 
 
+def test_unaffected_date_rule():
+    days = [date(2026, 7, 21), date(2026, 7, 22), date(2026, 7, 23), date(2026, 7, 24), date(2026, 7, 27)]
+    assert arb.unaffected_date("2026-07-23", False, days) == date(2026, 7, 22)  # before the open: prior session
+    assert arb.unaffected_date("2026-07-23", True, days) == date(2026, 7, 23)   # after the close: that session
+    assert arb.unaffected_date("2026-07-26", False, days) == date(2026, 7, 24)  # weekend announcement
+    assert arb.unaffected_date("2026-07-26", True, days) == date(2026, 7, 24)
+    with pytest.raises(ValueError):
+        arb.unaffected_date("2026-07-21", False, days)
+
+
+def test_after_close_flag_is_required():
+    d = copy.deepcopy(BOOK["deals"][0])
+    d["announced_after_close"]["value"] = "no"
+    del d["unaffected_price"]["date"]
+    errs = arb.validate_deal(d)
+    assert any("announced_after_close must be true or false" in e for e in errs)
+    assert any("unaffected_price.date" in e for e in errs)
+
+
 def test_compute_row():
     d = copy.deepcopy(next(x for x in BOOK["deals"] if x["id"] == "CSR"))
     r = arb.compute(d, 55.0, 15.0, TODAY)
@@ -108,11 +127,16 @@ def test_every_deal_has_source_as_of_verified_on_every_term():
             assert isinstance(f["verified"], bool), (d["id"], k)
         for s in d["steps"]:
             assert s["source_url"].startswith("https://") and isinstance(s["verified"], bool) and s["status"] in ("open", "done")
-    # term sources are SEC filings or company releases; only unaffected prices may point at a price history
+    # a price history is never a verified source; unaffected prices always carry their session date
     for d in deals:
         for k in arb.TERM_FIELDS:
-            url = d[k]["source_url"]
-            assert url.startswith("https://www.sec.gov/Archives/") or (k == "unaffected_price" and not d[k]["verified"]), (d["id"], k)
+            if "finance.yahoo.com" in d[k]["source_url"]:
+                assert not d[k]["verified"] and d[k]["note"], (d["id"], k)
+        assert re.match(r"\d{4}-\d{2}-\d{2}$", d["unaffected_price"]["date"])
+        assert isinstance(d["announced_after_close"]["value"], bool)
+        assert d["unaffected_price"]["date"] <= d["announce_date"]["value"]
+        if d["unaffected_price"]["date"] == d["announce_date"]["value"]:
+            assert d["announced_after_close"]["value"] is True, d["id"]
 
 
 def test_deal_file_has_no_contacts_or_dashes():
@@ -153,6 +177,15 @@ def test_refresh_failure_exits_nonzero_and_keeps_old_file(tmp_path, capsys):
     partial = lambda t: {k: v for k, v in _closes(t).items() if k != "MKTX"}
     assert ra.main(fetch=partial, out=out) == 1
     assert "no price for target MKTX" in capsys.readouterr().err
+
+
+def test_refresh_rejects_mismatched_stock_deal_dates(tmp_path, capsys):
+    def f(t):
+        c = _closes(t)
+        c["IRT"] = ("2026-10-30", 14.72)  # acquirer close from an older session than the target's
+        return c
+    assert ra.main(fetch=f, out=tmp_path / "o.json") == 1
+    assert "price dates differ for CSR" in capsys.readouterr().err
 
 
 def test_refresh_rejects_invalid_deals(tmp_path):
