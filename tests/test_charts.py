@@ -68,7 +68,7 @@ def test_build_weekly_then_daily_and_index_map():
     assert len(p["dc"]) == 756 and len(p["ix"]) == n and p["ix"][-1] == 755
     assert all(p["dc"][i] == pytest.approx(p["c"][k], rel=1e-4) for k, i in enumerate(p["ix"]))
     assert all(lo <= min(o, c) and hi >= max(o, c) for o, hi, lo, c in zip(p["o"], p["h"], p["l"], p["c"]))
-    assert p["x"] == sorted(p["x"]) and p["last"] == charts.round_price(df["Close"].iloc[-1])
+    assert p["x"] == sorted(p["x"]) and p["last"] == charts._sig(float(df["Close"].iloc[-1]))
     assert p["lo52"] <= p["last"] <= p["hi52"]
 
 
@@ -191,3 +191,12 @@ def test_sub_dollar_price_keeps_precision():
     p = charts.build(df, "KPTI", "USD", None)
     assert p["last"] == pytest.approx(df["Close"].iloc[-1], rel=1e-3)
     assert p["dc"][-1] == pytest.approx(p["last"], rel=1e-3)
+
+
+def test_chart_last_matches_close_series_precision():
+    # The chart's "last" and its close series use the same 5 figure rounding, so a $1 to $5 stock
+    # (for example 1.234) never trips test_committed_chart_files after a fresh scan.
+    from scanner.charts import _sig
+    for px in (0.112345, 1.2345, 4.98765, 123.456789):
+        assert _sig(px) == pytest.approx(_sig(px), rel=1e-12)
+        assert abs(_sig(px) - px) / px < 1e-4

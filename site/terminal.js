@@ -8,7 +8,7 @@
   var CUR = null, RP = null;
   function esc(s) { return String(s).replace(/[&<>"']/g, function (c) { return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]; }); }
   function pc(v, d) { return v == null || v !== v ? "n/a" : (v >= 0 ? "+" : "") + (v * 100).toFixed(d == null ? 1 : d) + "%"; }
-  function money(v) { return v == null ? "n/a" : v >= 1000 ? v.toFixed(0) : v.toFixed(2); }
+  function money(v) { return v == null ? "n/a" : v >= 1000 ? v.toFixed(0) : Math.abs(v) < 1 ? String(+v.toPrecision(4)) : v.toFixed(2); }
   function range() {
     if (window.RANGE) return Promise.resolve(window.RANGE);
     if (!RP) RP = new Promise(function (ok, no) { var s = document.createElement("script"); s.src = "range.js?v=1"; s.onload = function () { ok(window.RANGE); }; s.onerror = no; document.head.appendChild(s); });

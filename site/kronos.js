@@ -7,7 +7,7 @@
   var COL = { grid: "#10202a", axis: "#5f7a80", teal: "#34e0d6", red: "#ff7a45", median: "#d9f9f7", ink: "#d8e6e6" };
   var H = 220, IDX = null;
   function esc(s) { return String(s).replace(/[&<>"']/g, function (c) { return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]; }); }
-  function fmt(v) { if (v == null) return "n/a"; var a = Math.abs(v); return v.toFixed(a >= 1000 ? 0 : a >= 100 ? 1 : 2); }
+  function fmt(v) { if (v == null) return "n/a"; var a = Math.abs(v); return a > 0 && a < 1 ? String(+v.toPrecision(4)) : v.toFixed(a >= 1000 ? 0 : a >= 100 ? 1 : 2); }
   function pct(v) { return (v >= 0 ? "+" : "") + (v * 100).toFixed(1) + "%"; }
   function shell() {
     var seg = ""; for (var i = 0; i < 20; i++) seg += "<i></i>";
