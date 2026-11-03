@@ -1571,8 +1571,8 @@
     "value": false,
     "source_url": "https://newsroom.amfam.com/american-family-to-acquire-bowhead-specialty/",
     "as_of": "2026-11-03",
-    "verified": true,
-    "note": "Released before the August 3 open."
+    "verified": false,
+    "note": "Release time not stated on the release page; treated as before the August 3 open because the Aug 3 close moved to the offer."
    },
    "expected_close": {
     "value": "prior to the end of 2026",

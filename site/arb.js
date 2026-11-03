@@ -93,6 +93,7 @@
         '<div><span class="label">Spread</span><b class="' + (c.spread < 0 ? "neg" : "") + '">' + pct(c.spread) + "</b><small>" + (c.spread_usd == null ? "" : (c.spread_usd < 0 ? "-$" : "$") + Math.abs(c.spread_usd).toFixed(2) + " a share") + "</small></div>" +
         '<div><span class="label">Annualized</span><b>' + pct(c.annualized, 1) + "</b><small>" + (c.days_to_close == null ? "close date unknown" : c.days_to_close + " days") + "</small></div>" +
       "</div>" +
+      (c.spread != null && c.spread < 0 ? '<p class="arb-note">Unusual: the target trades above the offer value. We have not confirmed why; check the latest filings before reading anything into it.</p>' : "") +
       "<h3>Terms</h3><dl class=\"arb-facts\">" +
         fact("Cash per share", d.cash_per_share, v(d, "cash_per_share") == null ? "None" : usd(v(d, "cash_per_share"))) +
         fact("Exchange ratio", d.exchange_ratio, v(d, "exchange_ratio") == null ? "None" : v(d, "exchange_ratio") + " " + (v(d, "acquirer_ticker") || "") + " per share") +
