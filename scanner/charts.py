@@ -26,6 +26,8 @@ from pathlib import Path
 import numpy as np
 import pandas as pd
 
+from .labels import round_price
+
 log = logging.getLogger(__name__)
 ROOT = Path(__file__).resolve().parent.parent
 STORE = ROOT / "data" / "charts.json"
@@ -133,7 +135,7 @@ def build(df: pd.DataFrame, ticker: str = "", currency: str | None = None, event
         "v": [None if v is None or not np.isfinite(v) else int(_sig(float(v), 3)) for v in (r[5] for r in rows)],
         "dc": ser(df["Close"].tolist()),
         "daily_from": len(rows) - len(new),
-        "last": round(last, 2), "hi52": _sig(float(yr["High"].max())), "lo52": _sig(float(yr["Low"].min())),
+        "last": round_price(last), "hi52": _sig(float(yr["High"].max())), "lo52": _sig(float(yr["Low"].min())),
         "chg_1y": round(100 * (last / float(df["Close"].iloc[-YEAR - 1]) - 1), 1) if len(df) > YEAR else None,
         "fan": fan(df["Close"]), "event": event,
         "source": "Yahoo Finance daily bars (split and dividend adjusted)",

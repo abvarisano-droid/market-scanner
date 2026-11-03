@@ -68,7 +68,7 @@ def test_build_weekly_then_daily_and_index_map():
     assert len(p["dc"]) == 756 and len(p["ix"]) == n and p["ix"][-1] == 755
     assert all(p["dc"][i] == pytest.approx(p["c"][k], rel=1e-4) for k, i in enumerate(p["ix"]))
     assert all(lo <= min(o, c) and hi >= max(o, c) for o, hi, lo, c in zip(p["o"], p["h"], p["l"], p["c"]))
-    assert p["x"] == sorted(p["x"]) and p["last"] == round(df["Close"].iloc[-1], 2)
+    assert p["x"] == sorted(p["x"]) and p["last"] == charts.round_price(df["Close"].iloc[-1])
     assert p["lo52"] <= p["last"] <= p["hi52"]
 
 
@@ -180,3 +180,14 @@ def test_earnings_dates_reraises_worker_error(monkeypatch):
     monkeypatch.setitem(sys.modules, "yfinance", types.SimpleNamespace(Ticker=boom))
     with pytest.raises(RuntimeError, match="calendar down"):
         data.earnings_dates("AAA", timeout=2)
+
+
+def test_sub_dollar_price_keeps_precision():
+    from scanner.labels import round_price
+    assert round_price(0.112) == 0.112 and round_price(0.00123456) == 0.001235
+    assert round_price(12.3456) == 12.35 and round_price(None) is None and round_price(float("nan")) is None
+    rng = np.random.default_rng(7)
+    df = ohlc(0.112 * np.exp(np.cumsum(rng.normal(0, 0.01, 400))))
+    p = charts.build(df, "KPTI", "USD", None)
+    assert p["last"] == pytest.approx(df["Close"].iloc[-1], rel=1e-3)
+    assert p["dc"][-1] == pytest.approx(p["last"], rel=1e-3)

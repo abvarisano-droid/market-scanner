@@ -22,7 +22,7 @@ import pandas as pd  # noqa: E402
 
 from scanner import calllog, longterm, pipeline, record, tracker, universe, valuation  # noqa: E402
 from scanner import technical as tech_rules  # noqa: E402
-from scanner.labels import BANNED, BEARISH, BULLISH, NEUTRAL, normalize  # noqa: E402
+from scanner.labels import BANNED, BEARISH, BULLISH, NEUTRAL, normalize, round_price  # noqa: E402
 
 BULL_AT = 35  # mispricing score that counts as Bullish / Bearish (before news adjustment)
 SAMPLE_NOTE = "Sample data. Synthetic prices, replaced by the first real daily scan. Graded results are illustrative only."
@@ -52,7 +52,7 @@ def _tech_rows(scan, hz, table):
     def row(r):
         m = table.get(r["ticker"], {})
         return {"ticker": r["ticker"], "name": _name(r["ticker"], m), "sector": plain(m.get("sector") or ""),
-                "index": m.get("index"), "close": num(m.get("price")), "score": r["score"], "bar": r["score"],
+                "index": m.get("index"), "close": round_price(m.get("price")), "score": r["score"], "bar": r["score"],
                 "label": r["label"], "reasons": [plain(x) for x in r["reasons"]]}
     return {"counts": h["counts"], "top_bull": [row(r) for r in h["top_bull"]],
             "top_bear": [row(r) for r in h["top_bear"]]}
@@ -67,7 +67,7 @@ def _mispricing_rows(scan, table):
         if not reasons and ok_thesis:
             reasons = [thesis[:200]]
         return {"ticker": p["ticker"], "name": _name(p["ticker"], p), "sector": plain(p.get("sector") or ""),
-                "index": p.get("index"), "close": num(p.get("price")), "score": p["mispricing"],
+                "index": p.get("index"), "close": round_price(p.get("price")), "score": p["mispricing"],
                 "bar": round((p["mispricing"] + 100) / 2, 1), "label": normalize(p["call"]),
                 "confidence": p.get("confidence"), "reasons": reasons,
                 "thesis": thesis[:400] if ok_thesis and p.get("source") == "ai" else ""}
@@ -121,9 +121,9 @@ def build_latest(scan: dict, sample: bool) -> dict:
         m = table.get(t)
         if not m:
             continue
-        c = num(m.get("price"))
+        c = round_price(m.get("price"))
         if c is None and spark:  # no usable last close: fall back to the last point of the sparkline
-            c = num(spark[-1])
+            c = round_price(spark[-1])
         row = {"n": _name(t, m), "s": plain(m.get("sector") or ""), "i": m.get("index"),
                "c": c, "cur": m.get("currency") or None, "spark": spark}
         if num(m.get("marketCap"), 0):

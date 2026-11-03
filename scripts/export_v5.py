@@ -13,7 +13,7 @@ import pandas as pd
 
 from scanner import charts as charts_mod
 from scanner import tracker
-from scanner.labels import BANNED, BEARISH, BULLISH, normalize
+from scanner.labels import BANNED, BEARISH, BULLISH, normalize, round_price
 
 LENSES = tracker.LENSES
 DISCLAIMER = "Not investment advice."
@@ -96,7 +96,7 @@ def _f(v, d=2):
 def fundamentals(row: dict | None) -> dict:
     """Valuation figures the scan already holds (Yahoo Finance fields). Missing stays None."""
     r = row or {}
-    px, avg, n = _f(r.get("price")), _f(r.get("targetMeanPrice")), r.get("numberOfAnalystOpinions")
+    px, avg, n = round_price(r.get("price")), round_price(r.get("targetMeanPrice")), r.get("numberOfAnalystOpinions")
     gap = round(avg / px - 1, 4) if px and avg and (n or 0) > 0 else None
     pe = lambda v: v if v is not None and 0 < v < 2000 else None  # negative or absurd P/E is not meaningful
     return {"fwd_pe": pe(_f(r.get("forwardPE"), 1)), "ttm_pe": pe(_f(r.get("trailingPE"), 1)),
