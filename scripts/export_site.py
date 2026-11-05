@@ -150,6 +150,29 @@ def build_latest(scan: dict, sample: bool) -> dict:
             "lookup": lookup, "spy_spark": scan.get("spy_spark", [])}
 
 
+# NYSE full-day closures, so the "first grades expected" dates skip them (weekends are skipped too).
+NYSE_HOLIDAYS = {"2026-11-26", "2026-12-25", "2027-01-01", "2027-01-18", "2027-02-15", "2027-03-26", "2027-05-31",
+                 "2027-06-18", "2027-07-05", "2027-09-06", "2027-11-25", "2027-12-24"}
+
+
+def trading_day_after(d: str, n: int) -> str:
+    """The date n NYSE trading days after d (weekends and the closures above skipped)."""
+    t = pd.Timestamp(d)
+    while n > 0:
+        t += pd.Timedelta(days=1)
+        if t.weekday() < 5 and t.strftime("%Y-%m-%d") not in NYSE_HOLIDAYS:
+            n -= 1
+    return t.strftime("%Y-%m-%d")
+
+
+def first_grades(first_logged: str | None) -> dict:
+    """When the first call's windows close: entry is the next trading day's close, then each window counts from there."""
+    if not first_logged:
+        return {}
+    entry = trading_day_after(first_logged, 1)
+    return {str(n): trading_day_after(entry, n) for n in tracker.HORIZONS.values()}
+
+
 def build_track(scan: dict, sample: bool) -> dict:
     sc = scan["scorecard"]
     led = pd.DataFrame(scan["ledger"])
@@ -182,7 +205,8 @@ def build_track(scan: dict, sample: bool) -> dict:
             "status": fresh["status"], "trading_days": days, "min_days": tracker.MIN_DAYS,
             "note": re.sub(r"\b1 trading days\b", "1 trading day", plain(fresh["note"])), "entry_rule": "next trading day close",
             "windows": list(tracker.HORIZONS.values()), "by_lens": by_lens,
-            "first_logged": str(led["date"].min())[:10] if len(led) else None, "interval": "95% Wilson interval", "log": log,
+            "first_logged": str(led["date"].min())[:10] if len(led) else None,
+            "first_grades": first_grades(str(led["date"].min())[:10] if len(led) else None), "interval": "95% Wilson interval", "log": log,
             "calls_logged": len(led), "pending": pending, "graded": graded[-300:], "disclaimer": DISCLAIMER}
 
 
