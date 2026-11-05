@@ -1,9 +1,9 @@
 {
- "asof": "2026-11-03",
+ "asof": "2026-11-04",
  "banner": "",
  "by_lens": {
   "mispricing": {
-   "calls": 54,
+   "calls": 69,
    "windows": {
     "20": {
      "avg_excess_pct": null,
@@ -32,7 +32,7 @@
    }
   },
   "short_term": {
-   "calls": 90,
+   "calls": 120,
    "windows": {
     "20": {
      "avg_excess_pct": null,
@@ -61,7 +61,7 @@
    }
   },
   "swing": {
-   "calls": 90,
+   "calls": 120,
    "windows": {
     "20": {
      "avg_excess_pct": null,
@@ -90,23 +90,23 @@
    }
   }
  },
- "calls_logged": 234,
+ "calls_logged": 309,
  "disclaimer": "Not investment advice.",
  "entry_rule": "next trading day close",
  "first_logged": "2026-10-30",
  "graded": [],
  "interval": "95% Wilson interval",
  "log": {
-  "head": "0ef65b2fe45a96383b7d46a3da3a011176e70e788fdd37f0eb289c41b5a23058",
-  "rows": 234,
+  "head": "3dfd200827d86f277fd8f7220203e35d343c9aefe3ceecff1466b2f78bdefba5",
+  "rows": 309,
   "verified": true
  },
  "min_days": 60,
- "note": "Only 2 trading days of calls so far (need 60). Treat results as noise.",
- "pending": 234,
+ "note": "Only 3 trading days of calls so far (need 60). Treat results as noise.",
+ "pending": 309,
  "sample": false,
  "status": "still noise",
- "trading_days": 2,
+ "trading_days": 3,
  "windows": [
   5,
   20,
