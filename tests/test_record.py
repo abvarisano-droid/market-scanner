@@ -62,3 +62,11 @@ def test_snapshot_written_once_per_week(tmp_path):
     assert body["rows"] == n and body["head"] == calllog.read_chain(text)[n - 1] and "Not investment advice" in body["note"]
     assert snapshot_record.snapshot(track, text, date(2026, 11, 2), tmp_path) is not None  # new ISO week
     assert snapshot_record.snapshot(track, text, date(2026, 10, 31), tmp_path) is None     # same week, not overwritten
+
+
+def test_first_grades_skip_weekends_and_closures():
+    # First call Fri Oct 30: entry is the Mon Nov 2 close, then 5, 20 and 60 trading days (Thanksgiving skipped).
+    assert export_site.first_grades("2026-10-30") == {"5": "2026-11-09", "20": "2026-12-01", "60": "2027-01-29"}
+    assert export_site.first_grades(None) == {}
+    tr = json.loads((export_site.ROOT / "site/data/track.json").read_text())
+    assert tr["first_grades"] == export_site.first_grades(tr["first_logged"])
