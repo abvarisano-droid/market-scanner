@@ -23,7 +23,15 @@
 
 ## Top calls
 
-### 000270.KS (KIA CORP.): **Bullish** (confidence 82, mispricing +70)
+### GTX (Garrett Motion Inc.): **Bullish** (confidence 72, mispricing +72)
+*Russell 2000, Consumer Cyclical, price 19.36*
+
+forward P/E 8.9x is cheap vs Consumer Cyclical peers; EV/EBITDA 7.3x is cheap vs Consumer Cyclical peers; Analyst consensus sits +75% from the last close (6 analysts); Down 35% in 3 months; News flow is positive
+- [Garrett Motion Sees Growth Beyond Turbos in Industrial Compression, Electrification](https://www.marketbeat.com/instant-alerts/event-garrett-motion-sees-growth-beyond-turbos-in-industrial-compression-electrification-2026-11-02/?utm_source=yahoofinance&utm_medium=yahoofinance)
+- [Billionaire Howard Marks’ AI Warning and Top 5 Non-AI Stock Picks](https://finance.yahoo.com/markets/stocks/articles/billionaire-howard-marks-ai-warning-200415142.html)
+- [GTX Q3 deep dive: Industrial momentum and margin gains offset auto volatility](https://finance.yahoo.com/markets/stocks/articles/gtx-q3-deep-dive-industrial-165129379.html)
+
+### 000270.KS (KIA CORP.): **Bullish** (confidence 82, mispricing +71)
 *KOSPI (Korea), Consumer Cyclical, price 100,800.00*
 
 forward P/E 5.0x is cheap vs Consumer Cyclical peers; EV/EBITDA 1.6x is cheap vs Consumer Cyclical peers; Analyst consensus sits +67% from the last close (30 analysts); Down 22% in 3 months; News flow is positive
@@ -34,138 +42,130 @@ forward P/E 5.0x is cheap vs Consumer Cyclical peers; EV/EBITDA 1.6x is cheap vs
 ### APTV (Aptiv PLC): **Bullish** (confidence 84, mispricing +69)
 *S&P 500, Consumer Cyclical, price 40.85*
 
-forward P/E 6.6x is cheap vs Consumer Cyclical peers; EV/EBITDA 4.1x is cheap vs Consumer Cyclical peers; FCF yield 18.8% is cheap vs Consumer Cyclical peers; Analyst consensus sits +57% from the last close (18 analysts)
+forward P/E 6.5x is cheap vs Consumer Cyclical peers; EV/EBITDA 4.1x is cheap vs Consumer Cyclical peers; FCF yield 19.4% is cheap vs Consumer Cyclical peers; Analyst consensus sits +53% from the last close (18 analysts)
 - [Aptiv (APTV) Faces A Fair Value Test On Mixed Third Quarter Results](https://finance.yahoo.com/markets/stocks/articles/aptiv-aptv-faces-fair-value-101923845.html)
 - [Aptiv Stock After Mixed Earnings Has The Bull Case Changed?](https://finance.yahoo.com/markets/stocks/articles/aptiv-stock-mixed-earnings-bull-081222179.html)
 - [Aptiv (APTV) Deepens Its Push Into Production Ready Automated Driving](https://finance.yahoo.com/technology/articles/aptiv-aptv-deepens-push-production-031701541.html)
 
-### EME (EMCOR Group, Inc.): **Bullish** (confidence 80, mispricing +65)
-*S&P 500, Industrials, price 595.32*
-
-Analyst consensus sits +52% from the last close (8 analysts); Down 27% in 3 months
-- [Does The Fall In MasTec Stock Change Anything?](https://www.trefis.com/stock/mtz/articles/622874/does-the-fall-in-mastec-stock-change-anything/2026-11-05)
-- [Is Quanta Still The Best Way To Own Tech's Building Boom?](https://www.trefis.com/stock/pwr/articles/622944/is-quanta-still-the-best-way-to-own-techs-building-boom/2026-11-05)
-- [Top Stock Reports for Berkshire Hathaway, Micron & Chevron](https://finance.yahoo.com/markets/stocks/articles/top-stock-reports-berkshire-hathaway-200900700.html)
-
-### CMI (Cummins Inc.): **Bullish** (confidence 79, mispricing +63)
-*S&P 500, Industrials, price 448.58*
-
-forward P/E 12.9x is cheap vs Industrials peers; Analyst consensus sits +58% from the last close (19 analysts); Down 30% in 3 months
-- [Should You Wait Before Buying Bloom Energy Stock?](https://www.trefis.com/stock/be/articles/622621/should-you-wait-before-buying-bloom-energy-stock/2026-11-05)
-- [What Are Eaton Stock Bulls Not Worried About?](https://www.trefis.com/stock/etn/articles/622872/what-are-eaton-stock-bulls-not-worried-about/2026-11-05)
-- [Can Bloom Energy Stock Jump 50%?](https://www.trefis.com/stock/be/articles/622888/can-bloom-energy-stock-jump-50/2026-11-05)
-
-### FIS (Fidelity National Information S): **Bullish** (confidence 76, mispricing +63)
-*S&P 500, Technology, price 29.39*
-
-FCF yield 15.3% is cheap vs Technology peers; Analyst consensus sits +60% from the last close (25 analysts); Down 30% in 3 months
-- [The Unwinding of the AI Trade Is Taking These Stocks Down With It the Most](https://www.barrons.com/articles/sandisk-stock-vertiv-flex-ai-trade-16cce859?siteid=yhoof2&yptr=yahoo)
-- [Is Fidelity National Information Services (FIS) Cheap On Lower Guidance And A CFO Exit?](https://finance.yahoo.com/markets/stocks/articles/fidelity-national-information-services-fis-101123490.html)
-- [Guidance Cut Could Change The Case For FIS Stock](https://finance.yahoo.com/markets/stocks/articles/guidance-cut-could-change-case-211210500.html)
-
-### ALB (Albemarle Corporation): **Bullish** (confidence 78, mispricing +62)
+### ALB (Albemarle Corporation): **Bullish** (confidence 81, mispricing +63)
 *S&P 500, Basic Materials, price 98.37*
 
-forward P/E 9.4x is cheap vs Basic Materials peers; FCF yield 10.8% is cheap vs Basic Materials peers; Analyst consensus sits +57% from the last close (21 analysts); Down 25% in 3 months
-- [Albemarle Corp (ALB) (Q3 2026) Earnings Call Highlights: Adjusted EBITDA Surges 186% as Cost ...](https://finance.yahoo.com/markets/stocks/articles/albemarle-corp-alb-q3-2026-011719099.html)
-- [Albemarle (ALB) Q3 2026 Earnings Call Transcript](https://www.fool.com/earnings/call-transcripts/2026/11/05/albemarle-alb-q3-2026-earnings-call-transcript/)
-- [ALB Q3 Earnings Beat Estimates on Higher Lithium Pricing](https://finance.yahoo.com/markets/stocks/articles/alb-q3-earnings-beat-estimates-135200063.html)
+FCF yield 10.7% is cheap vs Basic Materials peers; Analyst consensus sits +57% from the last close (21 analysts); Down 25% in 3 months; News flow is positive
+- [Should You Buy Albemarle Stock For Its Cash?](https://www.trefis.com/stock/alb/articles/623227/should-you-buy-albemarle-stock-for-its-cash/2026-11-06)
+- [Albemarle (ALB) Stock Sees Modest Fair Value Cut As Analysts Trim Targets](https://finance.yahoo.com/markets/stocks/articles/albemarle-alb-stock-sees-modest-211406360.html)
+- [Albemarle Q3 Earnings Call Highlights Cost Discipline and Lithium Demand](https://finance.yahoo.com/markets/stocks/articles/albemarle-q3-earnings-call-highlights-162400447.html)
 
-### SM (SM Energy Company): **Bullish** (confidence 82, mispricing +61)
+### FIS (Fidelity National Information S): **Bullish** (confidence 78, mispricing +63)
+*S&P 500, Technology, price 29.39*
+
+FCF yield 15.6% is cheap vs Technology peers; Analyst consensus sits +47% from the last close (24 analysts); Down 30% in 3 months
+- [Fidelity National Information Services Inc (FIS) (Q3 2026) Earnings Call Highlights: Solid Q3 ...](https://finance.yahoo.com/markets/stocks/articles/fidelity-national-information-services-inc-150622683.html)
+- [The Unwinding of the AI Trade Is Taking These Stocks Down With It the Most](https://www.barrons.com/articles/sandisk-stock-vertiv-flex-ai-trade-16cce859?siteid=yhoof2&yptr=yahoo)
+- [Is Fidelity National Information Services (FIS) Cheap On Lower Guidance And A CFO Exit?](https://finance.yahoo.com/markets/stocks/articles/fidelity-national-information-services-fis-101123490.html)
+
+### SM (SM Energy Company): **Bullish** (confidence 83, mispricing +62)
 *Russell 2000, Energy, price 29.63*
 
-forward P/E 3.4x is cheap vs Energy peers; FCF yield 28.8% is cheap vs Energy peers; Analyst consensus sits +56% from the last close (18 analysts); News flow is positive
+forward P/E 3.5x is cheap vs Energy peers; FCF yield 28.5% is cheap vs Energy peers; Analyst consensus sits +56% from the last close (18 analysts); News flow is positive
 - [Down 11.9% in 4 Weeks, Here's Why You Should You Buy the Dip in SM Energy (SM)](https://finance.yahoo.com/markets/stocks/articles/down-11-9-4-weeks-133501565.html)
 - [SM Energy Co (SM) Q3 2026 Earnings Call Highlights: $400 Million in Synergies, $1. ...](https://finance.yahoo.com/energy/articles/sm-energy-co-sm-q3-011132001.html)
 - [SM Energy (SM) Q3 2026 Earnings Call Transcript](https://www.fool.com/earnings/call-transcripts/2026/11/04/sm-energy-sm-q3-2026-earnings-call-transcript/)
 
-### CVS (CVS Health Corporation): **Bullish** (confidence 88, mispricing +60)
-*S&P 500, Healthcare, price 81.33*
+### CMI (Cummins Inc.): **Bullish** (confidence 87, mispricing +59)
+*S&P 500, Industrials, price 448.58*
 
-forward P/E 9.5x is cheap vs Healthcare peers; FCF yield 11.4% is cheap vs Healthcare peers; Analyst consensus sits +42% from the last close (25 analysts); News flow is positive
-- [CVS Health plans standalone retail pharmacy business by 2028](https://www.retail-insight-network.com/news/cvs-health-standalone-retail-pharmacy-business/)
-- [Hiltzik: CVS unwinds its big mergers, ending a dream of healthcare dominance](https://finance.yahoo.com/healthcare/articles/hiltzik-cvs-unwinds-big-mergers-110000264.html)
-- [Mark Cuban says CVS breakup may not make prescriptions more affordable](https://www.thestreet.com/health/cvs-breakup-mark-cuban-medication-prescriptions-affordable-prices)
+Analyst consensus sits +58% from the last close (19 analysts); Down 30% in 3 months; News flow is positive
+- [What Mattered Most In Caterpillar's Latest Quarter?](https://www.trefis.com/stock/cat/articles/623254/what-mattered-most-in-caterpillars-latest-quarter/2026-11-06)
+- [What Should Eaton Stock Holders Take From The September Quarter?](https://www.trefis.com/stock/etn/articles/623274/what-should-eaton-stock-holders-take-from-the-september-quarter/2026-11-06)
+- [Cummins Q3 Earnings Call Highlights](https://www.marketbeat.com/instant-alerts/transcript-cummins-q3-earnings-call-highlights-2026-11-06/?utm_source=yahoofinance&utm_medium=yahoofinance)
 
-### BBDC4.SA (BRADESCO    PN      N1): **Bullish** (confidence 62, mispricing +58)
+### CXW (CoreCivic, Inc.): **Bullish** (confidence 76, mispricing +59)
+*Russell 2000, Industrials, price 28.23*
+
+forward P/E 11.6x is cheap vs Industrials peers; trailing P/E 1.9x is cheap vs Industrials peers; EV/EBITDA 6.3x is cheap vs Industrials peers; Above-peer quality (ROE, margins, growth); Analyst consensus sits +48% from the last close (5 analysts); News flow is positive
+- [CoreCivic (CXW) Q3 2026 Earnings Call Transcript](https://www.fool.com/earnings/call-transcripts/2026/11/05/corecivic-cxw-q3-2026-earnings-call-transcript/)
+- [CoreCivic Inc (CXW) Q3 2026 Earnings Call Highlights: $2. ...](https://finance.yahoo.com/markets/stocks/articles/corecivic-inc-cxw-q3-2026-232537759.html)
+- [CoreCivic (NYSE:CXW) delivers impressive Q3 2026](https://finance.yahoo.com/markets/stocks/articles/corecivic-nyse-cxw-delivers-impressive-213745636.html)
+
+### EME (EMCOR Group, Inc.): **Bullish** (confidence 82, mispricing +58)
+*S&P 500, Industrials, price 595.32*
+
+Analyst consensus sits +52% from the last close (8 analysts); Down 27% in 3 months; News flow is positive
+- [What Does Quanta Stock's Winning Streak Really Prove?](https://www.trefis.com/stock/pwr/articles/623327/what-does-quanta-stocks-winning-streak-really-prove/2026-11-06)
+- [EMCOR Group (EME) Stock May Be Undervalued As Earnings Guidance Rises](https://finance.yahoo.com/markets/stocks/articles/emcor-group-eme-stock-may-141423766.html)
+- [Does The Fall In MasTec Stock Change Anything?](https://www.trefis.com/stock/mtz/articles/622874/does-the-fall-in-mastec-stock-change-anything/2026-11-05)
+
+### BBDC4.SA (BRADESCO    PN      N1): **Bullish** (confidence 61, mispricing +58)
 *Bovespa (Brazil), Financial Services, price 13.77*
 
 Analyst consensus sits +48% from the last close (12 analysts); Down 22% in 3 months
+- [Brazilian banks cut growth forecasts, raising fiscal stakes for Lula](https://finance.yahoo.com/economy/policy/articles/brazilian-banks-cut-growth-forecasts-183353312.html)
 - [Banco Bradesco (BOVESPA:BBDC4) Stock Fair Value Edges Lower After Cautious Analyst Revisions](https://finance.yahoo.com/markets/stocks/articles/banco-bradesco-bovespa-bbdc4-stock-221023231.html)
 - [Bradesco Sinks 5% on Itau BBA Downgrade as Brazilian Bank Stocks Slide](https://www.tikr.com/blog/bradesco-sinks-5-on-itau-bba-downgrade-as-brazilian-bank-stocks-slide?ref=yahoofinance)
-- [Bradesco: 3 Key Takeaways for Long-Term Investors](https://www.fool.com/earnings/takeaways/2026/10/26/bradesco-3-key-takeaways-for-long-term-investors/)
 
-### PCG (Pacific Gas & Electric Co.): **Bullish** (confidence 81, mispricing +56)
-*S&P 500, Utilities, price 13.23*
+### CVS (CVS Health Corporation): **Bullish** (confidence 73, mispricing +55)
+*S&P 500, Healthcare, price 81.33*
 
-forward P/E 7.3x is cheap vs Utilities peers; trailing P/E 9.8x is cheap vs Utilities peers; EV/EBITDA 8.9x is cheap vs Utilities peers; P/B 0.9x is cheap vs Utilities peers; FCF yield -16.3% is rich vs Utilities peers; Analyst consensus sits +33% from the last close (17 analysts); Down 24% in 3 months; News flow is positive
-- [Where Will PG&E Stock Be In Three Years?](https://www.trefis.com/stock/pcg/articles/622925/where-will-pge-stock-be-in-three-years/2026-11-05)
-- [Evergy's Q3 Earnings and Revenues Beat Estimates, '26 EPS View Raised](https://finance.yahoo.com/markets/stocks/articles/evergys-q3-earnings-revenues-beat-133300450.html)
-- [3 Hydrogen Stocks With Earnings Growth Up To 19%](https://finance.yahoo.com/energy/articles/3-hydrogen-stocks-earnings-growth-081433526.html)
+FCF yield 11.0% is cheap vs Healthcare peers; Analyst consensus sits +42% from the last close (25 analysts)
+- [Is McKesson Stock Increasing Your Market Risk?](https://www.trefis.com/stock/mck/articles/623268/is-mckesson-stock-increasing-your-market-risk/2026-11-06)
+- [CVS’ Decision to Split Retail Pharmacy and Healthcare Solutions Company May Affect Pricing for Customers](https://firstformoney.com/cvs-decision-to-split-retail-pharmacy-and-healthcare-solutions-company-may-affect-pricing-for-customers/)
+- [Elizabeth Warren Says CVS Is Still Trying To ‘Rip People Off’ With Planned Breakup as Mark Cuban Says Split ‘Changes Nothing For Patients’](https://finance.yahoo.com/healthcare/articles/elizabeth-warren-says-cvs-still-153007122.html)
 
-### RDDT (Reddit, Inc.): **Bullish** (confidence 73, mispricing +54)
+### RDDT (Reddit, Inc.): **Bullish** (confidence 68, mispricing +54)
 *S&P 500, Communication Services, price 93.81*
 
-Above-peer quality (ROE, margins, growth); Analyst consensus sits +64% from the last close (29 analysts); Down 42% in 3 months
-- [Reddit (RDDT) Highlights 1,300 Gaming Communities For Marketers](https://finance.yahoo.com/media-advertising/articles/reddit-rddt-highlights-1-300-051303471.html)
-- [Do You Like Cash? Consider Reddit Stock](https://www.trefis.com/stock/rddt/articles/622824/do-you-like-cash-consider-reddit-stock/2026-11-05)
-- [Reddit Sinks 8% as Social Ad Worries Deepen in Tech Rout](https://www.tikr.com/blog/reddit-sinks-8-as-social-ad-worries-deepen-in-tech-rout?ref=yahoofinance&tlnk=yf-261105-whpgc2qp)
+Above-peer quality (ROE, margins, growth); Analyst consensus sits +64% from the last close (29 analysts); Down 42% in 3 months; News flow is negative, check whether it is already priced in
+- [Reddit’s (RDDT) Short-Term Pains May Lead to Long-Term Gains](https://finance.yahoo.com/markets/stocks/articles/reddit-rddt-short-term-pains-214600411.html)
+- [The Average Social Security Check Is Just $1,940 And 56% Can’t Afford To Miss Half A Payment — ‘This Is Why Seniors Are Bagging Groceries at 70’](https://finance.yahoo.com/economy/articles/average-social-security-check-just-173010324.html)
+- [Wife Fears Becoming Mother-in-Law’s 'Retirement Plan' After Husband’s Siblings Tell Her To Pay $100 A Month From Her Salary](https://finance.yahoo.com/small-business/articles/wife-fears-becoming-mother-law-154507848.html)
 
-### FSLR (First Solar, Inc.): **Bullish** (confidence 71, mispricing +53)
-*S&P 500, Technology, price 195.76*
+### COST (Costco Wholesale Corporation): **Neutral** (confidence 58, mispricing -50)
+*S&P 500, Consumer Defensive, price 1,065.59*
 
-Analyst consensus sits +40% from the last close (30 analysts); Down 22% in 3 months
-- [Democratic Sweep Could Be A Big Deal For First Solar Stock (FSLR)](https://finance.yahoo.com/markets/stocks/articles/democratic-sweep-could-big-deal-091559405.html)
-- [First Solar (FSLR) Opens South Carolina Plant With New Jobs In Focus](https://finance.yahoo.com/energy/articles/first-solar-fslr-opens-south-012051206.html)
-- [Best Stocks to Buy for Rising Interest Rates](https://www.kiplinger.com/investing/stocks/603542/best-stocks-for-rising-interest-rates)
+forward P/E 42.1x is rich vs Consumer Defensive peers; trailing P/E 50.7x is rich vs Consumer Defensive peers; EV/EBITDA 32.1x is rich vs Consumer Defensive peers; P/B 13.0x is rich vs Consumer Defensive peers; FCF yield 1.4% is rich vs Consumer Defensive peers; News flow is positive
+- [Costco's October Net Sales Jump 12.6% as Digital Growth Accelerates](https://finance.yahoo.com/markets/stocks/articles/costcos-october-net-sales-jump-150100215.html)
+- [Rate Hikes Could Be Coming: History Likes These 4 Consumer Staples Stocks](https://247wallst.com/investing/2026/11/06/rate-hikes-could-be-coming-history-likes-these-4-consumer-staples-stocks/)
+- [Costco Stock: Earnings Growth Could Shape the Next Big Move](https://247wallst.com/investing/2026/11/06/costco-stock-earnings-growth-could-shape-the-next-big-move/)
 
-### CTAS (Cintas Corporation): **Neutral** (confidence 59, mispricing -44)
-*S&P 500, Industrials, price 226.41*
-
-forward P/E 36.7x is rich vs Industrials peers; trailing P/E 44.7x is rich vs Industrials peers; EV/EBITDA 29.7x is rich vs Industrials peers; P/B 17.4x is rich vs Industrials peers; News flow is positive
-- [Miami University’s Farmer School Lands Up To $100 Million From Its Namesake Family](https://finance.yahoo.com/small-business/articles/miami-university-farmer-school-lands-032028584.html)
-- [Is Cintas Stock Really Expensive?](https://www.trefis.com/stock/ctas/articles/622942/is-cintas-stock-really-expensive/2026-11-05)
-- [The Beauty Behind 'Boring' Stocks During Market Volatility](https://finance.yahoo.com/markets/stocks/articles/beauty-behind-boring-stocks-during-202100333.html)
-
-### WMT (Walmart Inc.): **Neutral** (confidence 55, mispricing -45)
-*S&P 500, Consumer Defensive, price 127.72*
-
-forward P/E 39.6x is rich vs Consumer Defensive peers; trailing P/E 46.3x is rich vs Consumer Defensive peers; EV/EBITDA 24.6x is rich vs Consumer Defensive peers; P/B 10.3x is rich vs Consumer Defensive peers; FCF yield 0.7% is rich vs Consumer Defensive peers; News flow is positive
-- [iShares U.S. Consumer Discretionary (IYC) Adds Amazon and Tesla on Nov. 4](https://finance.yahoo.com/markets/stocks/articles/ishares-u-consumer-discretionary-iyc-110549059.html)
-- [54 ETFs Add to Walmart (WMT) on Wednesday](https://finance.yahoo.com/markets/stocks/articles/54-etfs-add-walmart-wmt-110200461.html)
-- [Walmart expands drone delivery with 300 Zipline locations](https://www.retail-insight-network.com/news/walmart-drone-delivery-300-zipline-locations/)
-
-### CBA.AX (CWLTH BANK FPO [CBA]): **Bearish** (confidence 57, mispricing -48)
+### CBA.AX (CWLTH BANK FPO [CBA]): **Bearish** (confidence 58, mispricing -51)
 *ASX 200 (Australia), Financial Services, price 166.29*
 
-forward P/E 24.7x is rich vs Financial Services peers; trailing P/E 25.7x is rich vs Financial Services peers; Analyst consensus sits -25% from the last close (14 analysts)
+forward P/E 24.7x is rich vs Financial Services peers; trailing P/E 25.5x is rich vs Financial Services peers; Analyst consensus sits -25% from the last close (14 analysts)
 - [Janus Electric targets $65M North America revenue](https://finance.yahoo.com/video/janus-electric-targets-65m-north-023200588.html)
 - [Medibank Private Heads These 3 Australian Dividend Stocks To Watch](https://finance.yahoo.com/markets/stocks/articles/medibank-private-heads-3-australian-161220410.html)
 - [archTIS extends CBA maturity date to April 2027](https://www.proactiveinvestors.com/companies/news/1100803/archtis-extends-cba-maturity-date-to-april-2027-1100803.html)
 
-### COST (Costco Wholesale Corporation): **Bearish** (confidence 62, mispricing -50)
-*S&P 500, Consumer Defensive, price 1,065.59*
+### HUT (Hut 8 Corp.): **Bearish** (confidence 60, mispricing -55)
+*Russell 2000, Financial Services, price 45.95*
 
-forward P/E 42.6x is rich vs Consumer Defensive peers; trailing P/E 51.3x is rich vs Consumer Defensive peers; EV/EBITDA 32.5x is rich vs Consumer Defensive peers; P/B 13.2x is rich vs Consumer Defensive peers; FCF yield 1.4% is rich vs Consumer Defensive peers; News flow is positive
-- [iShares U.S. Consumer Discretionary (IYC) Adds Amazon and Tesla on Nov. 4](https://finance.yahoo.com/markets/stocks/articles/ishares-u-consumer-discretionary-iyc-110549059.html)
-- [‘Only Go Into Physical Stores Every Sixth Week’: Clark Howard’s Anti-Impulse Rule as Costco Hits $1,025](https://247wallst.com/personal-finance/2026/11/06/only-go-into-physical-stores-every-sixth-week-clark-howards-anti-impulse-rule-as-costco-hits-1025/)
-- [In 1975, Sol Price Was Pushed Out of FedMart, the Discount Chain He Founded. The Warehouse Store He Opened Next Became Part of Costco](https://247wallst.com/investing/2026/11/06/in-1975-sol-price-was-pushed-out-of-fedmart-the-discount-chain-he-founded-the-warehouse-store-he-opened-next-became-part-of-costco/)
+P/B 4.1x is rich vs Financial Services peers; FCF yield -128.1% is rich vs Financial Services peers; Below-peer quality, could be a value trap; Down 48% in 3 months
+- [Weekly Wrap: Bitcoin Falls as U.S. Market Crashes](https://www.cryptoprowl.com/releases/weekly-wrap-bitcoin-falls-as-us-market-crashes-7752)
+- [Can Yum China Afford Its Spending Bill?](https://www.trefis.com/stock/yumc/articles/623319/can-yum-china-afford-its-spending-bill/2026-11-06)
+- [Trump-Backed American Bitcoin Turns a Profit as Bitcoin Rise Lifts Books](https://decrypt.co/382633/trump-american-bitcoin-q3-profit-bitcoin-lifts-books)
 
-### ARES (Ares Management Corporation): **Bearish** (confidence 57, mispricing -58)
+### ATRC (AtriCure, Inc.): **Bearish** (confidence 64, mispricing -55)
+*Russell 2000, Healthcare, price 61.28*
+
+forward P/E 133.3x is rich vs Healthcare peers; trailing P/E 188.8x is rich vs Healthcare peers; EV/EBITDA 75.7x is rich vs Healthcare peers; Up 48% in 3 months; News flow is positive
+- [Is AtriCure (ATRC) Fully Valued After Strong Results And Raised 2026 Guidance?](https://finance.yahoo.com/markets/stocks/articles/atricure-atrc-fully-valued-strong-162017917.html)
+- [AtriCure (ATRC) Q3 2026 Earnings Call Transcript](https://www.fool.com/earnings/call-transcripts/2026/11/04/atricure-atrc-q3-2026-earnings-call-transcript/)
+- [What AtriCure (ATRC) Said on Its Q3 Earnings Call](https://www.marketbeat.com/instant-alerts/transcript-what-atricure-atrc-said-on-its-q3-earnings-call-2026-11-03/?utm_source=yahoofinance&utm_medium=yahoofinance)
+
+### ARES (Ares Management Corporation): **Bearish** (confidence 56, mispricing -57)
 *S&P 500, Financial Services, price 133.72*
 
-forward P/E 19.2x is rich vs Financial Services peers; trailing P/E 109.6x is rich vs Financial Services peers; P/B 12.1x is rich vs Financial Services peers; Below-peer quality, could be a value trap; News flow is positive
+forward P/E 19.2x is rich vs Financial Services peers; trailing P/E 109.8x is rich vs Financial Services peers; P/B 12.1x is rich vs Financial Services peers; Below-peer quality, could be a value trap; News flow is positive
+- [Franklin Q4 Earnings Beat Estimates on Higher Revenues, AUM Rises Y/Y](https://finance.yahoo.com/markets/stocks/articles/franklin-q4-earnings-beat-estimates-163500782.html)
 - [Franklin Q4 Earnings on the Deck: What's in Store for the Stock?](https://finance.yahoo.com/markets/stocks/articles/franklin-q4-earnings-deck-whats-165800710.html)
 - [3 Dividend Stocks Could Turn $300,000 Into $1,083 a Month in Passive Income](https://247wallst.com/investing/2026/11/04/3-dividend-stocks-could-turn-300000-into-1083-a-month-in-passive-income/)
-- [Optimism for 2027 IPOs: ICR Capital President & Chairman Don Duffy, Live from NYSE](https://finance.yahoo.com/markets/stocks/articles/optimism-2027-ipos-icr-capital-235256375.html)
 
-### MRNA (Moderna, Inc.): **Bearish** (confidence 72, mispricing -87)
+### MRNA (Moderna, Inc.): **Bearish** (confidence 62, mispricing -74)
 *S&P 500, Healthcare, price 241.46*
 
-P/B 14.2x is rich vs Healthcare peers; FCF yield 0.3% is rich vs Healthcare peers; Below-peer quality, could be a value trap; Analyst consensus sits -43% from the last close (19 analysts); Up 308% in 3 months; News flow is positive
-- [October jobs report and earnings from Moderna and Humana: What to Watch](https://finance.yahoo.com/video/october-jobs-report-earnings-moderna-010000755.html)
-- [Invesco S&P 500 Equal Weight (RSP) Adds Okta and Moderna on Nov. 4](https://finance.yahoo.com/markets/stocks/articles/invesco-p-500-equal-weight-110430559.html)
-- [While biotech bets swing on trial data, this dividend payer gained 72% since 2024](https://finance.yahoo.com/healthcare/articles/while-biotech-bets-swing-trial-103559933.html)
+Below-peer quality, could be a value trap; Analyst consensus sits -43% from the last close (19 analysts); Up 308% in 3 months; News flow is positive
+- [Moderna (MRNA) Stock Climbs As Q3 Earnings Mark Return To Profit](https://finance.yahoo.com/markets/stocks/articles/moderna-mrna-stock-climbs-q3-001637855.html)
+- [Moderna Stock Is Up 700% on Cancer Vaccine Hype. Earnings Reveal That Covid Still Counts.](https://www.barrons.com/articles/moderna-earnings-stock-price-994e2062?siteid=yhoof2&yptr=yahoo)
+- [Nvidia, Intel, Tesla, AMD, Coherent, Lam Research, Moderna, and More Stocks That Explain Today’s Market](https://www.barrons.com/articles/stock-movers-ddbd1841?siteid=yhoof2&yptr=yahoo)
 
 ## Short-term technical signals
 
@@ -195,7 +195,7 @@ P/B 14.2x is rich vs Healthcare peers; FCF yield 0.3% is rich vs Healthcare peer
 
 ## Unusual movers
 
-- **MNTN** -54.7%: Unusual volume 16.3x, Gap down -50.8%, At 52-week low, Oversold RSI 21, Big move -54.7%
+- **MNTN** -54.7%: Unusual volume 16.4x, Gap down -50.8%, At 52-week low, Oversold RSI 21, Big move -54.7%
 - **VCYT** -54.3%: Unusual volume 12.8x, Gap down -43.7%, At 52-week low, Oversold RSI 29, Big move -54.3%
 - **AKBA** -38.7%: Gap down -26.6%, At 52-week low, Big move -38.7%
 - **AMTX** +38.4%: Unusual volume 20.1x, Gap up +38.4%, Big move +38.4%
