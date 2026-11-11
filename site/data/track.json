@@ -1,9 +1,9 @@
 {
- "asof": "2026-11-05",
+ "asof": "2026-11-10",
  "banner": "",
  "by_lens": {
   "mispricing": {
-   "calls": 85,
+   "calls": 102,
    "windows": {
     "20": {
      "avg_excess_pct": null,
@@ -14,12 +14,12 @@
      "hits": 0
     },
     "5": {
-     "avg_excess_pct": null,
-     "ci_high_pct": null,
-     "ci_low_pct": null,
-     "graded": 0,
-     "hit_rate_pct": null,
-     "hits": 0
+     "avg_excess_pct": -1.53,
+     "ci_high_pct": 72.9,
+     "ci_low_pct": 42.2,
+     "graded": 36,
+     "hit_rate_pct": 58.3,
+     "hits": 21
     },
     "60": {
      "avg_excess_pct": null,
@@ -32,7 +32,7 @@
    }
   },
   "short_term": {
-   "calls": 150,
+   "calls": 180,
    "windows": {
     "20": {
      "avg_excess_pct": null,
@@ -43,12 +43,12 @@
      "hits": 0
     },
     "5": {
-     "avg_excess_pct": null,
-     "ci_high_pct": null,
-     "ci_low_pct": null,
-     "graded": 0,
-     "hit_rate_pct": null,
-     "hits": 0
+     "avg_excess_pct": 0.96,
+     "ci_high_pct": 71.4,
+     "ci_low_pct": 47.4,
+     "graded": 60,
+     "hit_rate_pct": 60.0,
+     "hits": 36
     },
     "60": {
      "avg_excess_pct": null,
@@ -61,7 +61,7 @@
    }
   },
   "swing": {
-   "calls": 150,
+   "calls": 180,
    "windows": {
     "20": {
      "avg_excess_pct": null,
@@ -72,12 +72,12 @@
      "hits": 0
     },
     "5": {
-     "avg_excess_pct": null,
-     "ci_high_pct": null,
-     "ci_low_pct": null,
-     "graded": 0,
-     "hit_rate_pct": null,
-     "hits": 0
+     "avg_excess_pct": -3.29,
+     "ci_high_pct": 51.0,
+     "ci_low_pct": 27.1,
+     "graded": 60,
+     "hit_rate_pct": 38.3,
+     "hits": 23
     },
     "60": {
      "avg_excess_pct": null,
@@ -90,7 +90,7 @@
    }
   }
  },
- "calls_logged": 385,
+ "calls_logged": 462,
  "disclaimer": "Not investment advice.",
  "entry_rule": "next trading day close",
  "first_grades": {
@@ -99,19 +99,1424 @@
   "60": "2027-01-29"
  },
  "first_logged": "2026-10-30",
- "graded": [],
+ "graded": [
+  {
+   "date": "2026-10-30",
+   "excess": 0.0128,
+   "label": "Bullish",
+   "lens": "mispricing",
+   "stock_return": 0.0136,
+   "ticker": "000270.KS",
+   "window": 5
+  },
+  {
+   "date": "2026-10-30",
+   "excess": -0.0128,
+   "label": "Bearish",
+   "lens": "short_term",
+   "stock_return": 0.0136,
+   "ticker": "000270.KS",
+   "window": 5
+  },
+  {
+   "date": "2026-10-30",
+   "excess": -0.229,
+   "label": "Bullish",
+   "lens": "mispricing",
+   "stock_return": -0.2283,
+   "ticker": "000660.KS",
+   "window": 5
+  },
+  {
+   "date": "2026-10-30",
+   "excess": -0.1715,
+   "label": "Bullish",
+   "lens": "mispricing",
+   "stock_return": -0.1707,
+   "ticker": "005930.KS",
+   "window": 5
+  },
+  {
+   "date": "2026-10-30",
+   "excess": -0.0659,
+   "label": "Bearish",
+   "lens": "swing",
+   "stock_return": 0.0667,
+   "ticker": "035420.KS",
+   "window": 5
+  },
+  {
+   "date": "2026-10-30",
+   "excess": -0.066,
+   "label": "Bearish",
+   "lens": "swing",
+   "stock_return": 0.0668,
+   "ticker": "0700.HK",
+   "window": 5
+  },
+  {
+   "date": "2026-10-30",
+   "excess": -0.0276,
+   "label": "Bearish",
+   "lens": "short_term",
+   "stock_return": 0.0284,
+   "ticker": "1211.HK",
+   "window": 5
+  },
+  {
+   "date": "2026-10-30",
+   "excess": -0.0276,
+   "label": "Bearish",
+   "lens": "swing",
+   "stock_return": 0.0284,
+   "ticker": "1211.HK",
+   "window": 5
+  },
+  {
+   "date": "2026-10-30",
+   "excess": 0.0023,
+   "label": "Bullish",
+   "lens": "swing",
+   "stock_return": -0.0006,
+   "ticker": "6098.T",
+   "window": 5
+  },
+  {
+   "date": "2026-10-30",
+   "excess": -0.051,
+   "label": "Bearish",
+   "lens": "swing",
+   "stock_return": 0.0518,
+   "ticker": "9988.HK",
+   "window": 5
+  },
+  {
+   "date": "2026-10-30",
+   "excess": 0.0147,
+   "label": "Bullish",
+   "lens": "swing",
+   "stock_return": 0.0154,
+   "ticker": "ABBV",
+   "window": 5
+  },
+  {
+   "date": "2026-10-30",
+   "excess": 0.0053,
+   "label": "Bullish",
+   "lens": "short_term",
+   "stock_return": 0.0061,
+   "ticker": "AJG",
+   "window": 5
+  },
+  {
+   "date": "2026-10-30",
+   "excess": -0.0937,
+   "label": "Bearish",
+   "lens": "swing",
+   "stock_return": 0.0945,
+   "ticker": "ALB",
+   "window": 5
+  },
+  {
+   "date": "2026-10-30",
+   "excess": -0.0882,
+   "label": "Bullish",
+   "lens": "swing",
+   "stock_return": -0.0875,
+   "ticker": "APA",
+   "window": 5
+  },
+  {
+   "date": "2026-10-30",
+   "excess": -0.7908,
+   "label": "Bearish",
+   "lens": "short_term",
+   "stock_return": 0.7916,
+   "ticker": "APP",
+   "window": 5
+  },
+  {
+   "date": "2026-10-30",
+   "excess": -0.7908,
+   "label": "Bearish",
+   "lens": "swing",
+   "stock_return": 0.7916,
+   "ticker": "APP",
+   "window": 5
+  },
+  {
+   "date": "2026-10-30",
+   "excess": 0.1312,
+   "label": "Bullish",
+   "lens": "short_term",
+   "stock_return": 0.1319,
+   "ticker": "BAYN.DE",
+   "window": 5
+  },
+  {
+   "date": "2026-10-30",
+   "excess": 0.0227,
+   "label": "Bullish",
+   "lens": "swing",
+   "stock_return": 0.0235,
+   "ticker": "BIIB",
+   "window": 5
+  },
+  {
+   "date": "2026-10-30",
+   "excess": 0.0626,
+   "label": "Bullish",
+   "lens": "mispricing",
+   "stock_return": 0.0633,
+   "ticker": "BKNG",
+   "window": 5
+  },
+  {
+   "date": "2026-10-30",
+   "excess": -0.0626,
+   "label": "Bearish",
+   "lens": "swing",
+   "stock_return": 0.0633,
+   "ticker": "BKNG",
+   "window": 5
+  },
+  {
+   "date": "2026-10-30",
+   "excess": -0.0482,
+   "label": "Bearish",
+   "lens": "swing",
+   "stock_return": 0.049,
+   "ticker": "CHTR",
+   "window": 5
+  },
+  {
+   "date": "2026-10-30",
+   "excess": -0.0973,
+   "label": "Bullish",
+   "lens": "swing",
+   "stock_return": -0.0965,
+   "ticker": "CNQ.TO",
+   "window": 5
+  },
+  {
+   "date": "2026-10-30",
+   "excess": 0.0133,
+   "label": "Bearish",
+   "lens": "short_term",
+   "stock_return": -0.0126,
+   "ticker": "COIN",
+   "window": 5
+  },
+  {
+   "date": "2026-10-30",
+   "excess": -0.085,
+   "label": "Bullish",
+   "lens": "swing",
+   "stock_return": -0.0842,
+   "ticker": "COP",
+   "window": 5
+  },
+  {
+   "date": "2026-10-30",
+   "excess": -0.0429,
+   "label": "Bearish",
+   "lens": "mispricing",
+   "stock_return": 0.0437,
+   "ticker": "CRL",
+   "window": 5
+  },
+  {
+   "date": "2026-10-30",
+   "excess": 0.0555,
+   "label": "Bearish",
+   "lens": "mispricing",
+   "stock_return": -0.0547,
+   "ticker": "CRWD",
+   "window": 5
+  },
+  {
+   "date": "2026-10-30",
+   "excess": -0.0754,
+   "label": "Bullish",
+   "lens": "swing",
+   "stock_return": -0.0746,
+   "ticker": "CVX",
+   "window": 5
+  },
+  {
+   "date": "2026-10-30",
+   "excess": 0.03,
+   "label": "Bullish",
+   "lens": "mispricing",
+   "stock_return": 0.0308,
+   "ticker": "DG.PA",
+   "window": 5
+  },
+  {
+   "date": "2026-10-30",
+   "excess": -0.0132,
+   "label": "Bullish",
+   "lens": "short_term",
+   "stock_return": -0.0124,
+   "ticker": "ERIE",
+   "window": 5
+  },
+  {
+   "date": "2026-10-30",
+   "excess": -0.018,
+   "label": "Bullish",
+   "lens": "short_term",
+   "stock_return": -0.0172,
+   "ticker": "EXC",
+   "window": 5
+  },
+  {
+   "date": "2026-10-30",
+   "excess": 0.0217,
+   "label": "Bearish",
+   "lens": "short_term",
+   "stock_return": -0.021,
+   "ticker": "FFIV",
+   "window": 5
+  },
+  {
+   "date": "2026-10-30",
+   "excess": 0.0014,
+   "label": "Bearish",
+   "lens": "swing",
+   "stock_return": -0.0006,
+   "ticker": "FICO",
+   "window": 5
+  },
+  {
+   "date": "2026-10-30",
+   "excess": -0.0732,
+   "label": "Bullish",
+   "lens": "mispricing",
+   "stock_return": -0.0724,
+   "ticker": "FIX",
+   "window": 5
+  },
+  {
+   "date": "2026-10-30",
+   "excess": -0.07,
+   "label": "Bearish",
+   "lens": "swing",
+   "stock_return": 0.0708,
+   "ticker": "FMG.AX",
+   "window": 5
+  },
+  {
+   "date": "2026-10-30",
+   "excess": 0.0517,
+   "label": "Bullish",
+   "lens": "mispricing",
+   "stock_return": 0.0525,
+   "ticker": "FSLR",
+   "window": 5
+  },
+  {
+   "date": "2026-10-30",
+   "excess": 0.0304,
+   "label": "Bearish",
+   "lens": "short_term",
+   "stock_return": -0.0296,
+   "ticker": "FTNT",
+   "window": 5
+  },
+  {
+   "date": "2026-10-30",
+   "excess": -0.0313,
+   "label": "Bullish",
+   "lens": "short_term",
+   "stock_return": -0.0305,
+   "ticker": "GD",
+   "window": 5
+  },
+  {
+   "date": "2026-10-30",
+   "excess": -0.0067,
+   "label": "Bullish",
+   "lens": "swing",
+   "stock_return": -0.0059,
+   "ticker": "GILD",
+   "window": 5
+  },
+  {
+   "date": "2026-10-30",
+   "excess": -0.0279,
+   "label": "Bearish",
+   "lens": "short_term",
+   "stock_return": 0.0287,
+   "ticker": "GOOG",
+   "window": 5
+  },
+  {
+   "date": "2026-10-30",
+   "excess": -0.032,
+   "label": "Bearish",
+   "lens": "short_term",
+   "stock_return": 0.0328,
+   "ticker": "GOOGL",
+   "window": 5
+  },
+  {
+   "date": "2026-10-30",
+   "excess": -0.0195,
+   "label": "Bullish",
+   "lens": "short_term",
+   "stock_return": -0.0187,
+   "ticker": "GPN",
+   "window": 5
+  },
+  {
+   "date": "2026-10-30",
+   "excess": 0.0208,
+   "label": "Bullish",
+   "lens": "swing",
+   "stock_return": 0.0216,
+   "ticker": "HAS",
+   "window": 5
+  },
+  {
+   "date": "2026-10-30",
+   "excess": 0.0108,
+   "label": "Bearish",
+   "lens": "short_term",
+   "stock_return": -0.01,
+   "ticker": "INTC",
+   "window": 5
+  },
+  {
+   "date": "2026-10-30",
+   "excess": -0.0516,
+   "label": "Bearish",
+   "lens": "swing",
+   "stock_return": 0.0524,
+   "ticker": "KER.PA",
+   "window": 5
+  },
+  {
+   "date": "2026-10-30",
+   "excess": 0.0275,
+   "label": "Bullish",
+   "lens": "short_term",
+   "stock_return": 0.0283,
+   "ticker": "KIM",
+   "window": 5
+  },
+  {
+   "date": "2026-10-30",
+   "excess": -0.028,
+   "label": "Bearish",
+   "lens": "short_term",
+   "stock_return": 0.0288,
+   "ticker": "LLOY.L",
+   "window": 5
+  },
+  {
+   "date": "2026-10-30",
+   "excess": -0.0001,
+   "label": "Bullish",
+   "lens": "short_term",
+   "stock_return": 0.0007,
+   "ticker": "LLY",
+   "window": 5
+  },
+  {
+   "date": "2026-10-30",
+   "excess": 0.0052,
+   "label": "Bullish",
+   "lens": "short_term",
+   "stock_return": 0.006,
+   "ticker": "LNT",
+   "window": 5
+  },
+  {
+   "date": "2026-10-30",
+   "excess": 0.051,
+   "label": "Bullish",
+   "lens": "mispricing",
+   "stock_return": 0.0518,
+   "ticker": "LVS",
+   "window": 5
+  },
+  {
+   "date": "2026-10-30",
+   "excess": -0.0184,
+   "label": "Bullish",
+   "lens": "short_term",
+   "stock_return": -0.0176,
+   "ticker": "MO",
+   "window": 5
+  },
+  {
+   "date": "2026-10-30",
+   "excess": -0.0184,
+   "label": "Bullish",
+   "lens": "swing",
+   "stock_return": -0.0176,
+   "ticker": "MO",
+   "window": 5
+  },
+  {
+   "date": "2026-10-30",
+   "excess": -0.1957,
+   "label": "Bearish",
+   "lens": "swing",
+   "stock_return": 0.1965,
+   "ticker": "MOS",
+   "window": 5
+  },
+  {
+   "date": "2026-10-30",
+   "excess": -0.2173,
+   "label": "Bearish",
+   "lens": "mispricing",
+   "stock_return": 0.2181,
+   "ticker": "MRNA",
+   "window": 5
+  },
+  {
+   "date": "2026-10-30",
+   "excess": 0.0989,
+   "label": "Bearish",
+   "lens": "short_term",
+   "stock_return": -0.0981,
+   "ticker": "MRVL",
+   "window": 5
+  },
+  {
+   "date": "2026-10-30",
+   "excess": -0.0493,
+   "label": "Bearish",
+   "lens": "mispricing",
+   "stock_return": 0.0501,
+   "ticker": "MTD",
+   "window": 5
+  },
+  {
+   "date": "2026-10-30",
+   "excess": -0.1213,
+   "label": "Bullish",
+   "lens": "mispricing",
+   "stock_return": -0.1205,
+   "ticker": "MU",
+   "window": 5
+  },
+  {
+   "date": "2026-10-30",
+   "excess": 0.0314,
+   "label": "Bearish",
+   "lens": "short_term",
+   "stock_return": -0.0307,
+   "ticker": "NOW",
+   "window": 5
+  },
+  {
+   "date": "2026-10-30",
+   "excess": 0.0283,
+   "label": "Bullish",
+   "lens": "mispricing",
+   "stock_return": 0.0291,
+   "ticker": "PCAR",
+   "window": 5
+  },
+  {
+   "date": "2026-10-30",
+   "excess": -0.1072,
+   "label": "Bearish",
+   "lens": "short_term",
+   "stock_return": 0.1079,
+   "ticker": "RDDT",
+   "window": 5
+  },
+  {
+   "date": "2026-10-30",
+   "excess": -0.1072,
+   "label": "Bearish",
+   "lens": "swing",
+   "stock_return": 0.1079,
+   "ticker": "RDDT",
+   "window": 5
+  },
+  {
+   "date": "2026-10-30",
+   "excess": -0.0437,
+   "label": "Bullish",
+   "lens": "short_term",
+   "stock_return": -0.043,
+   "ticker": "REGN",
+   "window": 5
+  },
+  {
+   "date": "2026-10-30",
+   "excess": -0.0173,
+   "label": "Bullish",
+   "lens": "short_term",
+   "stock_return": -0.0165,
+   "ticker": "ROP",
+   "window": 5
+  },
+  {
+   "date": "2026-10-30",
+   "excess": 0.0628,
+   "label": "Bullish",
+   "lens": "short_term",
+   "stock_return": 0.0636,
+   "ticker": "SAN.PA",
+   "window": 5
+  },
+  {
+   "date": "2026-10-30",
+   "excess": -0.0569,
+   "label": "Bullish",
+   "lens": "swing",
+   "stock_return": -0.0561,
+   "ticker": "SHEL.L",
+   "window": 5
+  },
+  {
+   "date": "2026-10-30",
+   "excess": -0.1762,
+   "label": "Bullish",
+   "lens": "mispricing",
+   "stock_return": -0.1754,
+   "ticker": "SNDK",
+   "window": 5
+  },
+  {
+   "date": "2026-10-30",
+   "excess": 0.1762,
+   "label": "Bearish",
+   "lens": "short_term",
+   "stock_return": -0.1754,
+   "ticker": "SNDK",
+   "window": 5
+  },
+  {
+   "date": "2026-10-30",
+   "excess": -0.0989,
+   "label": "Bullish",
+   "lens": "swing",
+   "stock_return": -0.0981,
+   "ticker": "SU.TO",
+   "window": 5
+  },
+  {
+   "date": "2026-10-30",
+   "excess": 0.0583,
+   "label": "Bearish",
+   "lens": "short_term",
+   "stock_return": -0.0575,
+   "ticker": "TER",
+   "window": 5
+  },
+  {
+   "date": "2026-10-30",
+   "excess": 0.0724,
+   "label": "Bearish",
+   "lens": "mispricing",
+   "stock_return": -0.0716,
+   "ticker": "TRGP",
+   "window": 5
+  },
+  {
+   "date": "2026-10-30",
+   "excess": 0.0646,
+   "label": "Bearish",
+   "lens": "mispricing",
+   "stock_return": -0.0638,
+   "ticker": "TSLA",
+   "window": 5
+  },
+  {
+   "date": "2026-10-30",
+   "excess": -0.0027,
+   "label": "Bullish",
+   "lens": "swing",
+   "stock_return": -0.002,
+   "ticker": "VEEV",
+   "window": 5
+  },
+  {
+   "date": "2026-10-30",
+   "excess": 0.0196,
+   "label": "Bullish",
+   "lens": "short_term",
+   "stock_return": 0.0204,
+   "ticker": "VLTO",
+   "window": 5
+  },
+  {
+   "date": "2026-10-30",
+   "excess": -0.0049,
+   "label": "Bullish",
+   "lens": "short_term",
+   "stock_return": -0.0041,
+   "ticker": "VRTX",
+   "window": 5
+  },
+  {
+   "date": "2026-10-30",
+   "excess": -0.1449,
+   "label": "Bullish",
+   "lens": "mispricing",
+   "stock_return": -0.1442,
+   "ticker": "WDC",
+   "window": 5
+  },
+  {
+   "date": "2026-10-30",
+   "excess": 0.012,
+   "label": "Bullish",
+   "lens": "swing",
+   "stock_return": 0.0128,
+   "ticker": "WST",
+   "window": 5
+  },
+  {
+   "date": "2026-10-30",
+   "excess": -0.1155,
+   "label": "Bearish",
+   "lens": "swing",
+   "stock_return": 0.1163,
+   "ticker": "WYNN",
+   "window": 5
+  },
+  {
+   "date": "2026-10-30",
+   "excess": -0.0839,
+   "label": "Bullish",
+   "lens": "swing",
+   "stock_return": -0.0832,
+   "ticker": "XOM",
+   "window": 5
+  },
+  {
+   "date": "2026-10-30",
+   "excess": -0.0198,
+   "label": "Bearish",
+   "lens": "swing",
+   "stock_return": 0.0206,
+   "ticker": "XYL",
+   "window": 5
+  },
+  {
+   "date": "2026-11-02",
+   "excess": -0.0218,
+   "label": "Bullish",
+   "lens": "short_term",
+   "stock_return": -0.0277,
+   "ticker": "600519.SS",
+   "window": 5
+  },
+  {
+   "date": "2026-11-02",
+   "excess": -0.0619,
+   "label": "Bearish",
+   "lens": "swing",
+   "stock_return": 0.056,
+   "ticker": "ABAT",
+   "window": 5
+  },
+  {
+   "date": "2026-11-02",
+   "excess": 0.1541,
+   "label": "Bearish",
+   "lens": "swing",
+   "stock_return": -0.16,
+   "ticker": "ABR",
+   "window": 5
+  },
+  {
+   "date": "2026-11-02",
+   "excess": 0.4584,
+   "label": "Bearish",
+   "lens": "swing",
+   "stock_return": -0.4643,
+   "ticker": "ACH",
+   "window": 5
+  },
+  {
+   "date": "2026-11-02",
+   "excess": -0.1463,
+   "label": "Bearish",
+   "lens": "swing",
+   "stock_return": 0.1404,
+   "ticker": "ACHR",
+   "window": 5
+  },
+  {
+   "date": "2026-11-02",
+   "excess": 0.043,
+   "label": "Bearish",
+   "lens": "short_term",
+   "stock_return": -0.0489,
+   "ticker": "ADAM",
+   "window": 5
+  },
+  {
+   "date": "2026-11-02",
+   "excess": 0.0038,
+   "label": "Bullish",
+   "lens": "short_term",
+   "stock_return": -0.0021,
+   "ticker": "ADUS",
+   "window": 5
+  },
+  {
+   "date": "2026-11-02",
+   "excess": -0.0383,
+   "label": "Bullish",
+   "lens": "swing",
+   "stock_return": -0.0442,
+   "ticker": "AII",
+   "window": 5
+  },
+  {
+   "date": "2026-11-02",
+   "excess": -0.0586,
+   "label": "Bullish",
+   "lens": "short_term",
+   "stock_return": -0.0645,
+   "ticker": "AIN",
+   "window": 5
+  },
+  {
+   "date": "2026-11-02",
+   "excess": -0.0222,
+   "label": "Bearish",
+   "lens": "swing",
+   "stock_return": 0.0163,
+   "ticker": "AIRO",
+   "window": 5
+  },
+  {
+   "date": "2026-11-02",
+   "excess": 0.2476,
+   "label": "Bearish",
+   "lens": "swing",
+   "stock_return": -0.2534,
+   "ticker": "AKBA",
+   "window": 5
+  },
+  {
+   "date": "2026-11-02",
+   "excess": -0.0584,
+   "label": "Bearish",
+   "lens": "swing",
+   "stock_return": 0.0526,
+   "ticker": "ALB",
+   "window": 5
+  },
+  {
+   "date": "2026-11-02",
+   "excess": -0.0438,
+   "label": "Bearish",
+   "lens": "swing",
+   "stock_return": 0.0379,
+   "ticker": "ALHC",
+   "window": 5
+  },
+  {
+   "date": "2026-11-02",
+   "excess": -0.0579,
+   "label": "Bearish",
+   "lens": "swing",
+   "stock_return": 0.052,
+   "ticker": "ALKT",
+   "window": 5
+  },
+  {
+   "date": "2026-11-02",
+   "excess": 0.0095,
+   "label": "Bearish",
+   "lens": "swing",
+   "stock_return": -0.0154,
+   "ticker": "ALMS",
+   "window": 5
+  },
+  {
+   "date": "2026-11-02",
+   "excess": 0.0141,
+   "label": "Bearish",
+   "lens": "swing",
+   "stock_return": -0.02,
+   "ticker": "ALMU",
+   "window": 5
+  },
+  {
+   "date": "2026-11-02",
+   "excess": 0.0431,
+   "label": "Bearish",
+   "lens": "swing",
+   "stock_return": -0.049,
+   "ticker": "ALT",
+   "window": 5
+  },
+  {
+   "date": "2026-11-02",
+   "excess": 0.0234,
+   "label": "Bearish",
+   "lens": "swing",
+   "stock_return": -0.0293,
+   "ticker": "AMSF",
+   "window": 5
+  },
+  {
+   "date": "2026-11-02",
+   "excess": -0.0164,
+   "label": "Bullish",
+   "lens": "swing",
+   "stock_return": -0.0223,
+   "ticker": "ANF",
+   "window": 5
+  },
+  {
+   "date": "2026-11-02",
+   "excess": -0.6168,
+   "label": "Bearish",
+   "lens": "swing",
+   "stock_return": 0.611,
+   "ticker": "APP",
+   "window": 5
+  },
+  {
+   "date": "2026-11-02",
+   "excess": 0.0007,
+   "label": "Bearish",
+   "lens": "swing",
+   "stock_return": -0.0066,
+   "ticker": "ARDX",
+   "window": 5
+  },
+  {
+   "date": "2026-11-02",
+   "excess": -0.0872,
+   "label": "Bearish",
+   "lens": "mispricing",
+   "stock_return": 0.0813,
+   "ticker": "ARES",
+   "window": 5
+  },
+  {
+   "date": "2026-11-02",
+   "excess": 0.0613,
+   "label": "Bullish",
+   "lens": "short_term",
+   "stock_return": 0.0554,
+   "ticker": "ASUR",
+   "window": 5
+  },
+  {
+   "date": "2026-11-02",
+   "excess": 0.0781,
+   "label": "Bullish",
+   "lens": "mispricing",
+   "stock_return": 0.0722,
+   "ticker": "BBDC4.SA",
+   "window": 5
+  },
+  {
+   "date": "2026-11-02",
+   "excess": 0.0289,
+   "label": "Bullish",
+   "lens": "mispricing",
+   "stock_return": 0.0231,
+   "ticker": "BKNG",
+   "window": 5
+  },
+  {
+   "date": "2026-11-02",
+   "excess": 0.0407,
+   "label": "Bearish",
+   "lens": "short_term",
+   "stock_return": -0.0465,
+   "ticker": "BLZE",
+   "window": 5
+  },
+  {
+   "date": "2026-11-02",
+   "excess": 0.0075,
+   "label": "Bullish",
+   "lens": "swing",
+   "stock_return": 0.0017,
+   "ticker": "BMBL",
+   "window": 5
+  },
+  {
+   "date": "2026-11-02",
+   "excess": 0.0978,
+   "label": "Bullish",
+   "lens": "mispricing",
+   "stock_return": 0.0919,
+   "ticker": "BNP.PA",
+   "window": 5
+  },
+  {
+   "date": "2026-11-02",
+   "excess": -0.0048,
+   "label": "Bullish",
+   "lens": "swing",
+   "stock_return": -0.0107,
+   "ticker": "BOX",
+   "window": 5
+  },
+  {
+   "date": "2026-11-02",
+   "excess": -0.0237,
+   "label": "Bullish",
+   "lens": "swing",
+   "stock_return": -0.0296,
+   "ticker": "CFFI",
+   "window": 5
+  },
+  {
+   "date": "2026-11-02",
+   "excess": 0.0891,
+   "label": "Bullish",
+   "lens": "short_term",
+   "stock_return": 0.0833,
+   "ticker": "CPRI",
+   "window": 5
+  },
+  {
+   "date": "2026-11-02",
+   "excess": 0.0283,
+   "label": "Bearish",
+   "lens": "short_term",
+   "stock_return": -0.0342,
+   "ticker": "CRMD",
+   "window": 5
+  },
+  {
+   "date": "2026-11-02",
+   "excess": 0.0715,
+   "label": "Bearish",
+   "lens": "mispricing",
+   "stock_return": -0.0773,
+   "ticker": "CRWD",
+   "window": 5
+  },
+  {
+   "date": "2026-11-02",
+   "excess": 0.0041,
+   "label": "Bullish",
+   "lens": "short_term",
+   "stock_return": -0.0018,
+   "ticker": "DFIN",
+   "window": 5
+  },
+  {
+   "date": "2026-11-02",
+   "excess": 0.0606,
+   "label": "Bullish",
+   "lens": "mispricing",
+   "stock_return": 0.0547,
+   "ticker": "DG.PA",
+   "window": 5
+  },
+  {
+   "date": "2026-11-02",
+   "excess": -0.0551,
+   "label": "Bearish",
+   "lens": "short_term",
+   "stock_return": 0.0492,
+   "ticker": "DRUG",
+   "window": 5
+  },
+  {
+   "date": "2026-11-02",
+   "excess": 0.0004,
+   "label": "Bullish",
+   "lens": "short_term",
+   "stock_return": -0.0055,
+   "ticker": "EVGO",
+   "window": 5
+  },
+  {
+   "date": "2026-11-02",
+   "excess": 0.0813,
+   "label": "Bullish",
+   "lens": "swing",
+   "stock_return": 0.0754,
+   "ticker": "FIGS",
+   "window": 5
+  },
+  {
+   "date": "2026-11-02",
+   "excess": -0.1336,
+   "label": "Bullish",
+   "lens": "mispricing",
+   "stock_return": -0.1394,
+   "ticker": "FIX",
+   "window": 5
+  },
+  {
+   "date": "2026-11-02",
+   "excess": 0.1014,
+   "label": "Bearish",
+   "lens": "short_term",
+   "stock_return": -0.1073,
+   "ticker": "FLNC",
+   "window": 5
+  },
+  {
+   "date": "2026-11-02",
+   "excess": -0.0206,
+   "label": "Bullish",
+   "lens": "mispricing",
+   "stock_return": -0.0265,
+   "ticker": "FSLR",
+   "window": 5
+  },
+  {
+   "date": "2026-11-02",
+   "excess": 0.0296,
+   "label": "Bearish",
+   "lens": "short_term",
+   "stock_return": -0.0354,
+   "ticker": "FTNT",
+   "window": 5
+  },
+  {
+   "date": "2026-11-02",
+   "excess": 0.0575,
+   "label": "Bullish",
+   "lens": "short_term",
+   "stock_return": 0.0516,
+   "ticker": "GDYN",
+   "window": 5
+  },
+  {
+   "date": "2026-11-02",
+   "excess": 0.0298,
+   "label": "Bullish",
+   "lens": "mispricing",
+   "stock_return": 0.0239,
+   "ticker": "GOOG",
+   "window": 5
+  },
+  {
+   "date": "2026-11-02",
+   "excess": 0.0321,
+   "label": "Bullish",
+   "lens": "mispricing",
+   "stock_return": 0.0262,
+   "ticker": "GOOGL",
+   "window": 5
+  },
+  {
+   "date": "2026-11-02",
+   "excess": 0.0425,
+   "label": "Bullish",
+   "lens": "short_term",
+   "stock_return": 0.0366,
+   "ticker": "GPN",
+   "window": 5
+  },
+  {
+   "date": "2026-11-02",
+   "excess": 0.0964,
+   "label": "Bullish",
+   "lens": "short_term",
+   "stock_return": 0.0905,
+   "ticker": "HGV",
+   "window": 5
+  },
+  {
+   "date": "2026-11-02",
+   "excess": 0.0329,
+   "label": "Bullish",
+   "lens": "short_term",
+   "stock_return": 0.027,
+   "ticker": "HOG",
+   "window": 5
+  },
+  {
+   "date": "2026-11-02",
+   "excess": 0.005,
+   "label": "Bullish",
+   "lens": "swing",
+   "stock_return": -0.0008,
+   "ticker": "IBTA",
+   "window": 5
+  },
+  {
+   "date": "2026-11-02",
+   "excess": 0.0425,
+   "label": "Bullish",
+   "lens": "short_term",
+   "stock_return": 0.0366,
+   "ticker": "IDXX",
+   "window": 5
+  },
+  {
+   "date": "2026-11-02",
+   "excess": 0.0258,
+   "label": "Bullish",
+   "lens": "short_term",
+   "stock_return": 0.02,
+   "ticker": "III",
+   "window": 5
+  },
+  {
+   "date": "2026-11-02",
+   "excess": -0.0728,
+   "label": "Bearish",
+   "lens": "short_term",
+   "stock_return": 0.0669,
+   "ticker": "JBSS",
+   "window": 5
+  },
+  {
+   "date": "2026-11-02",
+   "excess": 0.0879,
+   "label": "Bullish",
+   "lens": "short_term",
+   "stock_return": 0.082,
+   "ticker": "KDP",
+   "window": 5
+  },
+  {
+   "date": "2026-11-02",
+   "excess": 0.8009,
+   "label": "Bearish",
+   "lens": "short_term",
+   "stock_return": -0.8068,
+   "ticker": "KPTI",
+   "window": 5
+  },
+  {
+   "date": "2026-11-02",
+   "excess": -0.0213,
+   "label": "Bullish",
+   "lens": "short_term",
+   "stock_return": -0.0272,
+   "ticker": "LEGH",
+   "window": 5
+  },
+  {
+   "date": "2026-11-02",
+   "excess": 0.0728,
+   "label": "Bullish",
+   "lens": "mispricing",
+   "stock_return": 0.0669,
+   "ticker": "LVS",
+   "window": 5
+  },
+  {
+   "date": "2026-11-02",
+   "excess": 0.0235,
+   "label": "Bearish",
+   "lens": "short_term",
+   "stock_return": -0.0294,
+   "ticker": "MLYS",
+   "window": 5
+  },
+  {
+   "date": "2026-11-02",
+   "excess": -0.1039,
+   "label": "Bearish",
+   "lens": "mispricing",
+   "stock_return": 0.098,
+   "ticker": "MRNA",
+   "window": 5
+  },
+  {
+   "date": "2026-11-02",
+   "excess": 0.0964,
+   "label": "Bearish",
+   "lens": "short_term",
+   "stock_return": -0.1022,
+   "ticker": "MRVL",
+   "window": 5
+  },
+  {
+   "date": "2026-11-02",
+   "excess": -0.0373,
+   "label": "Bearish",
+   "lens": "mispricing",
+   "stock_return": 0.0314,
+   "ticker": "MTD",
+   "window": 5
+  },
+  {
+   "date": "2026-11-02",
+   "excess": -0.0015,
+   "label": "Bearish",
+   "lens": "short_term",
+   "stock_return": -0.0044,
+   "ticker": "NPKI",
+   "window": 5
+  },
+  {
+   "date": "2026-11-02",
+   "excess": 0.1662,
+   "label": "Bullish",
+   "lens": "swing",
+   "stock_return": 0.1604,
+   "ticker": "OPRT",
+   "window": 5
+  },
+  {
+   "date": "2026-11-02",
+   "excess": -0.0976,
+   "label": "Bullish",
+   "lens": "swing",
+   "stock_return": -0.1035,
+   "ticker": "OSPN",
+   "window": 5
+  },
+  {
+   "date": "2026-11-02",
+   "excess": 0.0014,
+   "label": "Bullish",
+   "lens": "mispricing",
+   "stock_return": -0.0045,
+   "ticker": "PCG",
+   "window": 5
+  },
+  {
+   "date": "2026-11-02",
+   "excess": 0.0086,
+   "label": "Bullish",
+   "lens": "swing",
+   "stock_return": 0.0027,
+   "ticker": "PCRX",
+   "window": 5
+  },
+  {
+   "date": "2026-11-02",
+   "excess": 0.0046,
+   "label": "Bullish",
+   "lens": "swing",
+   "stock_return": -0.0013,
+   "ticker": "PRTH",
+   "window": 5
+  },
+  {
+   "date": "2026-11-02",
+   "excess": 0.0321,
+   "label": "Bullish",
+   "lens": "mispricing",
+   "stock_return": 0.0262,
+   "ticker": "RDDT",
+   "window": 5
+  },
+  {
+   "date": "2026-11-02",
+   "excess": 0.0388,
+   "label": "Bearish",
+   "lens": "short_term",
+   "stock_return": -0.0447,
+   "ticker": "RSI",
+   "window": 5
+  },
+  {
+   "date": "2026-11-02",
+   "excess": 0.1663,
+   "label": "Bullish",
+   "lens": "swing",
+   "stock_return": 0.1604,
+   "ticker": "SG",
+   "window": 5
+  },
+  {
+   "date": "2026-11-02",
+   "excess": -0.056,
+   "label": "Bullish",
+   "lens": "swing",
+   "stock_return": -0.0619,
+   "ticker": "SHEL.L",
+   "window": 5
+  },
+  {
+   "date": "2026-11-02",
+   "excess": -0.0455,
+   "label": "Bearish",
+   "lens": "mispricing",
+   "stock_return": 0.0396,
+   "ticker": "SHOP.TO",
+   "window": 5
+  },
+  {
+   "date": "2026-11-02",
+   "excess": 0.018,
+   "label": "Bullish",
+   "lens": "swing",
+   "stock_return": 0.0121,
+   "ticker": "SIG",
+   "window": 5
+  },
+  {
+   "date": "2026-11-02",
+   "excess": -0.0839,
+   "label": "Bearish",
+   "lens": "short_term",
+   "stock_return": 0.078,
+   "ticker": "SKYW",
+   "window": 5
+  },
+  {
+   "date": "2026-11-02",
+   "excess": 0.0411,
+   "label": "Bearish",
+   "lens": "mispricing",
+   "stock_return": -0.047,
+   "ticker": "TSLA",
+   "window": 5
+  },
+  {
+   "date": "2026-11-02",
+   "excess": 0.1665,
+   "label": "Bullish",
+   "lens": "swing",
+   "stock_return": 0.1607,
+   "ticker": "WEYS",
+   "window": 5
+  },
+  {
+   "date": "2026-11-02",
+   "excess": 0.1297,
+   "label": "Bullish",
+   "lens": "mispricing",
+   "stock_return": 0.1238,
+   "ticker": "WYNN",
+   "window": 5
+  },
+  {
+   "date": "2026-11-02",
+   "excess": -0.4702,
+   "label": "Bearish",
+   "lens": "short_term",
+   "stock_return": 0.4643,
+   "ticker": "XMAX",
+   "window": 5
+  },
+  {
+   "date": "2026-11-02",
+   "excess": 0.1171,
+   "label": "Bearish",
+   "lens": "short_term",
+   "stock_return": -0.123,
+   "ticker": "XRX",
+   "window": 5
+  }
+ ],
  "interval": "95% Wilson interval",
  "log": {
-  "head": "55dcddaa8a8ee2ccd219dbaee5c423ee4c69021d6ed90468f9a91039b2d2da44",
-  "rows": 385,
+  "head": "0a15f2a39edc63f0b3c1aaa0fbb60a37ff12e361bf0c9ec4116ce3fd9625f4df",
+  "rows": 462,
   "verified": true
  },
  "min_days": 60,
- "note": "Only 4 trading days of calls so far (need 60). Treat results as noise.",
- "pending": 385,
+ "note": "Only 7 trading days of calls so far (need 60). Treat results as noise.",
+ "pending": 306,
  "sample": false,
  "status": "still noise",
- "trading_days": 4,
+ "trading_days": 7,
  "windows": [
   5,
   20,

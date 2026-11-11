@@ -1,0 +1,101 @@
+{
+ "by_lens": {
+  "mispricing": {
+   "calls": 102,
+   "windows": {
+    "20": {
+     "avg_excess_pct": null,
+     "ci_high_pct": null,
+     "ci_low_pct": null,
+     "graded": 0,
+     "hit_rate_pct": null,
+     "hits": 0
+    },
+    "5": {
+     "avg_excess_pct": -1.53,
+     "ci_high_pct": 72.9,
+     "ci_low_pct": 42.2,
+     "graded": 36,
+     "hit_rate_pct": 58.3,
+     "hits": 21
+    },
+    "60": {
+     "avg_excess_pct": null,
+     "ci_high_pct": null,
+     "ci_low_pct": null,
+     "graded": 0,
+     "hit_rate_pct": null,
+     "hits": 0
+    }
+   }
+  },
+  "short_term": {
+   "calls": 180,
+   "windows": {
+    "20": {
+     "avg_excess_pct": null,
+     "ci_high_pct": null,
+     "ci_low_pct": null,
+     "graded": 0,
+     "hit_rate_pct": null,
+     "hits": 0
+    },
+    "5": {
+     "avg_excess_pct": 0.96,
+     "ci_high_pct": 71.4,
+     "ci_low_pct": 47.4,
+     "graded": 60,
+     "hit_rate_pct": 60.0,
+     "hits": 36
+    },
+    "60": {
+     "avg_excess_pct": null,
+     "ci_high_pct": null,
+     "ci_low_pct": null,
+     "graded": 0,
+     "hit_rate_pct": null,
+     "hits": 0
+    }
+   }
+  },
+  "swing": {
+   "calls": 180,
+   "windows": {
+    "20": {
+     "avg_excess_pct": null,
+     "ci_high_pct": null,
+     "ci_low_pct": null,
+     "graded": 0,
+     "hit_rate_pct": null,
+     "hits": 0
+    },
+    "5": {
+     "avg_excess_pct": -3.29,
+     "ci_high_pct": 51.0,
+     "ci_low_pct": 27.1,
+     "graded": 60,
+     "hit_rate_pct": 38.3,
+     "hits": 23
+    },
+    "60": {
+     "avg_excess_pct": null,
+     "ci_high_pct": null,
+     "ci_low_pct": null,
+     "graded": 0,
+     "hit_rate_pct": null,
+     "hits": 0
+    }
+   }
+  }
+ },
+ "first_logged": "2026-10-30",
+ "head": "55dcddaa8a8ee2ccd219dbaee5c423ee4c69021d6ed90468f9a91039b2d2da44",
+ "min_days": 60,
+ "note": "Not investment advice. Calls are mechanical and graded versus SPY; nothing here is edited after the fact.",
+ "rows": 385,
+ "scan_asof": "2026-11-10",
+ "status": "still noise",
+ "taken": "2026-11-11",
+ "trading_days": 7,
+ "week": "2026-W46"
+}
