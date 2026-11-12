@@ -128,6 +128,23 @@
    "cap_usd": null,
    "stopped": null,
    "cost_usd": 0.0
+  },
+  {
+   "date": "2026-11-10",
+   "run_id": "43141514904",
+   "model": "claude-sonnet-5-5",
+   "key_present": false,
+   "calls": 0,
+   "ok": 0,
+   "skipped": 0,
+   "errors": {},
+   "input_tokens": 0,
+   "output_tokens": 0,
+   "cache_read_input_tokens": 0,
+   "cache_creation_input_tokens": 0,
+   "cap_usd": null,
+   "stopped": null,
+   "cost_usd": 0.0
   }
  ]
 }
