@@ -1,13 +1,14 @@
 {
- "checked_at": "2026-11-11T20:09:12Z",
+ "checked_at": "2026-11-12T20:46:01Z",
  "missed": [
   "2026-11-06",
-  "2026-11-09"
+  "2026-11-09",
+  "2026-11-11"
  ],
  "status": "missed",
- "market_date": "2026-11-10",
+ "market_date": "2026-11-11",
  "last_scan": "2026-11-10",
- "catch_up": false,
+ "catch_up": true,
  "arb": {
   "as_of": "2026-11-02",
   "stale": true
