@@ -81,6 +81,31 @@ reports land in `reports/forecast_lab/`.
 - Each installed contestant appears in the report with range held, Brier, CRPS and skill.
 - Any contestant that can't run is listed under "skipped" with the reason, not crashed.
 
+## On Windows: setup and the nightly job
+
+From the repo folder in PowerShell:
+
+```
+powershell -NoProfile -ExecutionPolicy Bypass -File .\scripts\forecast_lab_setup.ps1
+```
+
+It switches to the branch, makes `.venv`, installs torch (CPU) and the lab's packages, fetches the
+Kronos weights, runs the tests, runs a quick 8-week contest and prints the scorecard, then adds a
+Task Scheduler job `ForecastLabNightly` (01:30 by default, `-Time "02:00"` to change).
+
+Each night `scripts/forecast_lab_nightly.ps1` runs the tests and the full 52-week contest in plain
+Python, then runs Claude Code headless (`claude -p`, Sonnet, 40 turns max) with
+`scripts/forecast_lab_night_prompt.txt` to fix any contestant that failed. Claude can edit and commit but
+not push; the script pushes only to this branch, and only if every changed file is under
+`forecast_lab/`, `tests/` or `docs/`. Logs: `logs/forecast_lab/` (not in git).
+
+The PC must stay on, plugged in and signed in (locked is fine). Pause or remove the job:
+
+```
+Disable-ScheduledTask -TaskName ForecastLabNightly
+Unregister-ScheduledTask -TaskName ForecastLabNightly -Confirm:$false
+```
+
 ## Phase 2: paper desks and the Friday scorecard
 
 - One simulated desk per contestant, all running the same rule: each Monday, from the ~100 largest

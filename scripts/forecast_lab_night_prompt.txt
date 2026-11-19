@@ -1,0 +1,19 @@
+You are the Forecast Lab night agent in the market-scanner repo, on branch claude/project-thread-yrciat.
+Read docs/forecast-lab.md first. Paper money only: never trade, sign in to a brokerage or move money.
+
+Tonight's tests and contest backtest already ran. Your job:
+1. Read the log named below and the newest reports/forecast_lab/contest-*.md.
+2. If a contestant is listed under skipped or errored (kronos_small, timesfm_2_5, chronos_bolt_small,
+   moirai_2_small), make it run. Install its package into the active Python environment with pip:
+   chronos-forecasting; TimesFM with pip install "timesfm[torch] @ git+https://github.com/google-research/timesfm.git";
+   uni2ts for Moirai. Before installing, run pip install --dry-run and stop on that package if it would
+   change the installed torch or numpy version; say so in your summary instead.
+3. Fix only the failing adapter in forecast_lab/models.py against the package's current docs, and add or
+   update a test in tests/test_forecast_lab.py. Run python -m pytest -q tests/test_forecast_lab.py; all must pass.
+4. Commit only files under forecast_lab/, tests/ and docs/ with a message starting "claude: ". Do not push;
+   the night script pushes. Never commit reports/, logs/, data/cache/ or .weights/.
+5. Never put personal holdings or anything from the user's home folder into the repo.
+6. End with a short plain summary: which contestants ran, the contest table's top 3 by skill, what you fixed,
+   and anything that still needs Ashton. No em dashes.
+
+If nothing failed, change nothing and just write the summary.

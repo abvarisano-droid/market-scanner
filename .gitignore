@@ -4,3 +4,6 @@ __pycache__/
 data/cache/
 .streamlit/secrets.toml
 .pytest_cache/
+.weights/
+reports/forecast_lab/
+logs/
