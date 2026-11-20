@@ -1,5 +1,5 @@
 {
- "asof": "2026-11-18",
+ "asof": "2026-11-19",
  "banner": "",
  "by_lens": {
   "mispricing": {
@@ -14,11 +14,11 @@
      "hits": 0
     },
     "5": {
-     "avg_excess_pct": -0.61,
-     "ci_high_pct": 61.4,
-     "ci_low_pct": 42.4,
-     "graded": 102,
-     "hit_rate_pct": 52.0,
+     "avg_excess_pct": -0.39,
+     "ci_high_pct": 62.5,
+     "ci_low_pct": 43.3,
+     "graded": 100,
+     "hit_rate_pct": 53.0,
      "hits": 53
     },
     "60": {
@@ -32,7 +32,7 @@
    }
   },
   "short_term": {
-   "calls": 240,
+   "calls": 270,
    "windows": {
     "20": {
      "avg_excess_pct": null,
@@ -43,12 +43,12 @@
      "hits": 0
     },
     "5": {
-     "avg_excess_pct": -1.1,
-     "ci_high_pct": 56.2,
-     "ci_low_pct": 41.6,
-     "graded": 176,
-     "hit_rate_pct": 48.9,
-     "hits": 86
+     "avg_excess_pct": -1.21,
+     "ci_high_pct": 55.9,
+     "ci_low_pct": 41.3,
+     "graded": 175,
+     "hit_rate_pct": 48.6,
+     "hits": 85
     },
     "60": {
      "avg_excess_pct": null,
@@ -61,7 +61,7 @@
    }
   },
   "swing": {
-   "calls": 240,
+   "calls": 270,
    "windows": {
     "20": {
      "avg_excess_pct": null,
@@ -90,7 +90,7 @@
    }
   }
  },
- "calls_logged": 611,
+ "calls_logged": 671,
  "disclaimer": "Not investment advice.",
  "entry_rule": "next trading day close",
  "first_grades": {
@@ -100,6 +100,15 @@
  },
  "first_logged": "2026-10-30",
  "graded": [
+  {
+   "date": "2026-11-02",
+   "excess": 0.0411,
+   "label": "Bearish",
+   "lens": "mispricing",
+   "stock_return": -0.047,
+   "ticker": "TSLA",
+   "window": 5
+  },
   {
    "date": "2026-11-02",
    "excess": 0.1665,
@@ -723,15 +732,6 @@
   },
   {
    "date": "2026-11-03",
-   "excess": -0.0484,
-   "label": "Bullish",
-   "lens": "mispricing",
-   "stock_return": -0.0576,
-   "ticker": "SNDK",
-   "window": 5
-  },
-  {
-   "date": "2026-11-03",
    "excess": 0.0559,
    "label": "Bullish",
    "lens": "short_term",
@@ -786,10 +786,10 @@
   },
   {
    "date": "2026-11-03",
-   "excess": -0.0811,
+   "excess": -0.0826,
    "label": "Bearish",
    "lens": "short_term",
-   "stock_return": 0.0719,
+   "stock_return": 0.0735,
    "ticker": "WT",
    "window": 5
   },
@@ -2803,16 +2803,16 @@
  ],
  "interval": "95% Wilson interval",
  "log": {
-  "head": "bfee6ddf064de03b78470d100f7c5779bce1a6e9cb257220a597a312d3082738",
-  "rows": 611,
+  "head": "6e1317f56a913a84358705823e039fa8b0f782a14a345b98bbc8768f5ed91dd0",
+  "rows": 671,
   "verified": true
  },
  "min_days": 60,
- "note": "Only 13 trading days of calls so far (need 60). Treat results as noise.",
- "pending": 162,
+ "note": "Only 14 trading days of calls so far (need 60). Treat results as noise.",
+ "pending": 225,
  "sample": false,
  "status": "still noise",
- "trading_days": 13,
+ "trading_days": 14,
  "windows": [
   5,
   20,
